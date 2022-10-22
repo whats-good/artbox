@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "prisma.prisma",
+    "dbaeumer.vscode-eslint",
+    "GraphQL.vscode-graphql"
+  ]
+}
