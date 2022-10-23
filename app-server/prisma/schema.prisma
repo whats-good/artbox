@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator pothos {
+  provider = "prisma-pothos-types"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ChainAccount {
+  address   String   @id @db.Citext
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tokens    Token[]
+}
+
+model SmartContract {
+  address     String   @id @db.Citext
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String?
+  symbol      String?
+  decimals    Int?
+  description String?
+  tokens      Token[]
+}
+
+model Token {
+  id        String   @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tokenId         String @db.Citext
+  contractAddress String @db.Citext
+  ownerAddress    String @db.Citext
+
+  imageURL      String?
+  smartContract SmartContract @relation(fields: [contractAddress], references: [address])
+  owner         ChainAccount  @relation(fields: [ownerAddress], references: [address])
+
+  @@unique([tokenId, contractAddress])
+}
+
+// TODO: add lists later
+// model TokenList {
+//   id          String   @id
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+//   name        String
+//   description String?
+// }
