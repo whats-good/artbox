@@ -13,6 +13,7 @@
     "@react95/icons": "^2.0.5",
     "@usedapp/core": "^1.1.5",
     "@xstyled/styled-components": "^3.7.0",
+    "@zoralabs/nft-metadata": "^1.2.6",
     "apollo-boost": "^0.4.9",
     "axios": "^1.1.2",
     "ethers": "^5.7.1",

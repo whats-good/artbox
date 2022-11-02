@@ -2,7 +2,6 @@ import { GalleryWrapper, GalleryUpperBar, GalleryMiddle, GalleryBottom } from ".
 import { GridDisplay } from "./griddisplay";
 import { ArtistTitle } from '../components/artisttitle';
 import { ArtistDescription } from '../components/artistdescription';
-// import { SortWindow } from "./sortwindow";
 
 
 interface ArtistGalleryProps {
