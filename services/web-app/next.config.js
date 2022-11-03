@@ -12,6 +12,16 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'gateway.ipfs.io',
+        port: '',
+        pathname: '/ipfs/**',
+      }
+    ]
+  }
 }
 
 module.exports = withTM(withFonts(nextConfig));

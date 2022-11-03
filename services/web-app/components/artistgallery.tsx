@@ -2,7 +2,6 @@ import { GalleryWrapper, GalleryUpperBar, GalleryMiddle, GalleryBottom } from ".
 import { GridDisplay } from "./griddisplay";
 import { ArtistTitle } from '../components/artisttitle';
 import { ArtistDescription } from '../components/artistdescription';
-// import { SortWindow } from "./sortwindow";
 
 
 interface ArtistGalleryProps {
@@ -12,15 +11,15 @@ name: String,
 }
 
 
-export function ArtistGallery( { contracts, description, name } : ArtistGalleryProps) {
+export function ArtistGallery( { meta, name, desc } : any) {
   return (
     <GalleryWrapper>
       <GalleryUpperBar>
         <ArtistTitle name={name}/>
-        <ArtistDescription description={description}/>
+        <ArtistDescription description={desc}/>
       </GalleryUpperBar>
       <GalleryMiddle>
-        {contracts ? <GridDisplay contracts={contracts}/> : <p>Loading....</p> }
+        <GridDisplay meta={meta}/>
         {/* <SortWindow /> */}
       </GalleryMiddle>
       <GalleryBottom />
