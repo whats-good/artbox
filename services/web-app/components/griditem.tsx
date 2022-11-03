@@ -1,11 +1,11 @@
 import { GalleryImage, GalleryImageTop, GalleryImageBottom, GalleryImg } from './styled/galleryimagewrapper';
 
 export function GridItem ({ imageDetails } : any) {
-
+  console.log('IMAGES', imageDetails);
   return (
     <GalleryImage>
       <GalleryImageTop>
-        <GalleryImg src={imageDetails.url}/>
+        <GalleryImg src={imageDetails.imageURL}/>
       </GalleryImageTop>
       <GalleryImageBottom>
         <p>{imageDetails.name}</p>

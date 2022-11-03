@@ -11,15 +11,15 @@ name: String,
 }
 
 
-export function ArtistGallery( { contracts, description, name } : ArtistGalleryProps) {
+export function ArtistGallery( { meta, name, desc } : any) {
   return (
     <GalleryWrapper>
       <GalleryUpperBar>
         <ArtistTitle name={name}/>
-        <ArtistDescription description={description}/>
+        <ArtistDescription description={desc}/>
       </GalleryUpperBar>
       <GalleryMiddle>
-        {contracts ? <GridDisplay contracts={contracts}/> : <p>Loading....</p> }
+        <GridDisplay meta={meta}/>
         {/* <SortWindow /> */}
       </GalleryMiddle>
       <GalleryBottom />
