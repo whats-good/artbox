@@ -27,15 +27,15 @@ export const getBulkNftMetaData = async (address: string, page: number = 1) : Pr
   //Create Array with length of 15 to map over
   const arr = Array(15).fill('0');
 
+  //Fetch 15 token's metadata
   try {
-    console.log('trying...')
     for (let i = 0; i < arr.length; i++) {
       let metaData = await parser.fetchMetadata(address, count.toString());
       output.push(metaData);
       count ++;
     }
-  } catch(e) {
-    console.log(e);
+  } catch(err) {
+    console.log(err);
   }
   return {
     page: page + 1,

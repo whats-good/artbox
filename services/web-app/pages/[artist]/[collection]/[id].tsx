@@ -9,6 +9,9 @@ import { getNftMetaData } from '../../../helpers/getNftMetaData';
 
 type Data = {
   image?: string,
+  title?: string,
+  description?: string,
+  attributes?: string,
 }
 
 export const getServerSideProps : GetServerSideProps<Data> = async (context) => {
@@ -24,11 +27,14 @@ export const getServerSideProps : GetServerSideProps<Data> = async (context) => 
   return {
     props: {
       image: img?.imageURL,
+      title: img?.metadata.name,
+      description: img?.metadata.description,
+      attributes: JSON.stringify(img?.attributes),
     },
   }
 }
 
-const IndividualPiece: NextPage = ({ image } : InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const IndividualPiece: NextPage = ({ image, title, description, attributes } : InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
   return (
     <PageWrapper>
@@ -36,7 +42,10 @@ const IndividualPiece: NextPage = ({ image } : InferGetServerSidePropsType<typeo
       <ArtistPageWrapper>
         <BlueBar />
         <ShortenedAddress />
-        <img src={image}></img>
+        <img src={image} style={{width: '500px', height: 'auto'}}></img>
+        <p>Title: {title}</p>
+        <p>Description: {description}</p>
+        <p>Attributes: {attributes}</p>
       </ArtistPageWrapper>
     </PageWrapper>
   )

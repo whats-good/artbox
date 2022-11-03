@@ -1,7 +1,6 @@
 import { GalleryImage, GalleryImageTop, GalleryImageBottom, GalleryImg } from './styled/galleryimagewrapper';
 
 export function GridItem ({ imageDetails } : any) {
-  console.log('IMAGES', imageDetails);
   return (
     <GalleryImage>
       <GalleryImageTop>

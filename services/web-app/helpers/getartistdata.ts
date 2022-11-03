@@ -1,9 +1,9 @@
 
 interface ArtistData {
-  name: String,
-  desc: String,
-  wallet: String,
-  contracts?: String[],
+  name: string,
+  desc: string,
+  wallet?: string,
+  contracts?: string[],
 }
 
 // Temporary to mimic backend response
