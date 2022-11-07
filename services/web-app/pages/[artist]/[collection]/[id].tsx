@@ -4,8 +4,9 @@ import { TopBar } from '../../../components/topbar';
 import { ArtistPageWrapper } from '../../../components/styled/artistpage'
 import { BlueBar } from '../../../components/styled/artistpage';
 import { ShortenedAddress } from '../../../components/shortenedaddress';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { GetStaticProps, InferGetStaticPropsType, GetStaticPaths } from 'next';
 import { getNftMetaData } from '../../../helpers/getNftMetaData';
+import { useRouter } from 'next/router';
 
 type Data = {
   image?: string,
@@ -14,16 +15,28 @@ type Data = {
   attributes?: string,
 }
 
-export const getServerSideProps : GetServerSideProps<Data> = async (context) => {
+export const getStaticPaths : GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
+}
 
-  const { collection, id } = context.query;
+export const getStaticProps : GetStaticProps<Data> = async ({params}) => {
+
+  let collection;
+  let id;
   let img;
 
-  // Am doing this because context.query type is string || string[]
+  if (params) {
+    id = params.id;
+    collection = params.collection;
+  }
+
+  //Am doing this because context.query type is string || string[]
   if (typeof collection === 'string' && typeof id === 'string') {
     img = await getNftMetaData(collection, id);
   }
-
   return {
     props: {
       image: img?.imageURL,
@@ -34,7 +47,17 @@ export const getServerSideProps : GetServerSideProps<Data> = async (context) => 
   }
 }
 
-const IndividualPiece: NextPage = ({ image, title, description, attributes } : InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const IndividualPiece: NextPage = ({ image, title, description, attributes } : InferGetStaticPropsType<typeof getStaticProps>) => {
+
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return (
+      <>
+      <h1>Data is loading....</h1>
+      </>
+    )
+  }
 
   return (
     <PageWrapper>
