@@ -1,6 +1,12 @@
 import { NextPage } from "next";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { getArtistData } from '../../helpers/getartistdata';
+import { PageWrapper } from '../../components/styled/pagewrapper';
+import { TopBar } from '../../components/topbar';
+import { ArtistPageWrapper } from '../../components/styled/artistpage';
+import { ContractTiles } from '../../components/contractTiles/contractTile';
+import { BlueBar } from '../../components/styled/artistpage';
+import { ShortenedAddress } from '../../components/shortenedaddress';
 
 type ArtistProps = {
   name?: string,
@@ -26,15 +32,15 @@ export const getServerSideProps : GetServerSideProps<ArtistProps> = async (conte
 const Artist: NextPage = ({ name, desc, contracts } : InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
   return (
-    <>
-    <p>{name}</p>
-    <p>{desc}</p>
-    {contracts?.map((contract, index) => {
-      return (
-      <p>Contract # {index} --- {contract}</p>
-      )
-    })}
-    </>
+    <PageWrapper>
+      <TopBar />
+      <ArtistPageWrapper>
+        <BlueBar />
+        <ShortenedAddress />
+        <ContractTiles con={contracts} name={name} desc={desc}/>
+      </ArtistPageWrapper>
+    </PageWrapper>
+
   )
 }
 
