@@ -1,11 +1,11 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const ButtonOuter = styled.div`
-background-color: #B5B5B5;
-height: 24px;
-border-right: 1px solid black;
-border-bottom: 1px solid black;
-cursor: pointer;
+  background-color: #b5b5b5;
+  height: 24px;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  cursor: pointer;
 `;
 
 export const ButtonInner = styled.button`
@@ -21,4 +21,3 @@ border-top: 1px solid #D9D9D9;
 ${ButtonOuter}:hover & {
   background-color: #565656;
 }`;
-

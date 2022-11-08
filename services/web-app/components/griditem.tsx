@@ -1,14 +1,19 @@
-import { GalleryImage, GalleryImageTop, GalleryImageBottom, GalleryImg } from './styled/galleryimagewrapper';
+import {
+  GalleryImage,
+  GalleryImageTop,
+  GalleryImageBottom,
+  GalleryImg,
+} from "./styled/galleryimagewrapper";
 
-export function GridItem ({ imageDetails } : any) {
+export function GridItem({ imageDetails }: any) {
   return (
     <GalleryImage>
       <GalleryImageTop>
-        <GalleryImg src={imageDetails.imageURL}/>
+        <GalleryImg src={imageDetails.imageURL} />
       </GalleryImageTop>
       <GalleryImageBottom>
         <p>{imageDetails.name}</p>
       </GalleryImageBottom>
     </GalleryImage>
-  )
-};
+  );
+}

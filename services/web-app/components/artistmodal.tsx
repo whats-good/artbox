@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { Modal, List, Button } from '@react95/core';
+import { useState } from "react";
+import { Modal, List, Button } from "@react95/core";
 
 export const ArtistModal = () => {
-const [showModal, toggleShowModal] = useState<Boolean>(true);
+  const [showModal, toggleShowModal] = useState<Boolean>(true);
 
-const handleOpenModal = () => toggleShowModal(true);
-const handleCloseModal = () => toggleShowModal(false);
-const handleButtonClick = (e: React.MouseEvent<HTMLLIElement>) => {
-  alert(e.currentTarget.value);
-}
+  const handleOpenModal = () => toggleShowModal(true);
+  const handleCloseModal = () => toggleShowModal(false);
+  const handleButtonClick = (e: React.MouseEvent<HTMLLIElement>) => {
+    alert(e.currentTarget.value);
+  };
 
-return (
+  return (
     <>
       <Button onClick={handleOpenModal}>Trigger Modal</Button>
       {showModal && (
@@ -24,12 +24,12 @@ return (
           }}
           closeModal={handleCloseModal}
           buttons={[
-            { value: 'Ok', onClick: handleButtonClick },
-            { value: 'Cancel', onClick: handleButtonClick },
+            { value: "Ok", onClick: handleButtonClick },
+            { value: "Cancel", onClick: handleButtonClick },
           ]}
           menu={[
             {
-              name: 'File',
+              name: "File",
               list: (
                 <List>
                   <List.Item onClick={handleCloseModal}>Exit</List.Item>
@@ -37,7 +37,7 @@ return (
               ),
             },
             {
-              name: 'Edit',
+              name: "Edit",
               list: (
                 <List>
                   <List.Item>Copy</List.Item>

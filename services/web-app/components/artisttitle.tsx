@@ -1,9 +1,7 @@
 interface ArtistTitleProps {
-  name: String
+  name: String;
 }
 
-export function ArtistTitle({ name } : ArtistTitleProps) {
-  return (
-    <h1>{name}</h1>
-  )
+export function ArtistTitle({ name }: ArtistTitleProps) {
+  return <h1>{name}</h1>;
 }
