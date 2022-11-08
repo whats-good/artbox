@@ -1,5 +1,6 @@
 import { GetServerSidePropsContext, NextPage } from "next";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+
 import { getArtistData } from "../../helpers/getartistdata";
 
 /**
@@ -76,6 +77,7 @@ const Artist: NextPage<
   }
 
   return (
+
     <>
       <p>{props.name}</p>
       <p>{props.desc}</p>
