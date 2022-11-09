@@ -1,12 +1,14 @@
 import type { NextPage } from "next";
-import { PageWrapper } from "../../../components/pagewrapper/pagewrapper";
-import { TopBar } from "../../../components/connectwallet/topbar";
-import { ArtistPageWrapper } from "../../../components/pagewrapper/artistpage";
-import { BlueBar } from "../../../components/pagewrapper/artistpage";
-import { ShortenedAddress } from "../../../components/addressdisplay/shortenedaddress";
 import { GetStaticProps, InferGetStaticPropsType, GetStaticPaths } from "next";
-import { getNftMetaData } from "../../../helpers/getNftMetaData";
 import { useRouter } from "next/router";
+import { getNftMetaData } from "../../../helpers";
+import {
+  PageWrapper,
+  TopBar,
+  ArtistPageWrapper,
+  BlueBar,
+  ShortenedAddress,
+} from "../../../components";
 
 type Data = {
   image?: string;

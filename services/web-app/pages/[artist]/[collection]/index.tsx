@@ -1,4 +1,9 @@
-import { NextPage, GetServerSidePropsContext } from "next";
+import {
+  NextPage,
+  GetServerSideProps,
+  InferGetServerSidePropsType,
+  GetServerSidePropsContext,
+} from "next";
 import {
   PageWrapper,
   TopBar,
@@ -7,12 +12,11 @@ import {
   ShortenedAddress,
   ArtistGallery,
 } from "../../../components";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import {
   BulkNftMetaData,
   getBulkNftMetaData,
-} from "../../../helpers/getNftMetaData";
-import { getArtistData } from "../../../helpers/getartistdata";
+  getArtistData,
+} from "../../../helpers";
 
 interface ReturnServerSideProps {
   props: {
