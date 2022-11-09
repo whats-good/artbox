@@ -7,22 +7,42 @@ const parser = new Agent({
   timeout: 60 * 1000,
 });
 
-export const getNftMetaData = async (
-  address: string,
-  id: string
-): Promise<NftMetadata> => {
-  return await parser.fetchMetadata(address, id);
+type GetNftMetaDataError = {
+  __typename: "GetNftMetaDataError";
+  message: string;
 };
 
 export type BulkNftMetaData = {
+  __typename: "BulkNftMetaData";
   page: number;
   results: NftMetadata[];
 };
 
+type BulkNftMetaDataError = {
+  __typename: "BulkNftMetaDataError";
+  message: string;
+};
+
+//Gets individual NFTs metadata
+export const getNftMetaData = async (
+  address: string,
+  id: string
+): Promise<NftMetadata | GetNftMetaDataError> => {
+  try {
+    return await parser.fetchMetadata(address, id);
+  } catch (e) {
+    return {
+      __typename: "GetNftMetaDataError",
+      message: JSON.stringify(e),
+    };
+  }
+};
+
+//Gets bulk NFTs metadata
 export const getBulkNftMetaData = async (
   address: string,
   page: number = 1
-): Promise<BulkNftMetaData> => {
+): Promise<BulkNftMetaData | BulkNftMetaDataError> => {
   // This initializes the count correctly depending on the page. Each page is 15 tokens
   let count = page * 15 - 14;
 
@@ -39,10 +59,15 @@ export const getBulkNftMetaData = async (
       output.push(metaData);
       count++;
     }
-  } catch (err) {
-    console.log(err);
+  } catch (e) {
+    return {
+      __typename: "BulkNftMetaDataError",
+      message: JSON.stringify(e),
+    };
   }
+
   return {
+    __typename: "BulkNftMetaData",
     page: page + 1,
     results: output,
   };

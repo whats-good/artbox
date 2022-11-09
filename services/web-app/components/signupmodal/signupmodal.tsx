@@ -5,7 +5,7 @@ import {
   SignupWrapper,
   InputDescription,
 } from "./styled/signupmodalstyled";
-import { ShortenedAddress } from "./shortenedaddress";
+import { ShortenedAddress } from "../addressdisplay/shortenedaddress";
 
 export const SignUpModal = () => {
   const [showModal, toggleShowModal] = useState<Boolean>(true);

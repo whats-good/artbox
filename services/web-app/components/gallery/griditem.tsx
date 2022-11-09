@@ -3,7 +3,7 @@ import {
   GalleryImageTop,
   GalleryImageBottom,
   GalleryImg,
-} from "./styled/galleryimagewrapper";
+} from "./galleryimagewrapper";
 
 export function GridItem({ imageDetails }: any) {
   return (

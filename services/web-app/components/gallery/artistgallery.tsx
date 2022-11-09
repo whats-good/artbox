@@ -5,8 +5,8 @@ import {
   GalleryBottom,
 } from "./styled/gallery";
 import { GridDisplay } from "./griddisplay";
-import { ArtistTitle } from "../components/artisttitle";
-import { ArtistDescription } from "../components/artistdescription";
+import { ArtistTitle } from "./artisttitle";
+import { ArtistDescription } from "./artistdescription";
 
 interface ArtistGalleryProps {
   contracts: String[];

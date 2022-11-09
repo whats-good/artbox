@@ -2,7 +2,7 @@ import {
   ContractTileStyled,
   ContractTileWrapper,
   ContractAddressTile,
-} from "./styledContractTile";
+} from "./styled/styledContractTile";
 import { shortenAddress } from "@usedapp/core";
 
 type ContractTilesProps = {

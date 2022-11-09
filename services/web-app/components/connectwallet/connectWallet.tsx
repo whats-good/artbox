@@ -1,6 +1,6 @@
 import { shortenAddress, useEthers } from "@usedapp/core";
 import { ConnectWalletWrapper } from "./styled/topbarstyled";
-import { ButtonOuter, ButtonInner } from "./styled/buttonstyled";
+import { ButtonOuter, ButtonInner } from "../button/buttonstyled";
 
 interface ButtonProps {
   text: String;
