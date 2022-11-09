@@ -1,52 +1,100 @@
-import { NextPage } from "next";
-import { PageWrapper } from '../../../components/styled/pagewrapper';
-import { TopBar } from '../../../components/topbar';
-import { ArtistPageWrapper } from '../../../components/styled/artistpage'
-import { BlueBar } from '../../../components/styled/artistpage';
-import { ShortenedAddress } from '../../../components/shortenedaddress';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { BulkNftMetaData, getBulkNftMetaData } from '../../../helpers/getNftMetaData';
-import { ArtistGallery } from "../../../components/artistgallery";
-import { getArtistData } from "../../../helpers/getartistdata";
+import {
+  NextPage,
+  GetServerSideProps,
+  InferGetServerSidePropsType,
+  GetServerSidePropsContext,
+} from "next";
+import {
+  PageWrapper,
+  TopBar,
+  ArtistPageWrapper,
+  BlueBar,
+  ShortenedAddress,
+  ArtistGallery,
+} from "../../../components";
+import {
+  BulkNftMetaData,
+  getBulkNftMetaData,
+  getArtistData,
+} from "../../../helpers";
 
-// type MetaData = {
-//   meta: BulkNftMetaData | undefined,
-// }
+interface ReturnServerSideProps {
+  props: {
+    __typename: "ReturnServerSideProps";
+    meta: BulkNftMetaData;
+    name: string;
+    desc: string;
+  };
+}
+interface ReturnServerSidePropsError {
+  props: {
+    __typename: "ReturnServerSidePropsError";
+    message: string;
+  };
+}
 
-export const getServerSideProps : GetServerSideProps<any> = async (context) => {
-
+export const getServerSideProps:
+  | ReturnServerSideProps
+  | ReturnServerSidePropsError = async (context: GetServerSidePropsContext) => {
   let { collection, id } = context.query;
-  let data;
 
-  if (typeof collection === 'string') {
-    data = await getBulkNftMetaData(collection);
-  } else if (Array.isArray(collection)) {
-    data = await getBulkNftMetaData(collection[0]);
+  if (typeof collection !== "string" || typeof id !== "string") {
+    return {
+      props: {
+        __typename: "ReturnServerSidePropsError",
+        message: "The URL params were not currectly formatted.",
+      },
+    };
   }
 
   const userData = await getArtistData(id);
+  const data = await getBulkNftMetaData(collection);
+
+  if (data.__typename === "BulkNftMetaDataError") {
+    return {
+      props: {
+        __typename: "ReturnServerSidePropsError",
+        message: "There was an error in getBulkNftMetaDataError function.",
+      },
+    };
+  }
+  if (userData.__typename === "INotFoundError") {
+    return {
+      props: {
+        __typename: "ReturnServerSidePropsError",
+        message: "There was an error in getArtistData function",
+      },
+    };
+  } else if (userData.__typename === "IError") {
+    return {
+      props: {
+        __typename: "ReturnServerSidePropsError",
+        message: "There was an error in getArtistData function",
+      },
+    };
+  }
 
   return {
     props: {
+      __typename: "ReturnServerSideProps",
       meta: data,
       name: userData.name,
       desc: userData.desc,
-    }
-  }
-}
+    },
+  };
+};
 
-const Collection : NextPage = ({ meta, name, desc } : InferGetServerSidePropsType<typeof getServerSideProps>) => {
-
+const Collection: NextPage<props> = (props) => {
   return (
     <PageWrapper>
       <TopBar />
       <ArtistPageWrapper>
         <BlueBar />
         <ShortenedAddress />
-        <ArtistGallery meta={meta} desc={desc} name={name}/>
+        <ArtistGallery meta={props.meta} desc={props.desc} name={props.name} />
       </ArtistPageWrapper>
     </PageWrapper>
-  )
-}
+  );
+};
 
 export default Collection;

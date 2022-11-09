@@ -1,29 +1,29 @@
-import { shortenAddress, useEthers } from '@usedapp/core'
-import { ConnectWalletWrapper } from './styled/topbarstyled';
-import { ButtonOuter, ButtonInner } from './styled/buttonstyled';
+import { shortenAddress, useEthers } from "@usedapp/core";
+import { ConnectWalletWrapper } from "./styled/topbarstyled";
+import { ButtonOuter, ButtonInner } from "../button/buttonstyled";
 
 interface ButtonProps {
   text: String;
   click: any;
 }
 
-function Button( { text, click } : ButtonProps) : JSX.Element {
+function Button({ text, click }: ButtonProps): JSX.Element {
   return (
     <ButtonOuter>
-      <ButtonInner onClick={() => click()}> { text } </ButtonInner>
+      <ButtonInner onClick={() => click()}> {text} </ButtonInner>
     </ButtonOuter>
-  )
-};
+  );
+}
 
 export function ConnectWallet() {
   const { account, activateBrowserWallet, deactivate } = useEthers();
 
   const ConnectButton = () => (
     <Button text="Connect" click={activateBrowserWallet} />
-  )
+  );
   const DisconnectButton = () => (
     <Button text="Disconnect" click={deactivate} />
-  )
+  );
 
   return (
     <ConnectWalletWrapper>
@@ -40,5 +40,5 @@ export function ConnectWallet() {
       {account && <DisconnectButton />}
       <br />
     </ConnectWalletWrapper>
-  )
+  );
 }
