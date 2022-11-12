@@ -27,7 +27,7 @@ export type GetArtistDataReturnType = ArtistData | INotFoundError | IError;
 export async function getArtistData(
   id: string
 ): Promise<GetArtistDataReturnType> {
-  const a = await fetch("....");
+  // const a = await fetch("....");
   // do something with "a"
 
   // process "a"

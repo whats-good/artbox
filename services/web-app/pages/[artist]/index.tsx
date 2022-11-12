@@ -1,14 +1,14 @@
 import { GetServerSidePropsContext, NextPage } from "next";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import { ShortenedAddress } from "../../components/addressdisplay/shortenedaddress";
+import { getArtistData } from "../../helpers";
 import {
+  ShortenedAddress,
+  PageWrapper,
+  TopBar,
   ArtistPageWrapper,
   BlueBar,
-} from "../../components/pagewrapper/artistpage";
-import { PageWrapper } from "../../components/pagewrapper/pagewrapper";
-import { TopBar } from "../../components/connectwallet/topbar";
-import { getArtistData } from "../../helpers/getartistdata";
-import { ContractTiles } from "../../components/contractTiles";
+  ContractTiles,
+} from "../../components";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext

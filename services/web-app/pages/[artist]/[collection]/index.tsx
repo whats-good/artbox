@@ -33,9 +33,9 @@ interface ReturnServerSidePropsError {
   };
 }
 
-export const getServerSideProps:
-  | ReturnServerSideProps
-  | ReturnServerSidePropsError = async (context: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
   let { collection, id } = context.query;
 
   if (typeof collection !== "string" || typeof id !== "string") {
@@ -73,7 +73,6 @@ export const getServerSideProps:
       },
     };
   }
-
   return {
     props: {
       __typename: "ReturnServerSideProps",
@@ -84,7 +83,11 @@ export const getServerSideProps:
   };
 };
 
-const Collection: NextPage<props> = (props) => {
+const Collection: NextPage<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = (props) => {
+  console.log(props.__typename);
+  console.log("META: ", props.meta);
   return (
     <PageWrapper>
       <TopBar />
