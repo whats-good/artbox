@@ -22,7 +22,7 @@ export function ArtistGallery({ meta, name, desc }: any) {
         <ArtistDescription description={desc} />
       </GalleryUpperBar>
       <GalleryMiddle>
-        <GridDisplay meta={meta} />
+        {meta ? <GridDisplay meta={meta} /> : <>Nope</>}
         {/* <SortWindow /> */}
       </GalleryMiddle>
       <GalleryBottom />
