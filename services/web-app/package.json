@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.1",
     "@react95/core": "^6.0.4",
     "@react95/icons": "^2.0.5",
     "@usedapp/core": "^1.1.5",

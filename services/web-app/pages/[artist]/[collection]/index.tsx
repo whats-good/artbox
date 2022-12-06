@@ -17,7 +17,6 @@ import {
   getBulkNftMetaData,
   getArtistData,
 } from "../../../helpers";
-
 interface ReturnServerSideProps {
   props: {
     __typename: "ReturnServerSideProps";
@@ -86,8 +85,6 @@ export const getServerSideProps = async (
 const Collection: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = (props) => {
-  console.log(props.__typename);
-  console.log("META: ", props.meta);
   return (
     <PageWrapper>
       <TopBar />
