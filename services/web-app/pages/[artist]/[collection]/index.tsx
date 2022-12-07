@@ -85,6 +85,7 @@ export const getServerSideProps = async (
 const Collection: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = (props) => {
+  console.log(props);
   return (
     <PageWrapper>
       <TopBar />

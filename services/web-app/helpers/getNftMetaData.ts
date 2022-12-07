@@ -7,7 +7,7 @@ const parser = new Agent({
   timeout: 60 * 1000,
 });
 
-type GetNftMetaDataError = {
+export type GetNftMetaDataError = {
   __typename: "GetNftMetaDataError";
   message: string;
 };

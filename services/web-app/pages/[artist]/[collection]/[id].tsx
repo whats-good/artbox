@@ -1,7 +1,8 @@
 import type { NextPage } from "next";
-import { GetStaticProps, InferGetStaticPropsType, GetStaticPaths } from "next";
+import { GetStaticProps, InferGetStaticPropsType, GetStaticPaths, GetStaticPropsResult } from "next";
 import { useRouter } from "next/router";
-import { getNftMetaData } from "../../../helpers";
+import { getNftMetaData, GetNftMetaDataError } from "../../../helpers";
+import type { NftMetadata } from "@zoralabs/nft-metadata";
 import {
   PageWrapper,
   TopBar,
@@ -10,12 +11,22 @@ import {
   ShortenedAddress,
 } from "../../../components";
 
-type Data = {
-  image?: string;
-  title?: string;
-  description?: string;
-  attributes?: string;
+type StaticPropsData = {
+  props: {
+    image: string;
+    title: string;
+    description: string;
+    attributes: string;
+  }
 };
+type StaticPropsError = {
+  props: {
+    message: string;
+  }
+};
+
+type ReturnStaticProps = StaticPropsData | StaticPropsError;
+type ReturnData = GetNftMetaDataError | NftMetadata;
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
@@ -24,10 +35,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps<Data> = async ({ params }) => {
-  let collection;
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+
+  let img : ReturnData = {
+    __typename: "GetNftMetaDataError",
+    message: "There was an error getting image data"
+  };
   let id;
-  let img;
+  let collection;
 
   if (params) {
     id = params.id;
@@ -37,15 +52,27 @@ export const getStaticProps: GetStaticProps<Data> = async ({ params }) => {
   //Am doing this because context.query type is string || string[]
   if (typeof collection === "string" && typeof id === "string") {
     img = await getNftMetaData(collection, id);
+  } else {
+    img = {
+      __typename: "GetNftMetaDataError",
+      message: "Could not get Nft metadata"
+    }
+  }
+  if (img.__typename !== "GetNftMetaDataError") {
+    return {
+      props: {
+        image: img.imageURL,
+        title: img.metadata.name,
+        description: img.metadata.description,
+        attributes: JSON.stringify(img.attributes)
+      }
+    }
   }
   return {
     props: {
-      image: img?.imageURL,
-      title: img?.metadata.name,
-      description: img?.metadata.description,
-      attributes: JSON.stringify(img?.attributes),
-    },
-  };
+      message: "Error in Getting Static Props",
+    }
+  }
 };
 
 const IndividualPiece: NextPage = ({
