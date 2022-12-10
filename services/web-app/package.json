@@ -13,17 +13,20 @@
     "@react95/core": "^6.0.4",
     "@react95/icons": "^2.0.5",
     "@usedapp/core": "^1.1.5",
+    "@wagmi/core": "0.7.9",
     "@xstyled/styled-components": "^3.7.0",
     "@zoralabs/nft-metadata": "^1.2.6",
+    "alchemy-sdk": "^2.2.3",
     "axios": "^1.1.2",
-    "ethers": "^5.7.1",
+    "ethers": "^5.7.2",
     "next": "13.0.0",
     "next-fonts": "^1.5.1",
     "next-images": "^1.8.4",
     "next-transpile-modules": "^9.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "styled-components": "^5.3.6"
+    "styled-components": "^5.3.6",
+    "wagmi": "0.8.10"
   },
   "devDependencies": {
     "@types/node": "18.11.4",

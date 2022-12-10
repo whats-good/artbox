@@ -11,16 +11,6 @@ const nextConfig = {
   swcMinify: true,
   compiler: {
     styledComponents: true,
-  },
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'gateway.ipfs.io',
-        port: '',
-        pathname: '/ipfs/**',
-      }
-    ]
   }
 }
 
