@@ -1,4 +1,3 @@
-// import { NextPage } from "next";
 import { Network, Alchemy, NftContractNftsResponse } from "alchemy-sdk";
 import { InferGetServerSidePropsType } from 'next';
 import { GetServerSideProps } from 'next';
@@ -14,7 +13,6 @@ type Success = {
 
 type FetchContractsProps = FetchError | Success
 
-
 export const getServerSideProps : GetServerSideProps<FetchContractsProps> = async () => {
   try {
     let contracts: NftContractNftsResponse[] = [];
@@ -22,7 +20,6 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
     const res = await fetch('http:localhost:3000/api/profile');
     const user = await res.json();
 
-    console.log('USER: ', user);
     //Then fetch NFT data from Alchemy
     const settings = {
       apiKey: process.env.ALCHEMY_API_KEY,
@@ -35,11 +32,11 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
     for (let i = 0; i < user.collections.length; i++) {
       contracts.push(await alchemy.nft.getNftsForContract(user.collections[i], { pageSize: 9 }))
     }
-    console.log('-------------------CONTRACTS----------------------', contracts);
+    //Must stringify then parse the 'contracts' array https://github.com/vercel/next.js/discussions/11209#discussioncomment-35915
     return {
       props: {
         __typename: "Success",
-        contracts: contracts,
+        contracts: JSON.parse(JSON.stringify(contracts)),
       }
     }
   } catch(e) {
@@ -47,7 +44,7 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
     return {
       props: {
         __typename: "FetchError",
-        message: "There was an error fetching from the API"
+        message: "There was an error fetching from the API: ", e
       }
     }
   }
@@ -56,10 +53,10 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
 function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
   if (props.__typename === "FetchError") {
     return (
-      <>
+      <div>
       Error:
       {props.message}
-      </>
+      </div>
     )
   }
   return (
@@ -67,7 +64,11 @@ function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
     {props.contracts.map((contract) => {
       return (
         <>
-        {contract.pageKey}
+        {contract.nfts.map((nft) => {
+          return (
+            <p>{nft.description}</p>
+          )
+        })}
         </>
       )
     })}
