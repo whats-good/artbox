@@ -1,38 +1,65 @@
 import { Network, Alchemy, NftContractNftsResponse } from "alchemy-sdk";
 import { InferGetServerSidePropsType } from 'next';
 import { GetServerSideProps } from 'next';
+import client from '../../utils/apollo-client';
+import { gql } from "@apollo/client";
+import { CollectionQuery } from '../../components/queries/querys'
+import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
 
-type FetchError = {
-    __typename: "FetchError",
+type SSRError = {
+    __typename: "SSRError",
     message: string
 }
 type Success = {
     __typename: "Success",
-    contracts: NftContractNftsResponse[];
+    contracts: CollectionInfoQuery[];
 }
 
-type FetchContractsProps = FetchError | Success
+type FetchContractsProps = SSRError | Success
 
-export const getServerSideProps : GetServerSideProps<FetchContractsProps> = async () => {
+export const getServerSideProps : GetServerSideProps<FetchContractsProps> = async (context) => {
+
+  let user;
+  let profile;
+
+  if (context.params) {
+    user = context.params.user
+  }
+  if (typeof user !== 'string') {
+    return {
+      props: {
+        __typename: "SSRError",
+        message: "Url Parameter not formatted properly",
+        notFound: true,
+      }
+    }
+  }
+
+  //Finding 'liked' collections in the DB of profile
   try {
-    let contracts: NftContractNftsResponse[] = [];
-    //Fetch User info from DB
     const res = await fetch('http:localhost:3000/api/profile');
-    const user = await res.json();
-
-    //Then fetch NFT data from Alchemy
-    const settings = {
-      apiKey: process.env.ALCHEMY_API_KEY,
-      network: Network.ETH_MAINNET,
+    profile = await res.json();
+  } catch(e) {
+    console.log(e);
+    return {
+      props: {
+        __typename: "SSRError",
+        message: "Could not fetch collections",
+        notFound: true,
+      }
     }
+  }
 
-    const alchemy = new Alchemy(settings);
+  try {
 
-    //Fetch each NFT Data for each collection
-    for (let i = 0; i < user.collections.length; i++) {
-      contracts.push(await alchemy.nft.getNftsForContract(user.collections[i], { pageSize: 9 }))
+    let contracts = [];
+
+    for (let i = 0; i < profile.collections.length; i++) {
+      const { data } = await client.query({
+        query: CollectionQuery,
+      });
+      contracts.push(data);
     }
-    //Must stringify then parse the 'contracts' array https://github.com/vercel/next.js/discussions/11209#discussioncomment-35915
     return {
       props: {
         __typename: "Success",
@@ -40,40 +67,32 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
       }
     }
   } catch(e) {
-    console.log(e);
     return {
       props: {
-        __typename: "FetchError",
-        message: "There was an error fetching from the API: ", e
+        __typename: "SSRError",
+        message: "Failed to Fetch Collection data",
+        notFound: true,
       }
     }
   }
 }
 
 function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
-  if (props.__typename === "FetchError") {
-    return (
-      <div>
-      Error:
-      {props.message}
-      </div>
-    )
-  }
+  console.log(props)
+
   return (
     <>
-    {props.contracts.map((contract) => {
-      return (
-        <>
-        {contract.nfts.map((nft) => {
-          return (
-            <p>{nft.description}</p>
-          )
-        })}
-        </>
-      )
-    })}
     </>
   );
 };
 
 export default User;
+
+
+//NEED:
+  //Contract Etherscan Link
+  //Contract OS Link
+  //Contract Looksrare Link
+  //Number of Tokens
+  //Number of Holders
+  //Sales Volume

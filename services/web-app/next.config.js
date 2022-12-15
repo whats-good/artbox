@@ -7,7 +7,7 @@ const withTM = require('next-transpile-modules')([
 ]);
 
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   swcMinify: true,
   compiler: {
     styledComponents: true,

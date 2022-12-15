@@ -4,13 +4,11 @@ import { ThemeProvider } from "@react95/core";
 import {
   WagmiConfig,
   createClient,
-  defaultChains,
   configureChains,
 } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-import { InjectedConnector } from 'wagmi/connectors/injected'
 import { mainnet } from '@wagmi/core/chains';
 
 // Configure chains & providers with the Alchemy provider.

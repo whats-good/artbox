@@ -1,6 +1,7 @@
 import { Network, Alchemy, Nft } from "alchemy-sdk";
 import { InferGetServerSidePropsType, GetServerSidePropsResult } from 'next';
 import { GetServerSideProps } from 'next';
+import axios from 'axios';
 
 type FetchError = {
     __typename: "FetchError",
@@ -10,7 +11,6 @@ type Success = {
     __typename: "Success",
     nft: Nft;
 }
-
 type FetchNftProps = FetchError | Success
 
 export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (context) => {
@@ -36,9 +36,7 @@ export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (con
   try {
     let nft: Nft;
     //TODO: Fetch if user 'owns' NFT or not from db
-    const res = await fetch('http:localhost:3000/api/profile');
-    const user = await res.json();
-
+    let nftHistory;
     //Then fetch NFT data from Alchemy
     const settings = {
       apiKey: process.env.ALCHEMY_API_KEY,
@@ -46,6 +44,10 @@ export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (con
     }
 
     const alchemy = new Alchemy(settings);
+
+    const nftData = await axios.get(`https://eth-mainnet.g.alchemy.com/nft/v2/${process.env.ALCHEMY_API_KEY}/getNFTSales?fromBlock=0&toBlock=latest&order=asc&contractAddress=${collection}&tokenId=${id}`);
+
+    console.log(nftData.data);
 
     nft = await alchemy.nft.getNftMetadata(collection, id)
     //Must stringify then parse the 'contracts' array https://github.com/vercel/next.js/discussions/11209#discussioncomment-35915
@@ -68,21 +70,24 @@ export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (con
 }
 
 function Token(props : InferGetServerSidePropsType<typeof getServerSideProps>){
-  if (props.__typename === "FetchError") {
+  console.log(props);
+  if (props.__typename === "Success") {
     return (
-      <div>
-      Error:
-      {props.message}
-      </div>
+      <>
+      </>
     )
   }
-  return (
-    <>
-    <p>
-      {props.nft.media[0].thumbnail}
-    </p>
-    </>
-  );
 };
 
 export default Token;
+
+//Title
+//Description
+//Collection
+//Metadata
+//Current Owner
+//Activity
+//Contract Address
+//Opensea Link
+//Etherscan Link
+//LooksRare Link
