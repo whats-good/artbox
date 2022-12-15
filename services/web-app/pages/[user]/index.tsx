@@ -1,8 +1,6 @@
-import { Network, Alchemy, NftContractNftsResponse } from "alchemy-sdk";
 import { InferGetServerSidePropsType } from 'next';
 import { GetServerSideProps } from 'next';
 import client from '../../utils/apollo-client';
-import { gql } from "@apollo/client";
 import { CollectionQuery } from '../../components/queries/querys'
 import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
 
@@ -18,10 +16,11 @@ type Success = {
 type FetchContractsProps = SSRError | Success
 
 export const getServerSideProps : GetServerSideProps<FetchContractsProps> = async (context) => {
-
+  console.log('COLLECTION QUERY: ', CollectionQuery);
   let user;
   let profile;
 
+  //Validate the URL parameter exists and is string
   if (context.params) {
     user = context.params.user
   }
@@ -35,7 +34,7 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
     }
   }
 
-  //Finding 'liked' collections in the DB of profile
+  //Finding user's 'liked' collections
   try {
     const res = await fetch('http:localhost:3000/api/profile');
     profile = await res.json();
@@ -50,11 +49,13 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
     }
   }
 
+  //For each collection, query the Zora API
   try {
 
     let contracts = [];
 
     for (let i = 0; i < profile.collections.length; i++) {
+
       const { data } = await client.query({
         query: CollectionQuery,
       });
@@ -78,8 +79,7 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
 }
 
 function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
-  console.log(props)
-
+  console.log(props);
   return (
     <>
     </>
