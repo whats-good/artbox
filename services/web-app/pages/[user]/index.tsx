@@ -1,8 +1,8 @@
 import { InferGetServerSidePropsType } from 'next';
 import { GetServerSideProps } from 'next';
 import client from '../../utils/apollo-client';
-import { CollectionQuery } from '../../components/queries/querys'
 import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
+import { gql } from "@apollo/client";
 
 type SSRError = {
     __typename: "SSRError",
@@ -16,7 +16,6 @@ type Success = {
 type FetchContractsProps = SSRError | Success
 
 export const getServerSideProps : GetServerSideProps<FetchContractsProps> = async (context) => {
-  console.log('COLLECTION QUERY: ', CollectionQuery);
   let user;
   let profile;
 
@@ -55,12 +54,46 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
     let contracts = [];
 
     for (let i = 0; i < profile.collections.length; i++) {
-
       const { data } = await client.query({
-        query: CollectionQuery,
+        variables: {
+          address: {collectionAddresses: profile.collections[i]},
+	        collectionAddress: {collectionAddresses: profile.collections[i]}
+        },
+        query:
+          gql`
+            query CollectionInfo($address: TokensQueryInput, $collectionAddress: CollectionsQueryInput) {
+              collections(
+                networks: [{network: ETHEREUM, chain: MAINNET}]
+                pagination: {limit: 9}
+                sort: {sortKey: CREATED, sortDirection: ASC}
+                where: $collectionAddress
+              ) {
+                nodes {
+                  address
+                  name
+                  symbol
+                  totalSupply
+                  description
+                }
+              }
+              tokens(
+                where: $address
+                pagination: {limit: 9}
+                networks: {network: ETHEREUM, chain: MAINNET}
+                sort: {sortKey: TOKEN_ID, sortDirection: DESC}
+              ) {
+                nodes {
+                  token {
+                    metadata
+                  }
+                }
+              }
+            }
+          `,
       });
       contracts.push(data);
     }
+    console.log('CONTRACTS', contracts);
     return {
       props: {
         __typename: "Success",
@@ -68,6 +101,7 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
       }
     }
   } catch(e) {
+    console.log('E,', e);
     return {
       props: {
         __typename: "SSRError",
@@ -79,7 +113,11 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
 }
 
 function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
-  console.log(props);
+  console.log(props.__typename === "Success");
+
+  if (props.__typename === "Success") {
+
+  }
   return (
     <>
     </>
@@ -96,3 +134,4 @@ export default User;
   //Number of Tokens
   //Number of Holders
   //Sales Volume
+

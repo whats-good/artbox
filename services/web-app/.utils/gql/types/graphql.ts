@@ -52,6 +52,17 @@ export type AggregateAttribute = {
   valueMetrics: Array<AggregateAttributeValue>;
 };
 
+export enum AggregateAttributeSortKey {
+  Count = 'COUNT',
+  None = 'NONE',
+  Value = 'VALUE'
+}
+
+export type AggregateAttributeSortKeySortInput = {
+  sortDirection: SortDirection;
+  sortKey: AggregateAttributeSortKey;
+};
+
 export type AggregateAttributeValue = {
   __typename?: 'AggregateAttributeValue';
   count: Scalars['Int'];
@@ -1136,6 +1147,7 @@ export type RootQuery = {
 
 export type RootQueryAggregateAttributesArgs = {
   networks?: InputMaybe<Array<NetworkInput>>;
+  sort: AggregateAttributeSortKeySortInput;
   where: AggregateAttributesQueryInput;
 };
 
@@ -1560,6 +1572,7 @@ export type TokensQueryFilter = {
   marketFilters?: InputMaybe<Array<MarketTypeFilter>>;
   mediaType?: InputMaybe<MediaType>;
   priceFilter?: InputMaybe<PriceFilter>;
+  timeFilter?: InputMaybe<TimeFilter>;
 };
 
 export type TokensQueryInput = {
@@ -2044,10 +2057,11 @@ export type VideoEncodingTypes = {
 
 export type CollectionInfoQueryVariables = Exact<{
   address?: InputMaybe<TokensQueryInput>;
+  collectionAddress?: InputMaybe<CollectionsQueryInput>;
 }>;
 
 
 export type CollectionInfoQuery = { __typename?: 'RootQuery', collections: { __typename?: 'CollectionConnection', nodes: Array<{ __typename?: 'Collection', address: string, name?: string | null, symbol?: string | null, totalSupply?: number | null, description: string }> }, tokens: { __typename?: 'TokenWithMarketsSummaryConnection', nodes: Array<{ __typename?: 'TokenWithMarketsSummary', token: { __typename?: 'Token', metadata?: any | null } }> } };
 
 
-export const CollectionInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CollectionInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"TokensQueryInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collections"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"networks"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"network"},"value":{"kind":"EnumValue","value":"ETHEREUM"}},{"kind":"ObjectField","name":{"kind":"Name","value":"chain"},"value":{"kind":"EnumValue","value":"MAINNET"}}]}]}},{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"9"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sortKey"},"value":{"kind":"EnumValue","value":"CREATED"}},{"kind":"ObjectField","name":{"kind":"Name","value":"sortDirection"},"value":{"kind":"EnumValue","value":"ASC"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"collectionAddresses"},"value":{"kind":"StringValue","value":"0x7D70D50A8E9D1B4F04F5a2fA2e46078DA9EBB467","block":false}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"totalSupply"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"9"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"networks"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"network"},"value":{"kind":"EnumValue","value":"ETHEREUM"}},{"kind":"ObjectField","name":{"kind":"Name","value":"chain"},"value":{"kind":"EnumValue","value":"MAINNET"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sortKey"},"value":{"kind":"EnumValue","value":"TOKEN_ID"}},{"kind":"ObjectField","name":{"kind":"Name","value":"sortDirection"},"value":{"kind":"EnumValue","value":"DESC"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metadata"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CollectionInfoQuery, CollectionInfoQueryVariables>;
+export const CollectionInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CollectionInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"TokensQueryInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"collectionAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"CollectionsQueryInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collections"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"networks"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"network"},"value":{"kind":"EnumValue","value":"ETHEREUM"}},{"kind":"ObjectField","name":{"kind":"Name","value":"chain"},"value":{"kind":"EnumValue","value":"MAINNET"}}]}]}},{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"9"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sortKey"},"value":{"kind":"EnumValue","value":"CREATED"}},{"kind":"ObjectField","name":{"kind":"Name","value":"sortDirection"},"value":{"kind":"EnumValue","value":"ASC"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"collectionAddress"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"totalSupply"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"tokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"pagination"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"9"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"networks"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"network"},"value":{"kind":"EnumValue","value":"ETHEREUM"}},{"kind":"ObjectField","name":{"kind":"Name","value":"chain"},"value":{"kind":"EnumValue","value":"MAINNET"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"sortKey"},"value":{"kind":"EnumValue","value":"TOKEN_ID"}},{"kind":"ObjectField","name":{"kind":"Name","value":"sortDirection"},"value":{"kind":"EnumValue","value":"DESC"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metadata"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CollectionInfoQuery, CollectionInfoQueryVariables>;
