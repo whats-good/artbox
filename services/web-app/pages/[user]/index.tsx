@@ -2,7 +2,6 @@ import { InferGetServerSidePropsType } from 'next';
 import { GetServerSideProps } from 'next';
 import client from '../../utils/apollo-client';
 import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
-import { gql } from "@apollo/client";
 import { collectionInfo } from '../../querys';
 
 
@@ -107,5 +106,5 @@ export default User;
   //Number of Tokens X
   //Number of Holders X
   //Sales Volume X
-  //Images for 9 of them X
+  //Images for 9 of them
 

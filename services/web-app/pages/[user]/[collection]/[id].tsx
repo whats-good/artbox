@@ -1,7 +1,8 @@
-import { Network, Alchemy, Nft } from "alchemy-sdk";
 import { InferGetServerSidePropsType, GetServerSidePropsResult } from 'next';
 import { GetServerSideProps } from 'next';
-import axios from 'axios';
+import client from '../../../utils/apollo-client';
+import { tokenInfo } from '../../../querys';
+import type { TokenInfoQuery } from '../../../.utils/gql/types/graphql';
 
 type FetchError = {
     __typename: "FetchError",
@@ -9,7 +10,7 @@ type FetchError = {
 }
 type Success = {
     __typename: "Success",
-    nft: Nft;
+    token: TokenInfoQuery,
 }
 type FetchNftProps = FetchError | Success
 
@@ -34,35 +35,29 @@ export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (con
   }
 
   try {
-    let nft: Nft;
-    //TODO: Fetch if user 'owns' NFT or not from db
-    let nftHistory;
-    //Then fetch NFT data from Alchemy
-    const settings = {
-      apiKey: process.env.ALCHEMY_API_KEY,
-      network: Network.ETH_MAINNET,
-    }
+    const { data } = await client.query({
+      variables: {
+        token: {
+          address: "0x49623cAEc21B1fF5D04d7Bf7B71531369a69bCe4",
+          tokenId: "14"
+        }
+      },
+      query: tokenInfo,
+    });
 
-    const alchemy = new Alchemy(settings);
-
-    const nftData = await axios.get(`https://eth-mainnet.g.alchemy.com/nft/v2/${process.env.ALCHEMY_API_KEY}/getNFTSales?fromBlock=0&toBlock=latest&order=asc&contractAddress=${collection}&tokenId=${id}`);
-
-    console.log(nftData.data);
-
-    nft = await alchemy.nft.getNftMetadata(collection, id)
-    //Must stringify then parse the 'contracts' array https://github.com/vercel/next.js/discussions/11209#discussioncomment-35915
     return {
       props: {
         __typename: "Success",
-        nft: JSON.parse(JSON.stringify(nft)),
+        token: data
       }
     }
+
   } catch(e) {
     console.log(e);
     return {
       props: {
         __typename: "FetchError",
-        message: "There was an error fetching NFT Metadata: ", e,
+        message: "There was an error fetching token Data: ", e,
         notFound: true
       }
     }
@@ -81,13 +76,13 @@ function Token(props : InferGetServerSidePropsType<typeof getServerSideProps>){
 
 export default Token;
 
-//Title
-//Description
-//Collection
-//Metadata
-//Current Owner
+//Title X
+//Description X
+//Collection X
+//Metadata X
+//Current Owner X
 //Activity
-//Contract Address
+//Contract Address X
 //Opensea Link
 //Etherscan Link
 //LooksRare Link
