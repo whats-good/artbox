@@ -3,6 +3,8 @@ import { GetServerSideProps } from 'next';
 import client from '../../utils/apollo-client';
 import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
 import { gql } from "@apollo/client";
+import { collectionInfo } from '../../querys';
+
 
 type SSRError = {
     __typename: "SSRError",
@@ -56,44 +58,15 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
     for (let i = 0; i < profile.collections.length; i++) {
       const { data } = await client.query({
         variables: {
-          address: {collectionAddresses: profile.collections[i]},
-	        collectionAddress: {collectionAddresses: profile.collections[i]}
+          tokenAddress: {collectionAddresses: profile.collections[i]},
+	        collectionAddress: {collectionAddresses: profile.collections[i]},
+          aggregateStatAddress: {collectionAddresses: profile.collections[i]},
+          ownerCountAddress: {collectionAddresses: profile.collections[i]},
         },
-        query:
-          gql`
-            query CollectionInfo($address: TokensQueryInput, $collectionAddress: CollectionsQueryInput) {
-              collections(
-                networks: [{network: ETHEREUM, chain: MAINNET}]
-                pagination: {limit: 9}
-                sort: {sortKey: CREATED, sortDirection: ASC}
-                where: $collectionAddress
-              ) {
-                nodes {
-                  address
-                  name
-                  symbol
-                  totalSupply
-                  description
-                }
-              }
-              tokens(
-                where: $address
-                pagination: {limit: 9}
-                networks: {network: ETHEREUM, chain: MAINNET}
-                sort: {sortKey: TOKEN_ID, sortDirection: DESC}
-              ) {
-                nodes {
-                  token {
-                    metadata
-                  }
-                }
-              }
-            }
-          `,
+        query: collectionInfo,
       });
       contracts.push(data);
     }
-    console.log('CONTRACTS', contracts);
     return {
       props: {
         __typename: "Success",
@@ -113,7 +86,7 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
 }
 
 function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
-  console.log(props.__typename === "Success");
+  console.log('PROPS: ', props);
 
   if (props.__typename === "Success") {
 
@@ -131,7 +104,8 @@ export default User;
   //Contract Etherscan Link
   //Contract OS Link
   //Contract Looksrare Link
-  //Number of Tokens
-  //Number of Holders
-  //Sales Volume
+  //Number of Tokens X
+  //Number of Holders X
+  //Sales Volume X
+  //Images for 9 of them X
 
