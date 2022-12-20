@@ -6,8 +6,9 @@ export const GalleryWrapper = styled.div`
   margin: 10px;
   background-color: #ebebeb;
   display: grid;
-  grid-template-rows: 15% auto 20px;
+  grid-template-rows: 100px 500px 15px;
 `;
+
 export const GalleryUpperBar = styled.div``;
 
 export const GalleryMiddle = styled.div`
@@ -15,6 +16,6 @@ export const GalleryMiddle = styled.div`
   grid-template-columns: 60% auto;
 `;
 
-export const GalleryBottom = styled.div`
+export const GalleryFooter = styled.div`
   border-top: 1px solid black;
 `;

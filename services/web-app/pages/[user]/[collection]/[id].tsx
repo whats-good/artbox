@@ -3,6 +3,8 @@ import { GetServerSideProps } from 'next';
 import client from '../../../utils/apollo-client';
 import { tokenInfo } from '../../../querys';
 import type { TokenInfoQuery } from '../../../.utils/gql/types/graphql';
+import { PageWrapper, TopBar, SingleTokenView, BlueBar } from '../../../components';
+
 
 type FetchError = {
     __typename: "FetchError",
@@ -34,12 +36,25 @@ export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (con
     }
   }
 
+  //Check if the user has 'liked' collection
+  try {
+
+  } catch(e) {
+    console.log(e);
+    return {
+      props: {
+        __typename: "FetchError",
+        message: "There was an error fetching token Data: ", e,
+      }
+    }
+  }
+
   try {
     const { data } = await client.query({
       variables: {
         token: {
-          address: "0x49623cAEc21B1fF5D04d7Bf7B71531369a69bCe4",
-          tokenId: "14"
+          address: collection,
+          tokenId: id
         }
       },
       query: tokenInfo,
@@ -65,10 +80,16 @@ export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (con
 }
 
 function Token(props : InferGetServerSidePropsType<typeof getServerSideProps>){
-  console.log(props);
+  console.log('PROPS: ', props);
   if (props.__typename === "Success") {
     return (
       <>
+        <TopBar />
+        <PageWrapper>
+          <BlueBar />
+          {/* Connected Address Here */} <div />
+          {props.token.token ? <SingleTokenView token={props.token.token}/> : <p>There was an error.</p>}
+        </PageWrapper>
       </>
     )
   }
@@ -81,7 +102,7 @@ export default Token;
 //Collection X
 //Metadata X
 //Current Owner X
-//Activity
+//Activity X
 //Contract Address X
 //Opensea Link
 //Etherscan Link

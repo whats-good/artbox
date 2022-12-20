@@ -3,7 +3,17 @@ import { GetServerSideProps } from 'next';
 import client from '../../utils/apollo-client';
 import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
 import { collectionInfo } from '../../querys';
+// import { TopBar } from "../../components/connectwallet/topbar";
+import { PageWrapper, BlueBar, TopBar, Gallery } from '../../components/'
+// import { Gallery } from '../../components'
 
+
+type Profile = {
+  id: number,
+  username: string,
+  collections: string[],
+  bio: string,
+}
 
 type SSRError = {
     __typename: "SSRError",
@@ -11,14 +21,15 @@ type SSRError = {
 }
 type Success = {
     __typename: "Success",
-    contracts: CollectionInfoQuery[];
+    contracts: CollectionInfoQuery[],
+    user: string,
+    bio: string
 }
-
 type FetchContractsProps = SSRError | Success
 
 export const getServerSideProps : GetServerSideProps<FetchContractsProps> = async (context) => {
   let user;
-  let profile;
+  let profile : Profile;
 
   //Validate the URL parameter exists and is string
   if (context.params) {
@@ -33,6 +44,7 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
       }
     }
   }
+  //TODO: Check if User exists
 
   //Finding user's 'liked' collections
   try {
@@ -70,14 +82,15 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
       props: {
         __typename: "Success",
         contracts: JSON.parse(JSON.stringify(contracts)),
+        user: profile.username,
+        bio: profile.bio
       }
     }
   } catch(e) {
-    console.log('E,', e);
     return {
       props: {
         __typename: "SSRError",
-        message: "Failed to Fetch Collection data",
+        message: "Failed to Fetch Collection data", e,
         notFound: true,
       }
     }
@@ -85,26 +98,25 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
 }
 
 function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
-  console.log('PROPS: ', props);
 
   if (props.__typename === "Success") {
-
+    return (
+      <>
+        <TopBar />
+        <PageWrapper>
+          <BlueBar />
+          {/* Connected Address Here */} <div />
+          <Gallery user={props.user} bio={props.bio} contracts={props.contracts}/>
+        </PageWrapper>
+      </>
+    );
+  } else {
+    return (
+      <>
+        There was an error.
+      </>
+    )
   }
-  return (
-    <>
-    </>
-  );
 };
 
 export default User;
-
-
-//NEED:
-  //Contract Etherscan Link
-  //Contract OS Link
-  //Contract Looksrare Link
-  //Number of Tokens X
-  //Number of Holders X
-  //Sales Volume X
-  //Images for 9 of them
-

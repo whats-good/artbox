@@ -1,10 +1,5 @@
 import styled from "styled-components";
 
-interface ImageProps {
-  url?: string;
-  src?: any;
-}
-
 export const GalleryImageWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
