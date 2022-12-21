@@ -1,4 +1,5 @@
-  import styled from 'styled-components';
+import styled from 'styled-components';
+import { shortenAddress } from '../../helpers/shortenAddress';
 import type { TokenInfoQuery, TokenAttribute, EventType, Chain } from '../../.utils/gql/types/graphql';
 
 type ImageColumnProps = {
@@ -38,6 +39,7 @@ type EventsListProps = {
 const EventsListWrapper = styled.div`
   border: 1px solid black;
   height: 22vh;
+  overflow-y: auto;
 `;
 const SingleTokenViewWrapper = styled.div`
   display: grid;
@@ -58,7 +60,7 @@ const ImageInfoWrapper = styled.div`
 const EventWrapper = styled.div`
   border-bottom: 1px solid black;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 12% 22% 23% 23% 20%;
 `
 
 export const SingleTokenView = ({ token } : TokenInfoQuery) => {
@@ -169,11 +171,11 @@ const EventsList = ({ events } : EventsListProps) => {
 const SaleEventItem = ({ date, to, from, price, hash } : SaleEventItemProps) => {
   return (
     <EventWrapper>
-      <p>Sale: (${price})</p>
-      <p>To: {to}</p>
-      <p>From: {from}</p>
-      <p>Hash: {hash.slice(0, 4)}</p>
-      <p>Date: {date}</p>
+      <p><b>Sale</b> (${price})</p>
+      <p>To: {shortenAddress(to)}</p>
+      <p>From: {shortenAddress(from)}</p>
+      <p>Hash: {shortenAddress(hash)}</p>
+      <p>Date: {date.slice(0,9)}</p>
     </EventWrapper>
   )
 }
@@ -181,11 +183,11 @@ const SaleEventItem = ({ date, to, from, price, hash } : SaleEventItemProps) => 
 const TransferEventItem = ({ date, to, from, hash } : TransferEventItemProps) => {
   return (
     <EventWrapper>
-      <p>Transfer:</p>
-      <p>To: {to}</p>
-      <p>From: {from}</p>
-      <p>Hash: {hash.slice(0, 4)}</p>
-      <p>Date: {date}</p>
+      <p><b>Transfer</b></p>
+      <p>To: {shortenAddress(to)}</p>
+      <p>From: {shortenAddress(from)}</p>
+      <p>Hash: {shortenAddress(hash)}</p>
+      <p>Date: {date.slice(0,9)}</p>
     </EventWrapper>
   )
 }
@@ -193,11 +195,11 @@ const TransferEventItem = ({ date, to, from, hash } : TransferEventItemProps) =>
 const MintEventItem = ({ date, price, hash, to } : MintEventItemProps) => {
   return (
     <EventWrapper>
-      <p>Transfer:</p>
-      <p>To: {to}</p>
-      <p>Price: {price}</p>
-      <p>Hash: {hash.slice(0, 4)}</p>
-      <p>Date: {date}</p>
+      <p><b>Mint</b></p>
+      <p>To: {shortenAddress(to)}</p>
+      <p>Price: ${price}</p>
+      <p>Hash: {shortenAddress(hash)}</p>
+      <p>Date: {date.slice(0,9)}</p>
     </EventWrapper>
   )
 }
