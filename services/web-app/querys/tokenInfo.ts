@@ -28,13 +28,14 @@ export const tokenInfo = gql`
       eventType
       transactionInfo {
         transactionHash
+        blockTimestamp
       }
       properties {
         ... on Sale {
           saleContractAddress
           buyerAddress
           price {
-            nativePrice {
+            usdcPrice {
               decimal
             }
           }
@@ -47,6 +48,15 @@ export const tokenInfo = gql`
         ... on TransferEvent {
           __typename
           fromAddress
+          toAddress
+        }
+        ... on MintEvent {
+          __typename
+          price {
+            usdcPrice {
+              decimal
+            }
+          }
           toAddress
         }
       }
