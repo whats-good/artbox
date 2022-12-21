@@ -8,6 +8,9 @@ import { getNftMetaData } from '../../helpers/getNftMetaData';
 type GalleryRowProps = {
   contract: CollectionInfoQuery
 }
+type GalleryImageProps = {
+  url: string
+}
 type RowTopBarProps = {
   collection: string | null | undefined;
   items: number | null | undefined;
@@ -78,19 +81,14 @@ const RowBottomWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 `
-const GalleryRowItemWrapper = styled.div`
-  margin: 0px 2px;
-  border: 1px solid black;
-`
-const yo = styled.img`
-width: 20px;
-height: auto;
+
+const GalleryImage = styled.div<GalleryImageProps>`
+background-image: url(${props => props.url})
+width: 50px;
+height: 50px;
 `
 
 export const GalleryRow = ({ contract } : GalleryRowProps) => {
-
-  console.log(getNftMetaData, )
-
   return (
     <GalleryRowWrapper>
       <RowTopBar
@@ -139,15 +137,16 @@ const RowBottom = ({ tokens } : RowBottomProps) => {
   )
 }
 
+const GalleryRowItemWrapper = styled.div`
+  margin: 0px 2px;
+  border: 1px solid black;
+`
+
 const GalleryRowItem = ({ url, title } : GalleryRowItemProps) => {
   return (
     <GalleryRowItemWrapper>
-      <GalleryImage />
-      <img style={{height: "auto", width: "20px"}} src={url}/>
+      {/* <GalleryImage url={url}/> */}
+      <img style={{width: "100%", height: "100%", objectFit: "cover"}} src={url}/>
     </GalleryRowItemWrapper>
   )
 }
-
-const GalleryImage = styled.div`
-
-`
