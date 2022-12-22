@@ -61,34 +61,3 @@ export const collectionInfo = gql`
     }
   }
 `
-
-// export const collectionInfo = gql`
-// query CollectionInfo($address: TokensQueryInput, $collectionAddress: CollectionsQueryInput) {
-//   collections(
-//     networks: [{network: ETHEREUM, chain: MAINNET}]
-//     pagination: {limit: 9}
-//     sort: {sortKey: CREATED, sortDirection: ASC}
-//     where: $collectionAddress
-//   ) {
-//     nodes {
-//       address
-//       name
-//       symbol
-//       totalSupply
-//       description
-//     }
-//   }
-//   tokens(
-//     where: $address
-//     pagination: {limit: 9}
-//     networks: {network: ETHEREUM, chain: MAINNET}
-//     sort: {sortKey: TOKEN_ID, sortDirection: DESC}
-//   ) {
-//     nodes {
-//       token {
-//         metadata
-//       }
-//     }
-//   }
-// }
-// `
