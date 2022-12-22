@@ -74,28 +74,30 @@ type GalleryRowItemProps = {
 }
 
 const GalleryRowWrapper = styled.div`
-  min-height: 240px;
+
 `
 const RowTopBarWrapper = styled.div`
-  height: 12%;
+  height: 30px;
   margin-left: 5px;
   margin-right: 15px;
   background-color: #008080;
   border: 1px solid black;
   display: grid;
-  grid-template-columns: 5% 32% 13% 15% 15% auto;
+  grid-template-columns: 5% 22% 15% 15% 15% auto;
   align-content: center;
 `
 const RowBottomWrapper = styled.div`
+  min-height: 210px;
   margin: 5px 20px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   height: 80%;
 `
 const GalleryRowItemWrapper = styled.div`
-  margin: 0px 2px;
+  margin: 1px 2px;
   border: 1px solid black;
   height: max;
+  background-color: #CDCDCD;
 `
 const GalleryRowItemBottomWrapper = styled.div`
   padding-left: 5px;
@@ -114,6 +116,8 @@ const CardsIconWrapper = styled.div`
   justify-content: flex-start;
 `
 const ExpandRowBottomWrapper = styled.div`
+  margin-left: 5px;
+  margin-right: 15px;
   background-color: #008080;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -155,7 +159,7 @@ const RowTopBar = ({ collection, items, holders, volume, expand, setExpand } : R
   return (
     <RowTopBarWrapper>
       <CardsIcon />
-      <AggregateStat label="Collection Name" stat={collection ? collection : 'N/A'}/>
+      <AggregateStat label="Collection" stat={collection ? collection : 'N/A'}/>
       <AggregateStat label="Items" stat={items ? items.toString() : 'N/A'}/>
       <AggregateStat label="Holders" stat={holders.toString()}/>
       <AggregateStat label="volume" stat={volume.usdcPrice.toFixed(0)} dollar={true}/>
@@ -184,66 +188,14 @@ const ExpandButton = ({ expand, setExpand } : ExpandButtonProps) => {
   )
 }
 
-type StateProps = Array<{
-  __typename?: 'TokenWithMarketsSummary';
-  token: {
-      __typename?: 'Token';
-      collectionName?: string | null;
-      collectionAddress: string;
-      description?: string | null;
-      metadata?: any | null;
-      tokenId: string;
-      image?: {
-          __typename?: 'TokenContentMedia';
-          url?: string | null;
-      } | null;
-      tokenContract?: {
-          __typename?: 'TokenContract';
-          description?: string | null;
-          name?: string | null;
-          symbol?: string | null;
-          totalSupply?: number | null;
-          collectionAddress: string;
-      } | null;
-  };
-} | {
-  __typename?: 'TokenWithMarketsSummary';
-  token: {
-      __typename?: 'Token';
-      collectionName?: string | null;
-      collectionAddress: string;
-      description?: string | null;
-      metadata?: any | null;
-      tokenId: string;
-      image?: {
-          __typename?: 'TokenContentMedia';
-          url?: string | null;
-          size?: string | null;
-          mediaEncoding?: {
-              __typename?: 'AudioEncodingTypes';
-          } | {
-              __typename?: 'ImageEncodingTypes';
-              thumbnail?: string | null;
-          } | {
-              __typename?: 'UnsupportedEncodingTypes';
-          } | {
-              __typename?: 'VideoEncodingTypes';
-          } | null;
-      } | null;
-  };
-}> | any
-
 const RowBottom = ({ tokens, expand, setExpand } : RowBottomProps) => {
 
   const [firstPage, setFirstPage] = useState(tokens.pageInfo.endCursor);
   const [firstNodes, setFirstNodes] = useState(tokens.nodes);
   const [currentPage, setCurrentPage] = useState(tokens.pageInfo.endCursor);
   const [collection] = useState(tokens.nodes[0].token.collectionAddress);
-  const [nodes, setNodes] = useState<StateProps>(tokens.nodes);
 
-  //
   if (expand) {
-    //Check if it is not the last page
     return (
       <ExpandRowBottom
         contractAddress={collection}
@@ -291,7 +243,7 @@ type ExpandRowBottomProps = {
 }
 
 const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandRowBottomProps ) => {
-
+  const [currentPage, setCurrentPage] = useState(page);
   const { loading, error, data, refetch, networkStatus } = useQuery(
     tokenGallery,
     {
@@ -299,12 +251,9 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
         tokenAddress: {collectionAddresses: [contractAddress]},
         page: {limit: count, after: page}
       },
+      // notifyOnNetworkStatusChange: true,
     }
   );
-
-  useEffect(() => {
-
-  }, [loading])
 
   if (loading) return (
     <p>Loading....</p>
@@ -312,12 +261,9 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
   if (error) return (
     <p>Error</p>
   );
-
-  console.log('DATA: ', data);
   return (
     <ExpandRowBottomWrapper>
       {data?.tokens.nodes.map((token) => {
-        console.log('TOKEN', token);
         return (
           <GalleryRowItem
             url={token.token.image?.url ? token.token.image?.url : ''}
@@ -325,6 +271,34 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
           />
         )
       })}
+      <button onClick={() => {
+        refetch({
+          tokenAddress: {collectionAddresses: [contractAddress]},
+          page: {limit: 27, after: data?.tokens.pageInfo.endCursor}
+        })
+      }}>Click me</button>
+      {/* <PageButtons refetch={refetch} page={page} contractAddress={contractAddress}/> */}
     </ExpandRowBottomWrapper>
+  )
+}
+
+const PageButtonsWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 20px;
+`
+
+const PageButtons = ({ refetch, page, contractAddress }) => {
+  return (
+    <PageButtonsWrapper>
+        <ButtonOuter>
+        <ButtonInner onClick={() => refetch({
+          tokenAddress: {collectionAddresses: [contractAddress]},
+          page: {limit: 27, after: page}
+        })}>
+          Expand
+        </ButtonInner>
+      </ButtonOuter>
+    </PageButtonsWrapper>
   )
 }
