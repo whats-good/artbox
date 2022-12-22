@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const GalleryWrapper = styled.div`
-  height: 96%;
+  height: 90%;
   border: 1px solid black;
   margin: 10px;
   background-color: #ebebeb;

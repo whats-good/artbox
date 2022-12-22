@@ -87,7 +87,7 @@ const ImageInfo = ({ token } : TokenInfoQuery) => {
       <ImageInfoPoint label="Title" info={token?.token.name ? token?.token.name : 'N/A'}/>
       <ImageInfoPoint label="Description" info={token?.token.description ? token?.token.description : 'N/A'}/>
       <ImageInfoPoint label="Collection" info={token?.token.collectionName ? token?.token.collectionName : 'N/A'}/>
-      <ImageInfoPoint label="Current Owner" info={token?.token.owner ? token?.token.owner : 'N/A'}/>
+      <ImageInfoPoint label="Current Owner" info={token?.token.owner ? shortenAddress(token?.token.owner) : 'N/A'}/>
       <MetaDataInfoPoint label="MetaData" metaData={token?.token.attributes}/>
       {token?.events ? <EventsList events={token.events}/> : <></>}
     </ImageInfoWrapper>

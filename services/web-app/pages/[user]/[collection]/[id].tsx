@@ -5,7 +5,6 @@ import { tokenInfo } from '../../../querys';
 import type { TokenInfoQuery } from '../../../.utils/gql/types/graphql';
 import { PageWrapper, TopBar, SingleTokenView, BlueBar } from '../../../components';
 
-
 type FetchError = {
     __typename: "FetchError",
     message: string,

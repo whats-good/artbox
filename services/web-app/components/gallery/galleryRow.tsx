@@ -2,15 +2,15 @@ import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
 import styled from 'styled-components'
 import cardImage from '../../assets/cardFile.svg';
 import Image from 'next/image';
-import { ContractTileStyled } from '../contractTiles/styled';
-import { getNftMetaData } from '../../helpers/getNftMetaData';
+import { ButtonInner, ButtonOuter } from '../button'
 
 type GalleryRowProps = {
   contract: CollectionInfoQuery
 }
-type GalleryImageProps = {
-  url: string
+type GalleryRowItemBottomProps = {
+  title: string
 }
+
 type RowTopBarProps = {
   collection: string | null | undefined;
   items: number | null | undefined;
@@ -80,12 +80,28 @@ const RowBottomWrapper = styled.div`
   margin: 5px 20px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  height: 80%;
 `
-
-const GalleryImage = styled.div<GalleryImageProps>`
-background-image: url(${props => props.url})
-width: 50px;
-height: 50px;
+const GalleryRowItemWrapper = styled.div`
+  margin: 0px 2px;
+  border: 1px solid black;
+  height: max;
+`
+const GalleryRowItemBottomWrapper = styled.div`
+  padding-left: 5px;
+  align-content: center;
+`
+const ExpandButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  padding-right: 2px;
+  justify-content: flex-end;
+`
+const CardsIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 2px;
+  justify-content: flex-start;
 `
 
 export const GalleryRow = ({ contract } : GalleryRowProps) => {
@@ -97,19 +113,28 @@ export const GalleryRow = ({ contract } : GalleryRowProps) => {
         holders={contract.aggregateStat.ownerCount}
         volume={contract.aggregateStat.salesVolume}
       />
-      <RowBottom tokens={contract.tokens}/>
+      <RowBottom tokens={contract.tokens} />
     </GalleryRowWrapper>
+  )
+}
+
+const CardsIcon = () => {
+  return (
+    <CardsIconWrapper>
+      <Image src={cardImage} alt="card-icon"/>
+    </CardsIconWrapper>
   )
 }
 
 const RowTopBar = ({ collection, items, holders, volume } : RowTopBarProps) => {
   return (
     <RowTopBarWrapper>
-      <Image style={{ marginTop: '14px' }}src={cardImage} alt="card-icon"/>
+      <CardsIcon />
       <AggregateStat label="Collection Name" stat={collection ? collection : 'N/A'}/>
       <AggregateStat label="Items" stat={items ? items.toString() : 'N/A'}/>
       <AggregateStat label="Holders" stat={holders.toString()}/>
       <AggregateStat label="volume" stat={volume.usdcPrice.toFixed(0)} dollar={true}/>
+      <ExpandButton />
     </RowTopBarWrapper>
   )
 };
@@ -119,6 +144,18 @@ const AggregateStat = ({ label, stat, dollar } : AggregateStatProps) => {
     <p>
       {label} : {dollar ? `$${stat}` : stat}
     </p>
+  )
+}
+
+const ExpandButton = () => {
+  return (
+    <ExpandButtonWrapper>
+      <ButtonOuter>
+        <ButtonInner>
+          Expand
+        </ButtonInner>
+      </ButtonOuter>
+    </ExpandButtonWrapper>
   )
 }
 
@@ -137,16 +174,19 @@ const RowBottom = ({ tokens } : RowBottomProps) => {
   )
 }
 
-const GalleryRowItemWrapper = styled.div`
-  margin: 0px 2px;
-  border: 1px solid black;
-`
+const GalleryRowItemBottom = ({title} : GalleryRowItemBottomProps) => {
+  return (
+    <GalleryRowItemBottomWrapper>
+      <p>{title}</p>
+    </GalleryRowItemBottomWrapper>
+  )
+}
 
 const GalleryRowItem = ({ url, title } : GalleryRowItemProps) => {
   return (
     <GalleryRowItemWrapper>
-      {/* <GalleryImage url={url}/> */}
-      <img style={{width: "100%", height: "100%", objectFit: "cover"}} src={url}/>
+      <img style={{width: "100%", height: "75%", objectFit: "cover", borderBottom: "1px solid black"}} src={url}/>
+      <GalleryRowItemBottom title={title}/>
     </GalleryRowItemWrapper>
   )
 }
