@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client"
+import { gql } from '../.utils/gql/types'
 
-export const collectionInfo = gql`
+export const collectionInfo = gql(`
   query CollectionInfo(
     $tokenAddress: TokensQueryInput,
     $collectionAddress: CollectionsQueryInput,
@@ -19,6 +19,11 @@ export const collectionInfo = gql`
           description
           image {
             url
+            mediaEncoding {
+              ... on ImageEncodingTypes {
+                thumbnail
+              }
+            }
           }
           metadata
           tokenContract {
@@ -60,4 +65,4 @@ export const collectionInfo = gql`
       )
     }
   }
-`
+`)

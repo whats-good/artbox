@@ -268,7 +268,8 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
       {data?.tokens.nodes.map((token) => {
         return (
           <GalleryRowItem
-            url={token.token.image?.url ? token.token.image?.url : ''}
+            // url={token.token.image?.url ? token.token.image?.url : ''}
+            url={token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && typeof token.token.image.mediaEncoding.thumbnail === "string" ? token.token.image.mediaEncoding.thumbnail : ''}
             title={token.token.tokenId}
           />
         )
@@ -304,21 +305,3 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
     </ExpandRowBottomWrapper>
   )
 }
-
-//
-//
-//Props: "eyJza2lwIjogOX0="
-//Prev: "eyJza2lwIjogOX0="
-//
-//Prev: "eyJza2lwIjogMzZ9"
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
