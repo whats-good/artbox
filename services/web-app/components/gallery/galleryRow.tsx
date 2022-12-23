@@ -50,6 +50,16 @@ type RowBottomProps = {
             image?: {
                 __typename?: 'TokenContentMedia';
                 url?: string | null;
+                mediaEncoding?: {
+                    __typename?: 'AudioEncodingTypes';
+                } | {
+                    __typename?: 'ImageEncodingTypes';
+                    thumbnail?: string | null;
+                } | {
+                    __typename?: 'UnsupportedEncodingTypes';
+                } | {
+                    __typename?: 'VideoEncodingTypes';
+                } | null;
             } | null;
             tokenContract?: {
                 __typename?: 'TokenContract';
@@ -66,7 +76,7 @@ type RowBottomProps = {
         hasNextPage: boolean;
         endCursor?: string | null;
     };
-  }
+  };
 }
 type GalleryRowItemProps = {
   url: string;
@@ -209,7 +219,10 @@ const RowBottom = ({ tokens, expand, setExpand } : RowBottomProps) => {
       {tokens.nodes.map((token) => {
         return (
           <GalleryRowItem
-            url={token.token.image?.url ? token.token.image?.url : ''}
+            url={
+              token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" &&
+              typeof token.token.image.mediaEncoding.thumbnail === "string"
+            ? token.token.image.mediaEncoding.thumbnail : ''}
             title={token.token.tokenId}
           />
         )
@@ -279,7 +292,7 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
           <ButtonOuter>
             <ButtonInner
               onClick={() => {
-                  setPreviousPage(data?.tokens.pageInfo.endCursor)
+                setPreviousPage(data?.tokens.pageInfo.endCursor)
                 refetch({
                   tokenAddress: {collectionAddresses: [contractAddress]},
                   page: {limit: 27, after: previousPage}

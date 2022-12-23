@@ -66,10 +66,10 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
     for (let i = 0; i < profile.collections.length; i++) {
       const { data } = await client.query({
         variables: {
-          tokenAddress: {collectionAddresses: profile.collections[i]},
-	        collectionAddress: {collectionAddresses: profile.collections[i]},
-          aggregateStatAddress: {collectionAddresses: profile.collections[i]},
-          ownerCountAddress: {collectionAddresses: profile.collections[i]},
+          tokenAddress: {collectionAddresses: [profile.collections[i]]},
+	        collectionAddress: {collectionAddresses: [profile.collections[i]]},
+          aggregateStatAddress: {collectionAddresses: [profile.collections[i]]},
+          ownerCountAddress: {collectionAddresses: [profile.collections[i]]},
         },
         query: collectionInfo,
       });

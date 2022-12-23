@@ -79,7 +79,6 @@ export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (con
 }
 
 function Token(props : InferGetServerSidePropsType<typeof getServerSideProps>){
-  console.log('PROPS: ', props);
   if (props.__typename === "Success") {
     return (
       <>
@@ -95,14 +94,3 @@ function Token(props : InferGetServerSidePropsType<typeof getServerSideProps>){
 };
 
 export default Token;
-
-//Title X
-//Description X
-//Collection X
-//Metadata X
-//Current Owner X
-//Activity X
-//Contract Address X
-//Opensea Link
-//Etherscan Link
-//LooksRare Link
