@@ -58,13 +58,13 @@ const ImageInfoWrapper = styled.div`
   padding: 0px 10px 10px;
 `;
 const EventWrapper = styled.div`
+  background-color: #CDCDCD;
   border-bottom: 1px solid black;
   display: grid;
   grid-template-columns: 12% 22% 23% 23% 20%;
 `
 
 export const SingleTokenView = ({ token } : TokenInfoQuery) => {
-  console.log('TOKEN: ', token);
   return (
     <SingleTokenViewWrapper>
       <ImageColumn url={token?.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" ? token.token.image.mediaEncoding.large : ''}/>

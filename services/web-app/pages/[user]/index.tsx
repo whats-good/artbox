@@ -4,6 +4,9 @@ import client from '../../utils/apollo-client';
 import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
 import { collectionInfo } from '../../querys';
 import { PageWrapper, BlueBar, TopBar, Gallery } from '../../components/'
+import { useAccount } from 'wagmi'
+import styled from 'styled-components';
+import { shortenAddress } from '../../helpers/shortenAddress';
 
 type Profile = {
   id: number,
@@ -96,13 +99,15 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
 
 function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
 
+  const { address, isConnecting, isDisconnected } = useAccount();
+
   if (props.__typename === "Success") {
     return (
       <>
         <TopBar />
         <PageWrapper>
           <BlueBar />
-          {/* Connected Address Here */} <div />
+          <ConnectedAccount />
           <Gallery user={props.user} bio={props.bio} contracts={props.contracts}/>
         </PageWrapper>
       </>
@@ -117,3 +122,24 @@ function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
 };
 
 export default User;
+
+const ConnectedAccountWrapper = styled.div`
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding-right: 10px;
+`
+
+const ConnectedAccount = () => {
+
+  const { address, isConnecting, isDisconnected } = useAccount()
+
+  if (address) {
+    return (
+      <ConnectedAccountWrapper>
+      <p>{shortenAddress(address)}</p>
+    </ConnectedAccountWrapper>
+    )
+  };
+  return <ConnectedAccountWrapper />;
+}
