@@ -123,6 +123,11 @@ const ExpandRowBottomWrapper = styled.div`
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
 `
+const PageButtonsWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 20px;
+`;
 
 export const GalleryRow = ({ contract } : GalleryRowProps) => {
 
@@ -190,23 +195,18 @@ const ExpandButton = ({ expand, setExpand } : ExpandButtonProps) => {
 
 const RowBottom = ({ tokens, expand, setExpand } : RowBottomProps) => {
 
-  const [firstPage, setFirstPage] = useState(tokens.pageInfo.endCursor);
-  const [firstNodes, setFirstNodes] = useState(tokens.nodes);
-  const [currentPage, setCurrentPage] = useState(tokens.pageInfo.endCursor);
-  const [collection] = useState(tokens.nodes[0].token.collectionAddress);
-
   if (expand) {
     return (
       <ExpandRowBottom
-        contractAddress={collection}
-        page={firstPage}
+        contractAddress={tokens.nodes[0].token.collectionAddress}
+        page={tokens.pageInfo.endCursor}
         count={27}
       />
     )
   }
   return (
     <RowBottomWrapper>
-      {firstNodes.map((token) => {
+      {tokens.nodes.map((token) => {
         return (
           <GalleryRowItem
             url={token.token.image?.url ? token.token.image?.url : ''}
@@ -243,6 +243,8 @@ type ExpandRowBottomProps = {
 }
 
 const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandRowBottomProps ) => {
+
+  const [previousPage, setPreviousPage] = useState(page);
   const [currentPage, setCurrentPage] = useState(page);
   const { loading, error, data, refetch, networkStatus } = useQuery(
     tokenGallery,
@@ -251,7 +253,7 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
         tokenAddress: {collectionAddresses: [contractAddress]},
         page: {limit: count, after: page}
       },
-      // notifyOnNetworkStatusChange: true,
+      notifyOnNetworkStatusChange: true,
     }
   );
 
@@ -271,34 +273,52 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
           />
         )
       })}
-      <button onClick={() => {
-        refetch({
-          tokenAddress: {collectionAddresses: [contractAddress]},
-          page: {limit: 27, after: data?.tokens.pageInfo.endCursor}
-        })
-      }}>Click me</button>
-      {/* <PageButtons refetch={refetch} page={page} contractAddress={contractAddress}/> */}
+      <PageButtonsWrapper>
+        {previousPage !== page ?
+          <ButtonOuter>
+            <ButtonInner
+              onClick={() => {
+                  setPreviousPage(data?.tokens.pageInfo.endCursor)
+                refetch({
+                  tokenAddress: {collectionAddresses: [contractAddress]},
+                  page: {limit: 27, after: previousPage}
+                })
+              }}>
+              {'<<'}
+            </ButtonInner>
+          </ButtonOuter>
+        : <></>}
+        <ButtonOuter>
+          <ButtonInner
+            onClick={() => {
+              setPreviousPage(data?.tokens.pageInfo.endCursor)
+              refetch({
+                tokenAddress: {collectionAddresses: [contractAddress]},
+                page: {limit: 27, after: data?.tokens.pageInfo.endCursor}
+              })
+            }}>
+            {'>>'}
+          </ButtonInner>
+        </ButtonOuter>
+      </PageButtonsWrapper>
     </ExpandRowBottomWrapper>
   )
 }
 
-const PageButtonsWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 20px;
-`
-
-const PageButtons = ({ refetch, page, contractAddress }) => {
-  return (
-    <PageButtonsWrapper>
-        <ButtonOuter>
-        <ButtonInner onClick={() => refetch({
-          tokenAddress: {collectionAddresses: [contractAddress]},
-          page: {limit: 27, after: page}
-        })}>
-          Expand
-        </ButtonInner>
-      </ButtonOuter>
-    </PageButtonsWrapper>
-  )
-}
+//
+//
+//Props: "eyJza2lwIjogOX0="
+//Prev: "eyJza2lwIjogOX0="
+//
+//Prev: "eyJza2lwIjogMzZ9"
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
