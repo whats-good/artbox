@@ -4,9 +4,7 @@ import client from '../../utils/apollo-client';
 import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
 import { collectionInfo } from '../../querys';
 import { PageWrapper, BlueBar, TopBar, Gallery } from '../../components/'
-import { useAccount } from 'wagmi'
-import styled from 'styled-components';
-import { shortenAddress } from '../../helpers/shortenAddress';
+import { ConnectedAccount } from '../../components/connectwallet';
 
 type Profile = {
   id: number,
@@ -14,7 +12,6 @@ type Profile = {
   collections: string[],
   bio: string,
 }
-
 type SSRError = {
     __typename: "SSRError",
     message: string
@@ -118,25 +115,4 @@ function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
     )
   }
 };
-
 export default User;
-
-const ConnectedAccountWrapper = styled.div`
-  display: flex;
-  justify-content: end;
-  align-items: center;
-  padding-right: 10px;
-`
-const ConnectedAccount = () => {
-
-  const { address } = useAccount()
-
-  if (address) {
-    return (
-      <ConnectedAccountWrapper>
-      <p>{shortenAddress(address)}</p>
-    </ConnectedAccountWrapper>
-    )
-  };
-  return <ConnectedAccountWrapper />;
-}

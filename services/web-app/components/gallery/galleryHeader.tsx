@@ -5,8 +5,6 @@ type GalleryHeaderProps = {
   bio: string,
 }
 
-
-
 export const GalleryHeader = ({user, bio} : GalleryHeaderProps) => {
 
   return (

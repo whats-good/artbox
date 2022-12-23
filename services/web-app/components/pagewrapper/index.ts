@@ -1,2 +1,1 @@
-export * from "./artistpage";
-export * from "./pagewrapper";
+export * from "./pageWrapper";

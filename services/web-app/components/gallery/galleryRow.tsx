@@ -1,5 +1,5 @@
-import { useState, Dispatch, SetStateAction, useEffect } from 'react';
-import type { TokenGalleryQuery, CollectionInfoQuery } from '../../.utils/gql/types/graphql'
+import { useState, Dispatch, SetStateAction } from 'react';
+import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
 import { useQuery } from '@apollo/client';
 import { tokenGallery } from '../../querys';
 import styled from 'styled-components'
@@ -86,10 +86,16 @@ type GalleryRowItemProps = {
   contract: string;
   user: string;
 }
+type ExpandRowBottomProps = {
+  contractAddress: string;
+  page: string | null | undefined;
+  count: number;
+  hasNext?: boolean;
+}
 
 const GalleryRowWrapper = styled.div`
-
 `
+
 const RowTopBarWrapper = styled.div`
   height: 30px;
   margin-left: 5px;
@@ -257,13 +263,6 @@ const GalleryRowItem = ({ url, title, contract, user } : GalleryRowItemProps) =>
       <GalleryRowItemBottom title={title}/>
     </GalleryRowItemWrapper>
   )
-}
-
-type ExpandRowBottomProps = {
-  contractAddress: string;
-  page: string | null | undefined;
-  count: number;
-  hasNext?: boolean;
 }
 
 const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandRowBottomProps ) => {

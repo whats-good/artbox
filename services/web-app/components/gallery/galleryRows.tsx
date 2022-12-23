@@ -10,7 +10,7 @@ const GalleryRowsWrapper = styled.div`
   display: grid;
   overflow-y: scroll;
   border-top: 1px solid black;
-`;
+`
 
 export const GalleryRows = ({ contracts } : GalleryRowsProps) => {
   return (
