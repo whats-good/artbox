@@ -129,10 +129,9 @@ const ConnectedAccountWrapper = styled.div`
   align-items: center;
   padding-right: 10px;
 `
-
 const ConnectedAccount = () => {
 
-  const { address, isConnecting, isDisconnected } = useAccount()
+  const { address } = useAccount()
 
   if (address) {
     return (
