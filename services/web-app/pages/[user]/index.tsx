@@ -48,7 +48,7 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
 
   //Finding user's 'liked' collections
   try {
-    const res = await fetch('http:localhost:3000/api/profile');
+    const res = await fetch(process.env.USER_API);
     profile = await res.json();
   } catch(e) {
     console.log(e);
@@ -98,8 +98,6 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
 }
 
 function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
-
-  const { address, isConnecting, isDisconnected } = useAccount();
 
   if (props.__typename === "Success") {
     return (

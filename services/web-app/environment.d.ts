@@ -3,6 +3,9 @@ declare global {
     interface ProcessEnv {
       ALCHEMY_API_KEY: string;
       NEXT_PUBLIC_ALCHEMY_API_KEY: string;
+      NEXT_PUBLIC_ZORA_GRAPHQL_URI: string;
+      ZORA_GRAPHQL_URI: string;
+      USER_API: string;
     }
   }
 }
