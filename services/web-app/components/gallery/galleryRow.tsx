@@ -226,7 +226,7 @@ const RowBottom = ({ tokens, expand, setExpand } : RowBottomProps) => {
       {tokens.nodes.map((token) => {
         return (
           <GalleryRowItem
-            contract={token.token.tokenContract?.collectionAddress ? token.token.tokenContract?.collectionAddress : ''}
+            contract={token.token.collectionAddress}
             url={
               token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" &&
               typeof token.token.image.mediaEncoding.thumbnail === "string"
@@ -268,6 +268,8 @@ type ExpandRowBottomProps = {
 
 const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandRowBottomProps ) => {
 
+  const router = useRouter();
+
   const [previousPage, setPreviousPage] = useState(page);
   const [currentPage, setCurrentPage] = useState(page);
   const { loading, error, data, refetch, networkStatus } = useQuery(
@@ -295,6 +297,8 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
             // url={token.token.image?.url ? token.token.image?.url : ''}
             url={token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && typeof token.token.image.mediaEncoding.thumbnail === "string" ? token.token.image.mediaEncoding.thumbnail : ''}
             title={token.token.tokenId}
+            user={router.asPath}
+            contract={token.token.collectionAddress}
           />
         )
       })}
