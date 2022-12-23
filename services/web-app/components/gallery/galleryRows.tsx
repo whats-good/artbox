@@ -3,7 +3,7 @@ import { GalleryRow } from './galleryRow';
 import styled from 'styled-components'
 
 type GalleryRowsProps = {
-  contracts: CollectionInfoQuery[]
+  contracts: CollectionInfoQuery[];
 }
 
 const GalleryRowsWrapper = styled.div`

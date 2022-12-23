@@ -6,6 +6,8 @@ import styled from 'styled-components'
 import cardImage from '../../assets/cardFile.svg';
 import Image from 'next/image';
 import { ButtonInner, ButtonOuter } from '../button';
+import Link from 'next/link';
+import { useRouter } from 'next/router'
 
 type GalleryRowProps = {
   contract: CollectionInfoQuery
@@ -80,7 +82,9 @@ type RowBottomProps = {
 }
 type GalleryRowItemProps = {
   url: string;
-  title: string
+  title: string;
+  contract: string;
+  user: string;
 }
 
 const GalleryRowWrapper = styled.div`
@@ -108,6 +112,9 @@ const GalleryRowItemWrapper = styled.div`
   border: 1px solid black;
   height: max;
   background-color: #CDCDCD;
+  &:hover {
+    border: 3px solid #565656;
+  }
 `
 const GalleryRowItemBottomWrapper = styled.div`
   padding-left: 5px;
@@ -204,7 +211,7 @@ const ExpandButton = ({ expand, setExpand } : ExpandButtonProps) => {
 }
 
 const RowBottom = ({ tokens, expand, setExpand } : RowBottomProps) => {
-
+  const router = useRouter();
   if (expand) {
     return (
       <ExpandRowBottom
@@ -219,11 +226,13 @@ const RowBottom = ({ tokens, expand, setExpand } : RowBottomProps) => {
       {tokens.nodes.map((token) => {
         return (
           <GalleryRowItem
+            contract={token.token.tokenContract?.collectionAddress ? token.token.tokenContract?.collectionAddress : ''}
             url={
               token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" &&
               typeof token.token.image.mediaEncoding.thumbnail === "string"
             ? token.token.image.mediaEncoding.thumbnail : ''}
             title={token.token.tokenId}
+            user={router.asPath}
           />
         )
       })}
@@ -239,10 +248,12 @@ const GalleryRowItemBottom = ({title} : GalleryRowItemBottomProps) => {
   )
 }
 
-const GalleryRowItem = ({ url, title } : GalleryRowItemProps) => {
+const GalleryRowItem = ({ url, title, contract, user } : GalleryRowItemProps) => {
   return (
     <GalleryRowItemWrapper>
-      <img style={{width: "100%", height: "75%", objectFit: "cover", borderBottom: "1px solid black"}} src={url}/>
+      <Link href={`${user}/${contract}/${title}`}>
+        <img style={{width: "100%", height: "75%", objectFit: "cover", borderBottom: "1px solid black"}} src={url}/>
+      </Link>
       <GalleryRowItemBottom title={title}/>
     </GalleryRowItemWrapper>
   )
