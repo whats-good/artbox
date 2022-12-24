@@ -16,7 +16,7 @@ export const ConnectedAccount = () => {
   if (address) {
     return (
       <ConnectedAccountWrapper>
-        <p>{shortenAddress(address)}</p>
+        <p>Connected: {shortenAddress(address)}</p>
       </ConnectedAccountWrapper>
     )
   };
