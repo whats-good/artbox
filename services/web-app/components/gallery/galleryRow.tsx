@@ -92,23 +92,28 @@ type ExpandRowBottomProps = {
   count: number;
   hasNext?: boolean;
 }
+type RowTopBarWrapperProps = {
+  expand: boolean
+}
+
 
 const GalleryRowWrapper = styled.div`
 `
 
-const RowTopBarWrapper = styled.div`
+const RowTopBarWrapper = styled.div<RowTopBarWrapperProps>`
   height: 30px;
   margin-left: 5px;
   margin-right: 15px;
   background-color: #008080;
   border: 1px solid black;
+  border-bottom: ${props => props.expand ? 'none' : ''};
   display: grid;
   grid-template-columns: 5% 22% 15% 15% 15% auto;
   align-content: center;
 `
 const RowBottomWrapper = styled.div`
   min-height: 210px;
-  margin: 5px 20px;
+  margin: 5px 15px 5px 5px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   height: 80%;
@@ -185,7 +190,7 @@ const CardsIcon = () => {
 
 const RowTopBar = ({ collection, items, holders, volume, expand, setExpand } : RowTopBarProps) => {
   return (
-    <RowTopBarWrapper>
+    <RowTopBarWrapper expand={expand}>
       <CardsIcon />
       <AggregateStat label="Collection" stat={collection ? collection : 'N/A'}/>
       <AggregateStat label="Items" stat={items ? items.toString() : 'N/A'}/>
