@@ -15,7 +15,7 @@ const GalleryRowsWrapper = styled.div`
 export const GalleryRows = ({ contracts } : GalleryRowsProps) => {
   return (
     <GalleryRowsWrapper>
-      {contracts.map((contract) => <GalleryRow contract={contract}></GalleryRow>)}
+      {contracts.map((contract) => <GalleryRow key={contract.collections.nodes[0].address} contract={contract}></GalleryRow>)}
     </GalleryRowsWrapper>
   )
 };

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import styled from 'styled-components';
 import { Modal, Button, Input } from "@react95/core";
 import {
   SignupForm,
@@ -54,3 +55,4 @@ const InsideModal = () => {
     </SignupWrapper>
   );
 };
+

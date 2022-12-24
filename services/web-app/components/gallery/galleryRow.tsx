@@ -232,6 +232,7 @@ const RowBottom = ({ tokens, expand, setExpand } : RowBottomProps) => {
       {tokens.nodes.map((token) => {
         return (
           <GalleryRowItem
+            key={token.token.tokenId}
             contract={token.token.collectionAddress}
             url={
               token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" &&
@@ -293,7 +294,7 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
       {data?.tokens.nodes.map((token) => {
         return (
           <GalleryRowItem
-            // url={token.token.image?.url ? token.token.image?.url : ''}
+            key={token.token.tokenId}
             url={token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && typeof token.token.image.mediaEncoding.thumbnail === "string" ? token.token.image.mediaEncoding.thumbnail : ''}
             title={token.token.tokenId}
             user={router.asPath}

@@ -109,9 +109,9 @@ const MetaDataInfoPoint = ({ label, metaData }: MetaDataInfoPointProps) => {
         <b>{label}:</b><br></br>
         {metaData?.map((data) => {
           return (
-            <>
-            <p><b>{data.traitType}:</b> {data.value}</p>
-            </>
+            <div key={data.traitType}>
+              <p><b>{data.traitType}:</b> {data.value}</p>
+            </div>
           )
         })}
       </>
@@ -131,6 +131,7 @@ const EventsList = ({ events } : EventsListProps) => {
         if (event.properties.__typename === "Sale") {
           return (
             <SaleEventItem
+              key={event.transactionInfo.blockTimestamp}
               date={event.transactionInfo.blockTimestamp}
               to={event.properties.buyerAddress}
               from={event.properties.sellerAddress}
@@ -142,6 +143,7 @@ const EventsList = ({ events } : EventsListProps) => {
         if (event.properties.__typename === "TransferEvent") {
           return (
             <TransferEventItem
+              key={event.transactionInfo.blockTimestamp}
               date={event.transactionInfo.blockTimestamp}
               to={event.properties.toAddress}
               from={event.properties.fromAddress}
@@ -152,6 +154,7 @@ const EventsList = ({ events } : EventsListProps) => {
         if (event.properties.__typename === "MintEvent") {
           return (
             <MintEventItem
+              key={event.transactionInfo.blockTimestamp}
               date={event.transactionInfo.blockTimestamp}
               to={event.properties.toAddress}
               price={event.properties.price?.usdcPrice ? event.properties.price.usdcPrice.decimal.toFixed(0) : 'N/A'}

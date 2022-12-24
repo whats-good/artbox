@@ -1,4 +1,3 @@
-export * from "./contractTiles";
 export * from "./button";
 export * from "./addressdisplay";
 export * from "./connectwallet";
