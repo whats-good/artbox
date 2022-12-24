@@ -1,5 +1,6 @@
 import { Actmovie303 } from '@react95/icons'
 import styled from 'styled-components';
+import '@react95/icons/icons.css';
 
 const GalleryItemLoadingWrapper = styled.div`
 
