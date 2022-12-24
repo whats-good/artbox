@@ -97,6 +97,7 @@ type RowTopBarWrapperProps = {
 }
 
 const GalleryRowWrapper = styled.div`
+  margin: 15px 0px;
 `
 const RowTopBarWrapper = styled.div<RowTopBarWrapperProps>`
   height: 30px;
