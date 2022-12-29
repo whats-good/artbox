@@ -151,9 +151,14 @@ const ExpandRowBottomWrapper = styled.div`
   grid-template-rows: 1fr 1fr 1fr;
 `
 const PageButtonsWrapper = styled.div`
-  display: grid;
+  display: flex;
   grid-template-columns: 1fr 1fr;
-  height: 20px;
+  margin-right: 15px;
+  margin-left: 5px;
+  height: max-content;
+  justify-content: flex-end;
+  padding: 3px;
+  background-color: #008080;
 `;
 
 export const GalleryRow = ({ contract } : GalleryRowProps) => {
@@ -294,18 +299,20 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
     <p>Error</p>
   );
   return (
-    <ExpandRowBottomWrapper>
-      {data?.tokens.nodes.map((token) => {
-        return (
-          <GalleryRowItem
-            key={token.token.tokenId}
-            url={token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && typeof token.token.image.mediaEncoding.thumbnail === "string" ? token.token.image.mediaEncoding.thumbnail : ''}
-            title={token.token.tokenId}
-            user={router.asPath}
-            contract={token.token.collectionAddress}
-          />
-        )
-      })}
+    <>
+      <ExpandRowBottomWrapper>
+        {data?.tokens.nodes.map((token) => {
+          return (
+            <GalleryRowItem
+              key={token.token.tokenId}
+              url={token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && typeof token.token.image.mediaEncoding.thumbnail === "string" ? token.token.image.mediaEncoding.thumbnail : ''}
+              title={token.token.tokenId}
+              user={router.asPath}
+              contract={token.token.collectionAddress}
+            />
+          )
+        })}
+      </ExpandRowBottomWrapper>
       <PageButtonsWrapper>
         {previousPage !== page ?
           <ButtonOuter>
@@ -334,6 +341,6 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
           </ButtonInner>
         </ButtonOuter>
       </PageButtonsWrapper>
-    </ExpandRowBottomWrapper>
+    </>
   )
 }

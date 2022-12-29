@@ -5,7 +5,6 @@ export const tokenGallery = gql(`
     tokens(
       where: $tokenAddress
       pagination: $page
-      sort: {sortKey: TOKEN_ID, sortDirection: DESC}
     ) {
       nodes {
         token {
