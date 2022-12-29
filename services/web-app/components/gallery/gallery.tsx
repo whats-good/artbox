@@ -15,7 +15,7 @@ const GalleryWrapper = styled.div`
   margin: 10px;
   background-color: #ebebeb;
   display: grid;
-  grid-template-rows: 100px 500px 15px;
+  grid-template-rows: 100px 500px;
 `
 const GalleryFooter = styled.div`
   border-top: 1px solid black;
@@ -26,7 +26,6 @@ export const Gallery = ({user, bio, contracts} : GalleryProps) => {
     <GalleryWrapper>
       <GalleryHeader user={user} bio={bio}/>
       <GalleryRows contracts={contracts}/>
-      <GalleryFooter />
     </GalleryWrapper>
   )
 }
