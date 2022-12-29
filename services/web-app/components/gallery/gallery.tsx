@@ -15,7 +15,7 @@ const GalleryWrapper = styled.div`
   margin: 10px;
   background-color: #ebebeb;
   display: grid;
-  grid-template-rows: 100px 500px;
+  grid-template-rows: 100px;
 `
 
 export const Gallery = ({user, bio, contracts} : GalleryProps) => {
