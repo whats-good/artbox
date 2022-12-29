@@ -11,7 +11,7 @@ export function ConnectWallet() {
           <ButtonInner
             onClick={() => connect({ connector })}
           >
-            {connector.name}
+            Connect
             {isLoading &&
               connector.id === pendingConnector?.id &&
               ' (connecting)'}
