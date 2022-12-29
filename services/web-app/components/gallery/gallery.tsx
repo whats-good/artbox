@@ -17,9 +17,6 @@ const GalleryWrapper = styled.div`
   display: grid;
   grid-template-rows: 100px 500px;
 `
-const GalleryFooter = styled.div`
-  border-top: 1px solid black;
-`
 
 export const Gallery = ({user, bio, contracts} : GalleryProps) => {
   return (

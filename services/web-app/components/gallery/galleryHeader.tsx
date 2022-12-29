@@ -1,6 +1,8 @@
 import styled from "styled-components"
+import { useState } from "react";
 import { ButtonOuter, ButtonInner } from "../button";
-
+import { Modal } from "@react95/core";
+import { ArtistBioModalInside } from './artistInfoModal';
 
 type GalleryHeaderProps = {
   user: string;
@@ -28,7 +30,7 @@ export const GalleryHeader = ({user, bio} : GalleryHeaderProps) => {
     <GalleryHeaderWrapper>
       <HeaderAndBioWrapper>
         <h1>{user}</h1>
-        <p>{bio.slice(0, 60)}</p>
+        <p>{bio.slice(0, 60) + '...'}</p>
       </HeaderAndBioWrapper>
       <ArtistInfoButton bio={bio}/>
     </GalleryHeaderWrapper>
@@ -36,11 +38,33 @@ export const GalleryHeader = ({user, bio} : GalleryHeaderProps) => {
 }
 
 const ArtistInfoButton = ({ bio } : ArtistInfoButtonProps) => {
+
+  const [showModal, toggleShowModal] = useState<Boolean>(false);
+
+  const handleOpenModal = () => toggleShowModal(true);
+  const handleCloseModal = () => toggleShowModal(false);
+
   return (
+    <>
     <ArtistInfoButtonWrapper>
       <ButtonOuter>
-        <ButtonInner>Artist Info</ButtonInner>
+        <ButtonInner onClick={handleOpenModal}>Artist Info</ButtonInner>
       </ButtonOuter>
     </ArtistInfoButtonWrapper>
+    {showModal && (
+      <Modal
+        width="450"
+        height="600"
+        title="Additional Artist Info"
+        defaultPosition={{
+          x: 40,
+          y: 20,
+        }}
+        closeModal={handleCloseModal}
+      >
+        <ArtistBioModalInside bio={bio}/>
+      </Modal>
+    )}
+    </>
   )
-}
+};
