@@ -30,11 +30,11 @@ const client = createClient({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={client}>
-      <ThemeProvider>
+      {/* <ThemeProvider theme={"vaporTeal"}> */}
         <ApolloProvider client={ApolloClient}>
           <Component {...pageProps} />
         </ApolloProvider>
-      </ThemeProvider>
+      {/* </ThemeProvider> */}
     </WagmiConfig>
   );
 }

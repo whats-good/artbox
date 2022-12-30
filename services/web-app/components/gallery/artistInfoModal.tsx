@@ -21,8 +21,9 @@ type ArtistBioTopBarProps = {
 
 const ArtistBioModalInsideWrapper = styled.div`
   display: grid;
-  grid-template-rows: 12% 88%;
+  grid-template-rows: 12% 87%;
   height: 100%;
+  padding: 5px;
 `
 const ArtistBioTopBarWrapper = styled.div`
   background-color: #EBEBEB;
@@ -35,10 +36,12 @@ const ArtistBioTopBarWrapper = styled.div`
 const ReadBioWrapper = styled.div`
   background-color: #EBEBEB;
   border: 1px solid black;
+  padding: 3px;
 `
 const EditableBioWrapper = styled.textarea`
   background-color: #EBEBEB;
   border: 1px solid black;
+  padding: 3px;
 `
 
 export const ArtistBioModalInside = ({ bio } : ArtistBioModalInsideProps) => {
