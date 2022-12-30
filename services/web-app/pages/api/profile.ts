@@ -16,7 +16,7 @@ export default function handler(
     id: 123,
     username: "0xLogan",
     collections: [
-      "0x875c08ada944dfd0d236329655e90f778f3b2e57",
+      "0x713ce7dE2296c1d48b61d5662fd381DEDfcB01bD",
       "0x7D70D50A8E9D1B4F04F5a2fA2e46078DA9EBB467",
       "0x49623cAEc21B1fF5D04d7Bf7B71531369a69bCe4",
       "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d"

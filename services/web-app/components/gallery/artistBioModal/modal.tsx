@@ -64,7 +64,10 @@ const ModalTopBar = ({ title, toggleShowModal } : ModalTopBarProps) => {
 
 export const Modal = ({ children, title, toggleShowModal } : ModalProps) => {
   return (
-    <Draggable handle=".draggable">
+    <Draggable
+      handle=".draggable"
+      defaultPosition={{x: 400, y: -140}}
+    >
       <ModalWrapper>
         <ModalTopBar
           title={title}
