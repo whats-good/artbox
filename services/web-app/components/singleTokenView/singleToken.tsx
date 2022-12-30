@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { shortenAddress } from '../../helpers/shortenAddress';
 import type { TokenInfoQuery, TokenAttribute, EventType, Chain } from '../../.utils/gql/types/graphql';
+import { parseImageUrl } from '../../helpers/parseImage';
 
 type ImageColumnProps = {
   url: string | null | undefined;
@@ -65,6 +66,15 @@ const EventWrapper = styled.div`
 `
 
 export const SingleTokenView = ({ token } : TokenInfoQuery) => {
+
+  parseImageUrl({token: token})
+  .then((res) => {
+    console.log('RESPONSE: ', res);
+  })
+  .catch((e) => {
+    console.log('ERROR', e)
+  })
+
   return (
     <SingleTokenViewWrapper>
       <ImageColumn url={token?.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" ? token.token.image.mediaEncoding.large : ''}/>
@@ -131,7 +141,6 @@ const EventsList = ({ events } : EventsListProps) => {
         if (event.properties.__typename === "Sale") {
           return (
             <SaleEventItem
-              key={event.transactionInfo.blockTimestamp}
               date={event.transactionInfo.blockTimestamp}
               to={event.properties.buyerAddress}
               from={event.properties.sellerAddress}
