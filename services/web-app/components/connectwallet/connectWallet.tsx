@@ -1,44 +1,24 @@
-import { shortenAddress, useEthers } from "@usedapp/core";
+import { useConnect } from 'wagmi';
 import { ConnectWalletWrapper } from "./styled/topbarstyled";
 import { ButtonOuter, ButtonInner } from "../button/buttonstyled";
 
-interface ButtonProps {
-  text: String;
-  click: any;
-}
-
-function Button({ text, click }: ButtonProps): JSX.Element {
-  return (
-    <ButtonOuter>
-      <ButtonInner onClick={() => click()}> {text} </ButtonInner>
-    </ButtonOuter>
-  );
-}
-
 export function ConnectWallet() {
-  const { account, activateBrowserWallet, deactivate } = useEthers();
-
-  const ConnectButton = () => (
-    <Button text="Connect" click={activateBrowserWallet} />
-  );
-  const DisconnectButton = () => (
-    <Button text="Disconnect" click={deactivate} />
-  );
-
+  const { connect, connectors, error, isLoading, pendingConnector } = useConnect();
   return (
     <ConnectWalletWrapper>
-      {account && (
-        <div>
-          <div className="inline">
-            &nbsp;
-            {/* <div className="account">{shortenAddress(account)}</div> */}
-          </div>
-          <br />
-        </div>
-      )}
-      {!account && <ConnectButton />}
-      {account && <DisconnectButton />}
-      <br />
+      {connectors.map((connector) => (
+        <ButtonOuter key={connector.id}>
+          <ButtonInner
+            onClick={() => connect({ connector })}
+          >
+            Connect
+            {isLoading &&
+              connector.id === pendingConnector?.id &&
+              ' (connecting)'}
+          </ButtonInner>
+        </ButtonOuter>
+      ))}
+      {error && <div>{error.message}</div>}
     </ConnectWalletWrapper>
   );
 }

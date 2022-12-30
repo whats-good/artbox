@@ -5,6 +5,7 @@ export const TopBarWrapper = styled.div`
   height: 50px;
   display: grid;
   grid-template-columns: 20% 60% 20%;
+  margin: auto;
 `;
 export const ConnectWalletWrapper = styled.div`
   grid-column-start: 3;

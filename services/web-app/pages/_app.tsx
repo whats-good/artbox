@@ -1,32 +1,41 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { Mainnet, DAppProvider, Config } from "@usedapp/core";
 import { ThemeProvider } from "@react95/core";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import {
+  WagmiConfig,
+  createClient,
+  configureChains,
+} from 'wagmi';
+import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { publicProvider } from 'wagmi/providers/public'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import { mainnet } from '@wagmi/core/chains';
+import { ApolloProvider } from '@apollo/client';
+import ApolloClient from '../utils/apollo-client'
 
-const config: Config = {
-  readOnlyChainId: Mainnet.chainId,
-  readOnlyUrls: {
-    [Mainnet.chainId]:
-      "https://mainnet.infura.io/v3/769e786d4b7d41ae86475b916510b455",
-  },
-};
+// Configure chains & providers with the Alchemy provider.
+const { chains, provider, webSocketProvider } = configureChains([mainnet], [
+  alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY }),
+  publicProvider(),
+])
 
-const client = new ApolloClient({
-  // uri: 'https://flyby-gateway.herokuapp.com/',
-  uri: "https://gateway.thegraph.com/api/89457974a27d6a710364fa19df8507d3/subgraphs/id/B333F7Ra4kuVBSwHFDfH9x9N1341GYHvdfpV94KY8Gmv",
-  cache: new InMemoryCache(),
-});
+const client = createClient({
+  autoConnect: false,
+  connectors: [
+    new MetaMaskConnector({ chains }),
+  ],
+  provider,
+})
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <DAppProvider config={config}>
-      <ThemeProvider>
-        <ApolloProvider client={client}>
+    <WagmiConfig client={client}>
+      {/* <ThemeProvider theme={"vaporTeal"}> */}
+        <ApolloProvider client={ApolloClient}>
           <Component {...pageProps} />
         </ApolloProvider>
-      </ThemeProvider>
-    </DAppProvider>
+      {/* </ThemeProvider> */}
+    </WagmiConfig>
   );
 }
 
