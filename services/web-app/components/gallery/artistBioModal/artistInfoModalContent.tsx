@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useState, Dispatch, SetStateAction} from 'react';
-import { ButtonOuter, ButtonInner } from "../button";
+import { ButtonOuter, ButtonInner } from "../../button";
 
 
 type ArtistBioModalInsideProps = {
