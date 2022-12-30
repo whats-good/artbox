@@ -124,6 +124,7 @@ importers:
       next-transpile-modules: ^9.0.0
       react: 18.2.0
       react-dom: 18.2.0
+      react-draggable: ^4.4.5
       styled-components: ^5.3.6
       typescript: 4.8.4
       wagmi: 0.8.10
@@ -146,6 +147,7 @@ importers:
       next-transpile-modules: 9.1.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-draggable: 4.4.5_biqbaboplfbrettd7655fr4n2y
       styled-components: 5.3.6_biqbaboplfbrettd7655fr4n2y
       wagmi: 0.8.10_ir5rj4sfbt34e63yhlgyn6mx7a
       zod: 3.20.2
