@@ -86,7 +86,7 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
     return {
       props: {
         __typename: "SSRError",
-        message: "Failed to Fetch Collection data", e,
+        message: "Failed to Fetch Collection data" + (JSON.parse(JSON.stringify(e))),
         notFound: true,
       }
     }

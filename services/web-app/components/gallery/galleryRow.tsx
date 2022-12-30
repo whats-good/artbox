@@ -1,4 +1,4 @@
-import { useState, Dispatch, SetStateAction } from 'react';
+import { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
 import { useQuery } from '@apollo/client';
 import { tokenGallery } from '../../querys';
@@ -8,6 +8,8 @@ import Image from 'next/image';
 import { ButtonInner, ButtonOuter } from '../button';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
+import { parseImageGallery } from '../../helpers';
+
 
 type GalleryRowProps = {
   contract: CollectionInfoQuery
@@ -58,7 +60,8 @@ type RowBottomProps = {
                     __typename?: 'ImageEncodingTypes';
                     thumbnail?: string | null;
                 } | {
-                    __typename?: 'UnsupportedEncodingTypes';
+                    __typename: 'UnsupportedEncodingTypes';
+                    original: string;
                 } | {
                     __typename?: 'VideoEncodingTypes';
                 } | null;
@@ -81,7 +84,40 @@ type RowBottomProps = {
   };
 }
 type GalleryRowItemProps = {
-  url: string;
+  token: {
+    __typename?: 'TokenWithMarketsSummary';
+    token: {
+        __typename?: 'Token';
+        collectionName?: string | null;
+        collectionAddress: string;
+        description?: string | null;
+        metadata?: any | null;
+        tokenId: string;
+        image?: {
+            __typename?: 'TokenContentMedia';
+            url?: string | null;
+            mediaEncoding?: {
+                __typename?: 'AudioEncodingTypes';
+            } | {
+                __typename?: 'ImageEncodingTypes';
+                thumbnail?: string | null;
+            } | {
+                __typename: 'UnsupportedEncodingTypes';
+                original: string;
+            } | {
+                __typename?: 'VideoEncodingTypes';
+            } | null;
+        } | null;
+        tokenContract?: {
+            __typename?: 'TokenContract';
+            description?: string | null;
+            name?: string | null;
+            symbol?: string | null;
+            totalSupply?: number | null;
+            collectionAddress: string;
+        } | null;
+    };
+};
   title: string;
   contract: string;
   user: string;
@@ -243,10 +279,7 @@ const RowBottom = ({ tokens, expand, setExpand } : RowBottomProps) => {
           <GalleryRowItem
             key={token.token.tokenId}
             contract={token.token.collectionAddress}
-            url={
-              token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" &&
-              typeof token.token.image.mediaEncoding.thumbnail === "string"
-            ? token.token.image.mediaEncoding.thumbnail : ''}
+            token={token}
             title={token.token.tokenId}
             user={router.asPath}
           />
@@ -264,11 +297,27 @@ const GalleryRowItemBottom = ({title} : GalleryRowItemBottomProps) => {
   )
 }
 
-const GalleryRowItem = ({ url, title, contract, user } : GalleryRowItemProps) => {
+const GalleryRowItem = ({ token, title, contract, user } : GalleryRowItemProps) => {
+
+  const [imageUrl, setImageUrl] = useState<string>('')
+
+  useEffect(() => {
+    parseImageGallery({token: token.token})
+    .then((res) => {
+      if (res.__typename === "success") {
+        console.log('SUCCESS: ', res.url);
+        setImageUrl(res.url);
+      }
+    })
+    .catch((e) => {
+      console.log(e);
+    })
+  }, [])
+
   return (
     <GalleryRowItemWrapper>
       <Link href={`${user}/${contract}/${title}`}>
-        <img style={{width: "100%", height: "75%", objectFit: "cover", borderBottom: "1px solid black"}} src={url}/>
+        <img style={{width: "100%", height: "75%", objectFit: "cover", borderBottom: "1px solid black"}} src={imageUrl}/>
       </Link>
       <GalleryRowItemBottom title={title}/>
     </GalleryRowItemWrapper>
@@ -305,7 +354,7 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
           return (
             <GalleryRowItem
               key={token.token.tokenId}
-              url={token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && typeof token.token.image.mediaEncoding.thumbnail === "string" ? token.token.image.mediaEncoding.thumbnail : ''}
+              token={token}
               title={token.token.tokenId}
               user={router.asPath}
               contract={token.token.collectionAddress}
