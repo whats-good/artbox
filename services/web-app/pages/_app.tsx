@@ -1,6 +1,5 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { ThemeProvider } from "@react95/core";
 import {
   WagmiConfig,
   createClient,
@@ -30,11 +29,9 @@ const client = createClient({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={client}>
-      {/* <ThemeProvider theme={"vaporTeal"}> */}
         <ApolloProvider client={ApolloClient}>
           <Component {...pageProps} />
         </ApolloProvider>
-      {/* </ThemeProvider> */}
     </WagmiConfig>
   );
 }

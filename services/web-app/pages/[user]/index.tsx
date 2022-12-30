@@ -3,8 +3,7 @@ import { GetServerSideProps } from 'next';
 import client from '../../utils/apollo-client';
 import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
 import { collectionInfo } from '../../querys';
-import { PageWrapper, BlueBar, TopBar, Gallery } from '../../components/'
-import { ConnectedAccount } from '../../components/connectwallet';
+import { PageWrapper, BlueBar, TopBar, Gallery, ConnectedAccount } from '../../components/'
 
 type Profile = {
   id: number,

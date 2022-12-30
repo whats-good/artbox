@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { shortenAddress } from '../../helpers/shortenAddress';
 import type { TokenInfoQuery, TokenAttribute, EventType, Chain } from '../../.utils/gql/types/graphql';
 import { parseImageUrl } from '../../helpers/parseImage';
+import { useEffect, useState } from "react";
 
 type ImageColumnProps = {
   url: string | null | undefined;
@@ -67,17 +68,23 @@ const EventWrapper = styled.div`
 
 export const SingleTokenView = ({ token } : TokenInfoQuery) => {
 
-  parseImageUrl({token: token})
-  .then((res) => {
-    console.log('RESPONSE: ', res);
-  })
-  .catch((e) => {
-    console.log('ERROR', e)
-  })
+  const [imageUrl, setImageUrl] = useState<string>('')
+
+  useEffect(() => {
+    parseImageUrl({token: token})
+    .then((res) => {
+      if (res.__typename === "success") {
+        setImageUrl(res.url);
+      }
+    })
+    .catch((e) => {
+      console.log(e);
+    })
+  }, [])
 
   return (
     <SingleTokenViewWrapper>
-      <ImageColumn url={token?.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" ? token.token.image.mediaEncoding.large : ''}/>
+      <ImageColumn url={imageUrl}/>
       <ImageInfo token={token}/>
     </SingleTokenViewWrapper>
   )

@@ -1,3 +1,3 @@
 export * from "./connectWallet";
 export * from "./topbar";
-export * from './addressDisplay';
+export * from "./addressDisplay";

@@ -20,6 +20,5 @@ export const ConnectedAccount = () => {
       </ConnectedAccountWrapper>
     )
   };
-
   return <ConnectedAccountWrapper />;
 }

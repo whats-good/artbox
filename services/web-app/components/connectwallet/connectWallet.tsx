@@ -2,7 +2,7 @@ import { useConnect } from 'wagmi';
 import { ConnectWalletWrapper } from "./styled/topbarstyled";
 import { ButtonOuter, ButtonInner } from "../button/buttonstyled";
 
-export function ConnectWallet() {
+export const ConnectWallet = () => {
   const { connect, connectors, error, isLoading, pendingConnector } = useConnect();
   return (
     <ConnectWalletWrapper>

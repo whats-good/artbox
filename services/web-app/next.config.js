@@ -1,12 +1,20 @@
-/** @type {import('next').NextConfig} */
+// /** @type {import('next').NextConfig} */
 
-const withFonts = require('next-fonts');
-const withTM = require('next-transpile-modules')([
-  '@react95/core',
-  '@react95/icons'
-]);
+// const withFonts = require('next-fonts');
+// const withTM = require('next-transpile-modules')([
+//   '@react95/core',
+//   '@react95/icons'
+// ]);
 
-const nextConfig = {
+// const nextConfig = {
+//   reactStrictMode: true,
+//   swcMinify: true,
+//   compiler: {
+//     styledComponents: true,
+//   }
+// }
+
+module.exports = {
   reactStrictMode: true,
   swcMinify: true,
   compiler: {
@@ -14,4 +22,5 @@ const nextConfig = {
   }
 }
 
-module.exports = withTM(withFonts(nextConfig));
+
+// module.exports = withTM(withFonts(nextConfig));

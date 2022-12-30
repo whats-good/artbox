@@ -17,27 +17,19 @@ const parseIpfs = (url : string) => {
 
 export const parseImageUrl = async ({ token } : TokenInfoQuery) : Promise<ParseImageResult> => {
 
-  const checkObj = {
-    properImage: true,
-    ipfsParse: true,
-    wrongImage: true,
-  }
-
-  //TRY NORMALLY
+  //First, try the normal image
   try {
     if (token?.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && token?.token.image?.mediaEncoding?.large) {
       if ((await axios.get(token.token.image.mediaEncoding.large)).status === 200) {
         return {
-        __typename: "success",
-        url: token.token.image.mediaEncoding.large,
+          __typename: "success",
+          url: token.token.image.mediaEncoding.large,
         }
       }
     }
-  } catch(e) {
-    checkObj.properImage = false;
-  }
+  } catch(e) {}
 
-  //TRY UNSUPPORTED TYPE
+  //Next, try the raw image URL
   try {
     if (token?.token.image?.mediaEncoding?.__typename === "UnsupportedEncodingTypes" && token.token.image.url) {
       if ((await axios.get(token.token.image.url)).status === 200) {
@@ -47,11 +39,9 @@ export const parseImageUrl = async ({ token } : TokenInfoQuery) : Promise<ParseI
         }
       }
     }
-  } catch(e) {
-    checkObj.wrongImage = false;
-  }
+  } catch(e) {}
 
-  //TRY PARSING WITH IPFS
+  //Finally, Check if IPFS link, and parse it
   try {
     if (token?.token.image?.url && token.token.image.url.slice(0, 7) === "ipfs://") {
       const parsedUrl = parseIpfs(token.token.image.url)
@@ -60,25 +50,13 @@ export const parseImageUrl = async ({ token } : TokenInfoQuery) : Promise<ParseI
           __typename: "success",
           url: parsedUrl,
         }
-      } else {
-        return {
-          __typename: "failed",
-          message: "Not working"
-        }
       }
     }
-  } catch(e) {
-    checkObj.ipfsParse = false;
-    return {
-      __typename: "failed",
-      message: "Unable to fetch"
-    }
-  }
+  } catch(e) {}
 
+  //Return failed message if none work
   return {
     __typename: "failed",
-    message: "This failed for unknown reasons."
+    message: "Not able to fetch Image URL",
   }
 }
-
-//ipfs://ipfs/QmTD6JkRDPCsEDz6ze4XGvAoGx9aURvF1JWLNnm66xUJAE/image.png
