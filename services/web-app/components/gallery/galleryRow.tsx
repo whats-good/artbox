@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { ButtonInner, ButtonOuter } from '../button';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
-
+import { parseIpfs } from '../../helpers';
 
 type GalleryRowProps = {
   contract: CollectionInfoQuery
@@ -162,10 +162,6 @@ const PageButtonsWrapper = styled.div`
   padding: 3px;
   background-color: #008080;
 `;
-
-const parseIpfs = (url : string) => {
-  return "https://ipfs.io" + url.slice(6);
-}
 
 export const GalleryRow = ({ contract } : GalleryRowProps) => {
 

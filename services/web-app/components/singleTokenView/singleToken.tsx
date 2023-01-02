@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { shortenAddress } from '../../helpers/shortenAddress';
 import type { TokenInfoQuery, TokenAttribute, EventType, Chain } from '../../.utils/gql/types/graphql';
 import { useState } from "react";
+import { parseIpfs } from '../../helpers';
 
 type ImageColumnProps = {
   urls: string[];
@@ -65,13 +66,8 @@ const EventWrapper = styled.div`
   grid-template-columns: 12% 22% 23% 23% 20%;
 `
 
-const parseIpfs = (url : string) => {
-  return "https://ipfs.io" + url.slice(6);
-}
-
 export const SingleTokenView = ({ token } : TokenInfoQuery) => {
 
-  const [imageUrl, setImageUrl] = useState<string>('')
   const urls = [];
 
   if (token?.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && token?.token.image?.mediaEncoding?.large) {
