@@ -1,4 +1,4 @@
-import { useState, Dispatch, SetStateAction } from 'react';
+import { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
 import { useQuery } from '@apollo/client';
 import { tokenGallery } from '../../querys';
@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { ButtonInner, ButtonOuter } from '../button';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
+
 
 type GalleryRowProps = {
   contract: CollectionInfoQuery
@@ -58,7 +59,8 @@ type RowBottomProps = {
                     __typename?: 'ImageEncodingTypes';
                     thumbnail?: string | null;
                 } | {
-                    __typename?: 'UnsupportedEncodingTypes';
+                    __typename: 'UnsupportedEncodingTypes';
+                    original: string;
                 } | {
                     __typename?: 'VideoEncodingTypes';
                 } | null;
@@ -81,7 +83,7 @@ type RowBottomProps = {
   };
 }
 type GalleryRowItemProps = {
-  url: string;
+  urls: string[];
   title: string;
   contract: string;
   user: string;
@@ -161,6 +163,10 @@ const PageButtonsWrapper = styled.div`
   background-color: #008080;
 `;
 
+const parseIpfs = (url : string) => {
+  return "https://ipfs.io" + url.slice(6);
+}
+
 export const GalleryRow = ({ contract } : GalleryRowProps) => {
 
   const [expand, setExpand] = useState(false);
@@ -239,14 +245,25 @@ const RowBottom = ({ tokens, expand, setExpand } : RowBottomProps) => {
   return (
     <RowBottomWrapper>
       {tokens.nodes.map((token) => {
+
+        const urls : string[] = [];
+
+        if (token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && token.token.image?.mediaEncoding?.thumbnail) {
+          urls.push(token.token.image.mediaEncoding.thumbnail)
+        }
+        if (token.token.image?.mediaEncoding?.__typename === "UnsupportedEncodingTypes" && token.token.image.url) {
+          urls.push(token.token.image.url)
+        }
+        if (token.token.image?.url && token.token.image.url.slice(0, 7) === "ipfs://") {
+          urls.push(parseIpfs(token.token.image.url))
+        }
+        urls.push('');
+
         return (
           <GalleryRowItem
             key={token.token.tokenId}
             contract={token.token.collectionAddress}
-            url={
-              token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" &&
-              typeof token.token.image.mediaEncoding.thumbnail === "string"
-            ? token.token.image.mediaEncoding.thumbnail : ''}
+            urls={urls}
             title={token.token.tokenId}
             user={router.asPath}
           />
@@ -264,11 +281,24 @@ const GalleryRowItemBottom = ({title} : GalleryRowItemBottomProps) => {
   )
 }
 
-const GalleryRowItem = ({ url, title, contract, user } : GalleryRowItemProps) => {
+const GalleryRowItem = ({ urls, title, contract, user } : GalleryRowItemProps) => {
+
+  const [i, increment] = useState<number>(0)
+  const [src, setSrc] = useState<string>(urls[i]);
+
   return (
     <GalleryRowItemWrapper>
       <Link href={`${user}/${contract}/${title}`}>
-        <img style={{width: "100%", height: "75%", objectFit: "cover", borderBottom: "1px solid black"}} src={url}/>
+        <img
+          style={{width: "100%", height: "75%", objectFit: "cover", borderBottom: "1px solid black"}}
+          src={src}
+          onError={() => {
+            if (i !== urls.length - 1) {
+              setSrc(urls[i]);
+              increment(i+1);
+            }
+          }}
+        />
       </Link>
       <GalleryRowItemBottom title={title}/>
     </GalleryRowItemWrapper>
@@ -302,10 +332,24 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
     <>
       <ExpandRowBottomWrapper>
         {data?.tokens.nodes.map((token) => {
+
+          const urls : string[] = [];
+
+          if (token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && token.token.image?.mediaEncoding?.thumbnail) {
+            urls.push(token.token.image.mediaEncoding.thumbnail)
+          }
+          if (token.token.image?.mediaEncoding?.__typename === "UnsupportedEncodingTypes" && token.token.image.url) {
+            urls.push(token.token.image.url)
+          }
+          if (token.token.image?.url && token.token.image.url.slice(0, 7) === "ipfs://") {
+            urls.push(parseIpfs(token.token.image.url))
+          }
+          urls.push('');
+
           return (
             <GalleryRowItem
               key={token.token.tokenId}
-              url={token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && typeof token.token.image.mediaEncoding.thumbnail === "string" ? token.token.image.mediaEncoding.thumbnail : ''}
+              urls={urls}
               title={token.token.tokenId}
               user={router.asPath}
               contract={token.token.collectionAddress}

@@ -11,17 +11,27 @@ export const tokenGallery = gql(`
           collectionName
           collectionAddress
           description
-          metadata
-          tokenId
           image {
             url
             mediaEncoding {
               ... on ImageEncodingTypes {
                 thumbnail
               }
+              ... on UnsupportedEncodingTypes {
+                __typename
+                original
+              }
             }
-            size
           }
+          metadata
+          tokenContract {
+            description
+            name
+            symbol
+            totalSupply
+            collectionAddress
+          }
+          tokenId
         }
       }
       pageInfo {
