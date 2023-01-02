@@ -7,15 +7,25 @@ type ModalProps = {
   children?: JSX.Element;
   title: string;
   toggleShowModal: Dispatch<SetStateAction<Boolean>>;
+  defaultPosition?: {
+    x: number;
+    y: number;
+  }
+  height?: string;
+  width?: string;
 }
 type ModalTopBarProps = {
   title: string;
   toggleShowModal: Dispatch<SetStateAction<Boolean>>;
 }
+type ModalWrapperProps = {
+  height: string;
+  width: string;
+}
 
-const ModalWrapper = styled.div`
-  height: 600px;
-  width: 450px;
+const ModalWrapper = styled.div<ModalWrapperProps>`
+  height: ${props => props.height};
+  width: ${props => props.width};
   background-color: #BFBFBF;
   display: grid;
   grid-template-rows: 20px 575px;
@@ -62,13 +72,13 @@ const ModalTopBar = ({ title, toggleShowModal } : ModalTopBarProps) => {
   )
 }
 
-export const Modal = ({ children, title, toggleShowModal } : ModalProps) => {
+export const Modal = ({ children, title, toggleShowModal, defaultPosition = {x: 400, y: -140}, height = "auto", width = "auto"} : ModalProps) => {
   return (
     <Draggable
       handle=".draggable"
-      defaultPosition={{x: 400, y: -140}}
+      defaultPosition={{x: defaultPosition.x, y: defaultPosition.y}}
     >
-      <ModalWrapper>
+      <ModalWrapper height={height} width={width}>
         <ModalTopBar
           title={title}
           toggleShowModal={toggleShowModal}
