@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Dispatch, SetStateAction } from 'react';
 import Draggable from 'react-draggable';
-import { ButtonOuter, ButtonInner } from "../../button";
+import { ButtonOuter, ButtonInner } from "../button";
 
 type ModalProps = {
   children?: JSX.Element;
