@@ -1,16 +1,16 @@
 import { Modal } from "../../components/modal";
 import { Dispatch, SetStateAction } from "react";
 
-type SignUpModalProps = {
+type DiscoverModalProps = {
   toggleShowModal: Dispatch<SetStateAction<Boolean>>;
 }
 
-export const SignUpModal = ({ toggleShowModal } : SignUpModalProps) => {
+export const DiscoverModal = ({ toggleShowModal } : DiscoverModalProps) => {
   return (
     <>
       <Modal
         toggleShowModal={toggleShowModal}
-        title="Create Profile"
+        title="Discover"
         height="300px"
         width="400px"
         defaultPosition={{
@@ -18,7 +18,7 @@ export const SignUpModal = ({ toggleShowModal } : SignUpModalProps) => {
           y: 40,
         }}
       >
-        <div>HELLO!</div>
+        <div>Discover Modal Here!</div>
       </Modal>
     </>
   )

@@ -1,17 +1,17 @@
 import { Dispatch, SetStateAction } from "react"
 import { ButtonInner, ButtonOuter } from "../button"
 
-type SignUpButtonProps = {
+type DiscoverButton = {
   toggleShowModal: Dispatch<SetStateAction<Boolean>>;
   showModal: Boolean;
 }
 
-export const SignUpButton = ({ toggleShowModal, showModal } : SignUpButtonProps) => {
+export const DiscoverButton = ({ toggleShowModal, showModal } : DiscoverButton) => {
 
   return (
     <>
       <ButtonOuter>
-        <ButtonInner onClick={() => toggleShowModal(!showModal)}>Create</ButtonInner>
+        <ButtonInner onClick={() => toggleShowModal(!showModal)}>Discover</ButtonInner>
       </ButtonOuter>
     </>
   )
