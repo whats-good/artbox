@@ -8,7 +8,6 @@ import Image from 'next/image';
 import { ButtonInner, ButtonOuter } from '../button';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
-import { parseImageGallery } from '../../helpers';
 
 
 type GalleryRowProps = {
@@ -84,40 +83,7 @@ type RowBottomProps = {
   };
 }
 type GalleryRowItemProps = {
-  token: {
-    __typename?: 'TokenWithMarketsSummary';
-    token: {
-        __typename?: 'Token';
-        collectionName?: string | null;
-        collectionAddress: string;
-        description?: string | null;
-        metadata?: any | null;
-        tokenId: string;
-        image?: {
-            __typename?: 'TokenContentMedia';
-            url?: string | null;
-            mediaEncoding?: {
-                __typename?: 'AudioEncodingTypes';
-            } | {
-                __typename?: 'ImageEncodingTypes';
-                thumbnail?: string | null;
-            } | {
-                __typename: 'UnsupportedEncodingTypes';
-                original: string;
-            } | {
-                __typename?: 'VideoEncodingTypes';
-            } | null;
-        } | null;
-        tokenContract?: {
-            __typename?: 'TokenContract';
-            description?: string | null;
-            name?: string | null;
-            symbol?: string | null;
-            totalSupply?: number | null;
-            collectionAddress: string;
-        } | null;
-    };
-};
+  urls: string[];
   title: string;
   contract: string;
   user: string;
@@ -197,6 +163,10 @@ const PageButtonsWrapper = styled.div`
   background-color: #008080;
 `;
 
+const parseIpfs = (url : string) => {
+  return "https://ipfs.io" + url.slice(6);
+}
+
 export const GalleryRow = ({ contract } : GalleryRowProps) => {
 
   const [expand, setExpand] = useState(false);
@@ -275,11 +245,25 @@ const RowBottom = ({ tokens, expand, setExpand } : RowBottomProps) => {
   return (
     <RowBottomWrapper>
       {tokens.nodes.map((token) => {
+
+        const urls : string[] = [];
+
+        if (token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && token.token.image?.mediaEncoding?.thumbnail) {
+          urls.push(token.token.image.mediaEncoding.thumbnail)
+        }
+        if (token.token.image?.mediaEncoding?.__typename === "UnsupportedEncodingTypes" && token.token.image.url) {
+          urls.push(token.token.image.url)
+        }
+        if (token.token.image?.url && token.token.image.url.slice(0, 7) === "ipfs://") {
+          urls.push(parseIpfs(token.token.image.url))
+        }
+        urls.push('');
+
         return (
           <GalleryRowItem
             key={token.token.tokenId}
             contract={token.token.collectionAddress}
-            token={token}
+            urls={urls}
             title={token.token.tokenId}
             user={router.asPath}
           />
@@ -297,27 +281,24 @@ const GalleryRowItemBottom = ({title} : GalleryRowItemBottomProps) => {
   )
 }
 
-const GalleryRowItem = ({ token, title, contract, user } : GalleryRowItemProps) => {
+const GalleryRowItem = ({ urls, title, contract, user } : GalleryRowItemProps) => {
 
-  const [imageUrl, setImageUrl] = useState<string>('')
-
-  useEffect(() => {
-    parseImageGallery({token: token.token})
-    .then((res) => {
-      if (res.__typename === "success") {
-        console.log('SUCCESS: ', res.url);
-        setImageUrl(res.url);
-      }
-    })
-    .catch((e) => {
-      console.log(e);
-    })
-  }, [])
+  const [i, increment] = useState<number>(0)
+  const [src, setSrc] = useState<string>(urls[i]);
 
   return (
     <GalleryRowItemWrapper>
       <Link href={`${user}/${contract}/${title}`}>
-        <img style={{width: "100%", height: "75%", objectFit: "cover", borderBottom: "1px solid black"}} src={imageUrl}/>
+        <img
+          style={{width: "100%", height: "75%", objectFit: "cover", borderBottom: "1px solid black"}}
+          src={src}
+          onError={() => {
+            if (i !== urls.length - 1) {
+              setSrc(urls[i]);
+              increment(i+1);
+            }
+          }}
+        />
       </Link>
       <GalleryRowItemBottom title={title}/>
     </GalleryRowItemWrapper>
@@ -351,10 +332,24 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
     <>
       <ExpandRowBottomWrapper>
         {data?.tokens.nodes.map((token) => {
+
+          const urls : string[] = [];
+
+          if (token.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && token.token.image?.mediaEncoding?.thumbnail) {
+            urls.push(token.token.image.mediaEncoding.thumbnail)
+          }
+          if (token.token.image?.mediaEncoding?.__typename === "UnsupportedEncodingTypes" && token.token.image.url) {
+            urls.push(token.token.image.url)
+          }
+          if (token.token.image?.url && token.token.image.url.slice(0, 7) === "ipfs://") {
+            urls.push(parseIpfs(token.token.image.url))
+          }
+          urls.push('');
+
           return (
             <GalleryRowItem
               key={token.token.tokenId}
-              token={token}
+              urls={urls}
               title={token.token.tokenId}
               user={router.asPath}
               contract={token.token.collectionAddress}

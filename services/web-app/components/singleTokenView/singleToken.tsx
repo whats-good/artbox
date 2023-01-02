@@ -1,11 +1,10 @@
 import styled from 'styled-components';
 import { shortenAddress } from '../../helpers/shortenAddress';
 import type { TokenInfoQuery, TokenAttribute, EventType, Chain } from '../../.utils/gql/types/graphql';
-import { parseImageUrl } from '../../helpers/parseImage';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type ImageColumnProps = {
-  url: string | null | undefined;
+  urls: string[];
 }
 type ImageInfoPointProps = {
   label: string;
@@ -66,34 +65,51 @@ const EventWrapper = styled.div`
   grid-template-columns: 12% 22% 23% 23% 20%;
 `
 
+const parseIpfs = (url : string) => {
+  return "https://ipfs.io" + url.slice(6);
+}
+
 export const SingleTokenView = ({ token } : TokenInfoQuery) => {
 
   const [imageUrl, setImageUrl] = useState<string>('')
+  const urls = [];
 
-  useEffect(() => {
-    parseImageUrl({token: token})
-    .then((res) => {
-      if (res.__typename === "success") {
-        setImageUrl(res.url);
-      }
-    })
-    .catch((e) => {
-      console.log(e);
-    })
-  }, [])
+  if (token?.token.image?.mediaEncoding?.__typename === "ImageEncodingTypes" && token?.token.image?.mediaEncoding?.large) {
+    urls.push(token.token.image.mediaEncoding.large)
+  }
+  if (token?.token.image?.mediaEncoding?.__typename === "UnsupportedEncodingTypes" && token.token.image.url) {
+    urls.push(token.token.image.url)
+  }
+  if (token?.token.image?.url && token.token.image.url.slice(0, 7) === "ipfs://") {
+    urls.push(parseIpfs(token.token.image.url))
+  }
+  urls.push('');
 
   return (
     <SingleTokenViewWrapper>
-      <ImageColumn url={imageUrl}/>
+      <ImageColumn urls={urls}/>
       <ImageInfo token={token}/>
     </SingleTokenViewWrapper>
   )
 }
 
-const ImageColumn = ({ url }: ImageColumnProps) => {
+const ImageColumn = ({ urls }: ImageColumnProps) => {
+
+  const [i, increment] = useState<number>(0)
+  const [src, setSrc] = useState<string>(urls[i]);
+
   return (
     <ImageColumnWrapper>
-      {url ? <img style={{width: 'auto', height: '70%', marginBottom: '40px'}} src={url}/> : <p>Sorry, this Image is not available</p>}
+        <img
+          style={{width: 'auto', height: '70%', marginBottom: '40px'}}
+          src={src}
+          onError={() => {
+            if (i !== urls.length - 1) {
+              setSrc(urls[i]);
+              increment(i+1);
+            }
+          }}
+        />
     </ImageColumnWrapper>
   )
 }
