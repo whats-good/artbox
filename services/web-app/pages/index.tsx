@@ -6,7 +6,7 @@ import { SignUpButton, SignUpModal } from "../components/signUp";
 import { DiscoverButton, DiscoverModal } from "../components/discover";
 
 const ButtonWrapper = styled.div`
-  width: 100px;
+  width: 200px;
 `
 const BodyWrapper = styled.div`
   height: calc(100vh - 52px);
