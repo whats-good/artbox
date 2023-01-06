@@ -1,9 +1,11 @@
 import { Modal } from "../../components/modal";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { ButtonInner, ButtonOuter } from "../button";
 import { useQuery } from '@apollo/client';
-
+import { validateContract } from "../../querys";
+import { ValidateContractQuery } from "../../.utils/gql/types/graphql";
+import { useAccount } from 'wagmi';
 
 const InsideSignUpModalWrapper = styled.div`
   height: 500px;
@@ -57,40 +59,75 @@ export const SignUpModal = ({ toggleShowModal } : SignUpModalProps) => {
   )
 }
 
-const InsideSignUpModal = () => {
+const ConnectWalletMessageWrapper = styled.div`
 
-  return (
-    <InsideSignUpModalWrapper>
-      <ConnectedAddress />
-      <CreateProfile />
-    </InsideSignUpModalWrapper>
-  )
-}
-
-const ConnectedAddress = () => {
+`
+const ConnectWalletMessage = () => {
   return (
     <></>
   )
 }
 
-const CreateProfile = () => {
 
+const InsideSignUpModal = () => {
+  const { address, isConnecting, isDisconnected } = useAccount();
+
+  if (!address) return <ConnectWalletMessage />
+
+  return (
+    <InsideSignUpModalWrapper>
+      {address ?
+        <>
+          <ConnectedAddress address={address}/>
+        </>
+      : <ConnectWalletMessage />}
+    </InsideSignUpModalWrapper>
+  )
+}
+
+type ConnectedAddressProps = {
+  address: string;
+}
+
+const ConnectedAddress = ({ address } : ConnectedAddressProps) => {
+  return (
+    <></>
+  )
+}
+
+type CreateProfileProps = {
+  address: string;
+}
+
+const CreateProfile = ({ address } : CreateProfileProps) => {
+
+  const [accountExists, setAccountExists] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
   const [bio, setBio] = useState<string>('');
-  const [contracts, setContracts] = useState<string[]>([]);
+  const [contracts, setContracts] = useState<ValidateContractQuery[]>([]);
+
+  useEffect(() => {
+    //Check if address is in the DB
+      // If yes,
+      // Set accountExists to true,
+      // Set username
+      // Set Description
+  }, [])
+
 
   return (
     <CreateProfileWrapper>
       <StyledForm>
         <StyledLabel>
           Set Name: <br/>
-          <StyledInput required type="text" name="name" onChange={(e) => setUsername(e.target.value)}/>
+          <StyledInput required type="text" name="name" value={username} onChange={(e) => setUsername(e.target.value)} />
         </StyledLabel>
         <StyledLabel>
           Set Description: <br/>
-          <StyledTextArea required maxLength={280} name="description" onChange={(e) => setBio(e.target.value)}/>
+          <StyledTextArea required maxLength={280} value={bio} name="description" onChange={(e) => setBio(e.target.value)}/>
         </StyledLabel>
-        <ShowCollections />
+        <AddCollections />
+        {/* <ShowCollections contracts={contracts} setContracts={setContracts}/> */}
         <ButtonOuter>
           <ButtonInner type="submit" onClick={() => {}}>Submit</ButtonInner>
         </ButtonOuter>
@@ -99,14 +136,59 @@ const CreateProfile = () => {
   )
 }
 
+const AddCollections = () => {
+  return (
+    <></>
+  )
+}
+
+
+
 const ShowCollectionsWrapper = styled.div`
 
 `
 
-const ShowCollections = () => {
+type ShowCollectionsProps = {
+  contracts: string[];
+  setContracts: Dispatch<SetStateAction<string[]>>;
+}
+
+const ShowCollections = ({ contracts, setContracts } : ShowCollectionsProps) => {
+  const { loading, error, data, refetch, networkStatus } = useQuery(
+    validateContract,
+    {
+      variables: {
+        contractAddress: {collectionAddresses: ['']}
+      }
+    }
+  )
+
   return (
     <ShowCollectionsWrapper>
-
+      {/* {contracts.map((contract) => <CollectionDisplay />)} */}
     </ShowCollectionsWrapper>
   )
 }
+
+type CollectionDisplayProps = {
+  address: string;
+  count: number;
+}
+
+const CollectionDisplayWrapper = styled.div`
+
+`
+
+const CollectionDisplay = ({ address, count } : CollectionDisplayProps) => {
+  return (
+    <CollectionDisplayWrapper>
+    {address + '....' + count}
+    </CollectionDisplayWrapper>
+  )
+}
+
+//Must connect wallet.
+  //If wallet is connected,
+    //Check if it is existing user
+      //If so, populate data accordingly
+    //If not,

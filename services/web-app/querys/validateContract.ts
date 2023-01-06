@@ -1,13 +1,13 @@
-import { gql } from "@apollo/client"
+import { gql } from '../.utils/gql/types';
 
-export const validateContract = gql`
+export const validateContract = gql(`
   query ValidateContract($contractAddress: CollectionsQueryInput) {
-  collections(where: $contractAddress) {
-    nodes {
-      totalSupply
+    collections(where: $contractAddress) {
+      nodes {
+        totalSupply
+      }
     }
   }
-}
-`
+`);
 
 
