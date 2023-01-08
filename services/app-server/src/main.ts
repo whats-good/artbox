@@ -62,8 +62,8 @@ builder.objectType(UnknownError, {
   interfaces: [IError],
 });
 
-builder.prismaObject('ChainAccount', {
-  name: 'ChainAccount',
+builder.prismaObject('User', {
+  name: 'User',
   fields: (t) => ({
     address: t.exposeID('address'),
     tokens: t.relation('tokens', {}),
