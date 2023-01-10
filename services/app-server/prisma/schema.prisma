@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "../node_modules/.prisma/client"
+  output   = "../src/generated/client"
 }
 
 generator pothos {
@@ -48,7 +48,7 @@ model SmartContract {
 
 model Network {
   id    Int      @id @default(autoincrement())
-  name  String
+  name  String   @unique
   smartContract SmartContract[]
 }
 

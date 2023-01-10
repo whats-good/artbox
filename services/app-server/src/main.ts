@@ -12,7 +12,7 @@ import SchemaBuilder from '@pothos/core';
 import ErrorsPlugin from '@pothos/plugin-errors';
 import PrismaPlugin from '@pothos/plugin-prisma';
 import type PrismaTypes from '@pothos/plugin-prisma/generated';
-import { PrismaClient, Token } from '@prisma/client';
+import { PrismaClient } from '../src/generated/client';
 
 export class ArtBoxBaseError extends Error {}
 
@@ -65,16 +65,44 @@ builder.objectType(UnknownError, {
 builder.prismaObject('User', {
   name: 'User',
   fields: (t) => ({
-    address: t.exposeID('address'),
-    tokens: t.relation('tokens', {}),
+    address: t.exposeString('address'),
+    username: t.exposeString('username'),
+    description: t.exposeString('description'),
+    contracts: t.relation('userOnContract', {}),
   }),
 });
 
 builder.prismaObject('SmartContract', {
   name: 'SmartContract',
   fields: (t) => ({
-    address: t.exposeID('address'),
-    name: t.exposeString('name', {
+    id: t.exposeID('id'),
+    contractAddress: t.exposeString('contractAddress'),
+    network: t.exposeInt('networkId'),
+  }),
+});
+
+builder.prismaObject('Network', {
+  name: 'Network',
+  fields: (t) => ({
+    id: t.exposeID('id'),
+    name: t.exposeString('name'),
+  }),
+});
+
+builder.prismaObject('UserOnContract', {
+  name: 'UserOnContract',
+  fields: (t) => ({
+    id: t.exposeID('id'),
+
+  })
+})
+
+
+builder.prismaObject('SmartContract', {
+  name: 'SmartContract',
+  fields: (t) => ({
+    id: t.exposeID('id'),
+    contractAddress: t.exposeString('contractAddress', {
       nullable: true,
     }),
     symbol: t.exposeString('symbol', {
