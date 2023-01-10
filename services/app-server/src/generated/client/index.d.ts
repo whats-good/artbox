@@ -5106,6 +5106,7 @@ export namespace Prisma {
 
   export type SmartContractWhereUniqueInput = {
     id?: number
+    contractAddress?: string
     networkId_contractAddress?: SmartContractNetworkIdContractAddressCompoundUniqueInput
   }
 

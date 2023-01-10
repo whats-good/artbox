@@ -39,7 +39,7 @@ model SmartContract {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  contractAddress   String   @db.Citext
+  contractAddress   String   @unique @db.Citext
   network   Network @relation(fields: [networkId], references: [id])
   networkId Int
   users     UserOnContract[]

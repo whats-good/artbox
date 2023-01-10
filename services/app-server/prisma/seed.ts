@@ -3,8 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prismaClient = new PrismaClient();
 
-// a random wallet address
-
 const ACCOUNTS = {
   SAM: {
     address: '0x5D0f971BCDd15A222A7776d0171225ccfE5EEadE',
@@ -21,116 +19,167 @@ const ACCOUNTS = {
 const SMART_CONTRACTS = {
   CONTRACT_ONE: '0x713ce7dE2296c1d48b61d5662fd381DEDfcB01bD',
   CONTRACT_TWO: '0x7D70D50A8E9D1B4F04F5a2fA2e46078DA9EBB467',
-  CONTRACT_THREE: '0x7D70D50A8E9D1B4F04F5a2fA2e46078DA9EBB467',
+  CONTRACT_THREE: '0x8a90CAb2b38dba80c64b7734e58Ee1dB38B8992e',
   CONTRACT_FOUR: '0x49623cAEc21B1fF5D04d7Bf7B71531369a69bCe4',
 };
 
 async function seed() {
   //Create Network
-  await prismaClient.network.create({
-    data: {
-      name: 'Ethereum',
-    },
+  await prismaClient.network.upsert({
+    where: { name: 'Ethereum' },
+    update: { name: 'Ethereum' },
+    create: { name: 'Ethereum' },
   });
   //Create SmartContracts
-  await prismaClient.smartContract.create({
-    data: {
+  await prismaClient.smartContract.upsert({
+    where: { contractAddress: SMART_CONTRACTS.CONTRACT_ONE },
+    update: {
+      contractAddress: SMART_CONTRACTS.CONTRACT_ONE,
+      network: {
+        connect: { name: 'Ethereum' },
+      },
+    },
+    create: {
       contractAddress: SMART_CONTRACTS.CONTRACT_ONE,
       network: {
         connect: { name: 'Ethereum' },
       },
     },
   });
-  //Create Users
-  await prismaClient.user.create({
-    data: {
-      address: ACCOUNTS.SAM.address,
-      username: ACCOUNTS.SAM.username,
-      contracts: {
-        create: [
-          {
-
-          },
-        ],
+  await prismaClient.smartContract.upsert({
+    where: { contractAddress: SMART_CONTRACTS.CONTRACT_TWO },
+    update: {
+      contractAddress: SMART_CONTRACTS.CONTRACT_TWO,
+      network: {
+        connect: { name: 'Ethereum' },
+      },
+    },
+    create: {
+      contractAddress: SMART_CONTRACTS.CONTRACT_TWO,
+      network: {
+        connect: { name: 'Ethereum' },
       },
     },
   });
-
-  await prismaClient.smartContract.createMany({
-    data: [
-      {
-        address: SMART_CONTRACTS.CONTRACT_ONE,
-        name: 'Smart Contract One',
-        symbol: 'SC1',
-        decimals: 18,
+  await prismaClient.smartContract.upsert({
+    where: { contractAddress: SMART_CONTRACTS.CONTRACT_THREE },
+    update: {
+      contractAddress: SMART_CONTRACTS.CONTRACT_THREE,
+      network: {
+        connect: { name: 'Ethereum' },
       },
-      {
-        address: SMART_CONTRACTS.CONTRACT_TWO,
-        name: 'Smart Contract Two',
-        symbol: 'SC2',
-        decimals: 18,
+    },
+    create: {
+      contractAddress: SMART_CONTRACTS.CONTRACT_THREE,
+      network: {
+        connect: { name: 'Ethereum' },
       },
-    ],
+    },
   });
-
-  await prismaClient.token.createMany({
-    data: [
-      {
-        id: uuidv4(),
-        contractAddress: SMART_CONTRACTS.CONTRACT_ONE,
-        ownerAddress: ACCOUNTS.ALICE,
-        tokenId: '1',
-        imageURL:
-          'https://news.artnet.com/app/news-upload/2021/11/FGHMFCBDIVHB3N6PSB7GNB53NM.png',
+  await prismaClient.smartContract.upsert({
+    where: { contractAddress: SMART_CONTRACTS.CONTRACT_FOUR },
+    update: {
+      contractAddress: SMART_CONTRACTS.CONTRACT_FOUR,
+      network: {
+        connect: { name: 'Ethereum' },
       },
-      {
-        id: uuidv4(),
-        contractAddress: SMART_CONTRACTS.CONTRACT_ONE,
-        ownerAddress: ACCOUNTS.ALICE,
-        tokenId:
-          'https://cryptoslate.com/wp-content/themes/cryptoslate-2020/imgresize/timthumb.php?src=https://cryptoslate.com/wp-content/uploads/2022/02/cryptopunk-ethereum.jpg&w=600&h=315&q=75',
+    },
+    create: {
+      contractAddress: SMART_CONTRACTS.CONTRACT_FOUR,
+      network: {
+        connect: { name: 'Ethereum' },
       },
-      {
-        id: uuidv4(),
-        contractAddress: SMART_CONTRACTS.CONTRACT_ONE,
-        ownerAddress: ACCOUNTS.ALICE,
-        tokenId: '3',
+    },
+  });
+  //Create Users
+  await prismaClient.user.upsert({
+    where: { address: ACCOUNTS.SAM.address },
+    update: {
+      address: ACCOUNTS.SAM.address,
+      username: ACCOUNTS.SAM.username,
+      description: ACCOUNTS.SAM.bio,
+    },
+    create: {
+      address: ACCOUNTS.SAM.address,
+      username: ACCOUNTS.SAM.username,
+      description: ACCOUNTS.SAM.bio,
+    },
+  });
+  await prismaClient.user.upsert({
+    where: { address: ACCOUNTS.LOGAN.address },
+    update: {
+      address: ACCOUNTS.LOGAN.address,
+      username: ACCOUNTS.LOGAN.username,
+      description: ACCOUNTS.LOGAN.bio,
+    },
+    create: {
+      address: ACCOUNTS.LOGAN.address,
+      username: ACCOUNTS.LOGAN.username,
+      description: ACCOUNTS.LOGAN.bio,
+    },
+  });
+  //Connect Users to their liked contracts
+  await prismaClient.userOnContract.create({
+    data: {
+      user: {
+        connect: { username: ACCOUNTS.SAM.username },
       },
-      {
-        id: uuidv4(),
-        contractAddress: SMART_CONTRACTS.CONTRACT_ONE,
-        ownerAddress: ACCOUNTS.BOB,
-        tokenId: '4',
+      smartContract: {
+        connect: { contractAddress: SMART_CONTRACTS.CONTRACT_ONE },
       },
-      {
-        id: uuidv4(),
-        contractAddress: SMART_CONTRACTS.CONTRACT_ONE,
-        ownerAddress: ACCOUNTS.BOB,
-        tokenId: '5',
+    },
+  });
+  await prismaClient.userOnContract.create({
+    data: {
+      user: {
+        connect: { username: ACCOUNTS.SAM.username },
       },
-      {
-        id: uuidv4(),
-        contractAddress: SMART_CONTRACTS.CONTRACT_TWO,
-        ownerAddress: ACCOUNTS.ALICE,
-        tokenId: '6',
+      smartContract: {
+        connect: { contractAddress: SMART_CONTRACTS.CONTRACT_TWO },
       },
-      {
-        id: uuidv4(),
-        contractAddress: SMART_CONTRACTS.CONTRACT_TWO,
-        ownerAddress: ACCOUNTS.BOB,
-        tokenId: '7',
+    },
+  });
+  await prismaClient.userOnContract.create({
+    data: {
+      user: {
+        connect: { username: ACCOUNTS.LOGAN.username },
       },
-      {
-        id: uuidv4(),
-        contractAddress: SMART_CONTRACTS.CONTRACT_TWO,
-        ownerAddress: ACCOUNTS.BOB,
-        tokenId: '8',
+      smartContract: {
+        connect: { contractAddress: SMART_CONTRACTS.CONTRACT_ONE },
       },
-    ],
+    },
+  });
+  await prismaClient.userOnContract.create({
+    data: {
+      user: {
+        connect: { username: ACCOUNTS.LOGAN.username },
+      },
+      smartContract: {
+        connect: { contractAddress: SMART_CONTRACTS.CONTRACT_TWO },
+      },
+    },
+  });
+  await prismaClient.userOnContract.create({
+    data: {
+      user: {
+        connect: { username: ACCOUNTS.LOGAN.username },
+      },
+      smartContract: {
+        connect: { contractAddress: SMART_CONTRACTS.CONTRACT_THREE },
+      },
+    },
+  });
+  await prismaClient.userOnContract.create({
+    data: {
+      user: {
+        connect: { username: ACCOUNTS.LOGAN.username },
+      },
+      smartContract: {
+        connect: { contractAddress: SMART_CONTRACTS.CONTRACT_FOUR },
+      },
+    },
   });
 }
-
-//TODO: add top level awaits
 
 seed()
   .then(() => {
