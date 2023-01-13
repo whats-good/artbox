@@ -7,12 +7,18 @@ import { validateContract } from "../../querys";
 import { ValidateContractQuery } from "../../.utils/gql/types/graphql";
 import { useAccount } from 'wagmi';
 
+//STYLES
+const CreateProfileWrapper = styled.div`
+`
+const ConnectWalletMessageWrapper = styled.div`
+`
+const ShowCollectionsWrapper = styled.div`
+`
+const CollectionDisplayWrapper = styled.div`
+`
 const InsideSignUpModalWrapper = styled.div`
   height: 500px;
   width: 450px;
-`
-const CreateProfileWrapper = styled.div`
-
 `
 const StyledInput = styled.input`
   width: 90%;
@@ -36,8 +42,23 @@ const StyledTextArea = styled.textarea`
   height: 150px;
 `
 
+//TYPES
+type CollectionDisplayProps = {
+  address: string;
+  count: number;
+}
 type SignUpModalProps = {
   toggleShowModal: Dispatch<SetStateAction<Boolean>>;
+}
+type CreateProfileProps = {
+  address: string;
+}
+type ShowCollectionsProps = {
+  contracts: string[];
+  setContracts: Dispatch<SetStateAction<string[]>>;
+}
+type ConnectedAddressProps = {
+  address: string;
 }
 
 export const SignUpModal = ({ toggleShowModal } : SignUpModalProps) => {
@@ -59,15 +80,11 @@ export const SignUpModal = ({ toggleShowModal } : SignUpModalProps) => {
   )
 }
 
-const ConnectWalletMessageWrapper = styled.div`
-
-`
 const ConnectWalletMessage = () => {
   return (
     <></>
   )
 }
-
 
 const InsideSignUpModal = () => {
   const { address, isConnecting, isDisconnected } = useAccount();
@@ -85,18 +102,10 @@ const InsideSignUpModal = () => {
   )
 }
 
-type ConnectedAddressProps = {
-  address: string;
-}
-
 const ConnectedAddress = ({ address } : ConnectedAddressProps) => {
   return (
     <></>
   )
-}
-
-type CreateProfileProps = {
-  address: string;
 }
 
 const CreateProfile = ({ address } : CreateProfileProps) => {
@@ -142,17 +151,6 @@ const AddCollections = () => {
   )
 }
 
-
-
-const ShowCollectionsWrapper = styled.div`
-
-`
-
-type ShowCollectionsProps = {
-  contracts: string[];
-  setContracts: Dispatch<SetStateAction<string[]>>;
-}
-
 const ShowCollections = ({ contracts, setContracts } : ShowCollectionsProps) => {
   const { loading, error, data, refetch, networkStatus } = useQuery(
     validateContract,
@@ -170,15 +168,6 @@ const ShowCollections = ({ contracts, setContracts } : ShowCollectionsProps) => 
   )
 }
 
-type CollectionDisplayProps = {
-  address: string;
-  count: number;
-}
-
-const CollectionDisplayWrapper = styled.div`
-
-`
-
 const CollectionDisplay = ({ address, count } : CollectionDisplayProps) => {
   return (
     <CollectionDisplayWrapper>
@@ -186,9 +175,3 @@ const CollectionDisplay = ({ address, count } : CollectionDisplayProps) => {
     </CollectionDisplayWrapper>
   )
 }
-
-//Must connect wallet.
-  //If wallet is connected,
-    //Check if it is existing user
-      //If so, populate data accordingly
-    //If not,

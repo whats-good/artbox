@@ -1,6 +1,6 @@
-import { useAccount } from 'wagmi'
-import styled from 'styled-components';
-import { shortenAddress } from '../../helpers/shortenAddress';
+import { useAccount } from "wagmi"
+import styled from "styled-components";
+import { shortenAddress } from "../../helpers/shortenAddress";
 
 const ConnectedAccountWrapper = styled.div`
   display: flex;
