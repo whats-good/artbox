@@ -81,7 +81,6 @@ builder.prismaObject('User', {
       type: [SmartContract],
       resolve: (user) =>
         user.contracts.map(({ smartContract }) => {
-          console.log('Smart Contract', smartContract);
           return smartContract;
         }),
     }),
@@ -143,107 +142,6 @@ builder.queryType({
     }),
   }),
 });
-
-// builder.queryType({
-//   fields: (t) => ({
-//     smartContract: t.prismaField({
-//       errors: {
-//         types: [NotFoundError],
-//         directResult: false,
-//       },
-//       type: 'SmartContract',
-//       args: {
-//         address: t.arg.string({
-//           required: true,
-//         }),
-//       },
-//       resolve: async (query, _, { address }) => {
-//         // TODO: findUnique should return "OR NULL"
-//         const contract = await prismaClient.smartContract.findUnique({
-//           ...query,
-//           where: {
-//             address,
-//           },
-//         });
-//         if (!contract) {
-//           throw new NotFoundError();
-//         }
-//         return contract;
-//       },
-//     }),
-//     chainAccount: t.prismaField({
-//       errors: {
-//         types: [NotFoundError],
-//         directResult: false,
-//       },
-//       type: 'ChainAccount',
-//       args: {
-//         address: t.arg.string({
-//           required: true,
-//         }),
-//       },
-//       resolve: async (query, _, { address }) => {
-//         // TODO: findUnique should return "OR NULL"
-//         const account = await prismaClient.chainAccount.findUnique({
-//           ...query,
-//           where: {
-//             address,
-//           },
-//         });
-//         if (!account) {
-//           throw new NotFoundError();
-//         }
-//         return account;
-//       },
-//     }),
-//     token: t.prismaField({
-//       errors: {
-//         types: [NotFoundError],
-//         directResult: false,
-//       },
-//       type: 'Token',
-//       args: {
-//         id: t.arg.string({
-//           required: false,
-//         }),
-//         contractAddress: t.arg.string({
-//           required: false,
-//         }),
-//         tokenId: t.arg.string({
-//           required: false,
-//         }),
-//       },
-//       resolve: async (query, _, { id, contractAddress, tokenId }) => {
-//         // TODO: findUnique should return "OR NULL"
-//         let token: Token;
-//         if (id) {
-//           token = await prismaClient.token.findUnique({
-//             ...query,
-//             where: {
-//               id,
-//             },
-//           });
-//         } else if (contractAddress && tokenId) {
-//           token = await prismaClient.token.findUnique({
-//             ...query,
-//             where: {
-//               tokenId_contractAddress: {
-//                 tokenId,
-//                 contractAddress,
-//               },
-//             },
-//           });
-//         } else {
-//           // TODO: throw a bad input union error here
-//         }
-//         if (!token) {
-//           throw new NotFoundError();
-//         }
-//         return token;
-//       },
-//     }),
-//   }),
-// });
 
 const server = createServer({
   schema: builder.toSchema(),
