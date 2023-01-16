@@ -1,4 +1,4 @@
-import { SmartContract } from './../prisma/@prisma/client/index.d';
+// import type { SmartContract } from './../prisma/@prisma/client/index.d';
 // import { NestFactory } from '@nestjs/core';
 // import { AppModule } from '@/modules/app/app.module';
 
@@ -13,7 +13,8 @@ import SchemaBuilder from '@pothos/core';
 import ErrorsPlugin from '@pothos/plugin-errors';
 import PrismaPlugin from '@pothos/plugin-prisma';
 import type PrismaTypes from '@pothos/plugin-prisma/generated';
-import { PrismaClient } from '../src/generated/client';
+import { PrismaClient } from '@prisma/client';
+import { Console } from 'console';
 
 export class ArtBoxBaseError extends Error {}
 
@@ -64,20 +65,36 @@ builder.objectType(UnknownError, {
 });
 
 builder.prismaObject('User', {
-  name: 'User',
   fields: (t) => ({
+    id: t.exposeID('id'),
     address: t.exposeString('address'),
     username: t.exposeString('username'),
     description: t.exposeString('description'),
+    contracts: t.field({
+      select: (args, ctx, nestedSelection) => ({
+        contracts: {
+          select: {
+            smartContract: nestedSelection(true),
+          },
+        },
+      }),
+      type: [SmartContract],
+      resolve: (user) =>
+        user.contracts.map(({ smartContract }) => {
+          console.log('Smart Contract', smartContract);
+          return smartContract;
+        }),
+    }),
   }),
 });
 
-builder.prismaObject('SmartContract', {
+const SmartContract = builder.prismaObject('SmartContract', {
   name: 'SmartContract',
   fields: (t) => ({
     id: t.exposeID('id'),
     contractAddress: t.exposeString('contractAddress'),
-    network: t.exposeInt('networkId'),
+    network: t.relation('network', {}),
+    users: t.relation('users', {}),
   }),
 });
 
@@ -93,6 +110,8 @@ builder.prismaObject('UserOnContract', {
   name: 'UserOnContract',
   fields: (t) => ({
     id: t.exposeID('id'),
+    smartContractId: t.exposeInt('smartContractId'),
+    userId: t.exposeInt('userId'),
   }),
 });
 
