@@ -1,4 +1,4 @@
-import { useConnect } from 'wagmi';
+import { useConnect } from "wagmi";
 import { ConnectWalletWrapper } from "./styled/topbarstyled";
 import { ButtonOuter, ButtonInner } from "../button/buttonstyled";
 
@@ -14,7 +14,7 @@ export const ConnectWallet = () => {
             Connect
             {isLoading &&
               connector.id === pendingConnector?.id &&
-              ' (connecting)'}
+              " (connecting)"}
           </ButtonInner>
         </ButtonOuter>
       ))}

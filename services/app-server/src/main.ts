@@ -1,3 +1,4 @@
+// import type { SmartContract } from './../prisma/@prisma/client/index.d';
 // import { NestFactory } from '@nestjs/core';
 // import { AppModule } from '@/modules/app/app.module';
 
@@ -12,7 +13,7 @@ import SchemaBuilder from '@pothos/core';
 import ErrorsPlugin from '@pothos/plugin-errors';
 import PrismaPlugin from '@pothos/plugin-prisma';
 import type PrismaTypes from '@pothos/plugin-prisma/generated';
-import { PrismaClient, Token } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 export class ArtBoxBaseError extends Error {}
 
@@ -62,148 +63,142 @@ builder.objectType(UnknownError, {
   interfaces: [IError],
 });
 
-builder.prismaObject('ChainAccount', {
-  name: 'ChainAccount',
+const User = builder.prismaObject('User', {
   fields: (t) => ({
-    address: t.exposeID('address'),
-    tokens: t.relation('tokens', {}),
+    id: t.exposeID('id'),
+    address: t.exposeString('address'),
+    username: t.exposeString('username'),
+    description: t.exposeString('description'),
+    contracts: t.field({
+      select: (args, ctx, nestedSelection) => ({
+        contracts: {
+          select: {
+            smartContract: nestedSelection(true),
+          },
+        },
+      }),
+      type: [SmartContract],
+      resolve: (user) =>
+        user.contracts.map(({ smartContract }) => {
+          return smartContract;
+        }),
+    }),
   }),
 });
 
-builder.prismaObject('SmartContract', {
+const SmartContract = builder.prismaObject('SmartContract', {
   name: 'SmartContract',
   fields: (t) => ({
-    address: t.exposeID('address'),
-    name: t.exposeString('name', {
-      nullable: true,
-    }),
-    symbol: t.exposeString('symbol', {
-      nullable: true,
-    }),
-    decimals: t.exposeInt('decimals', {
-      nullable: true,
-    }),
-    tokens: t.relation('tokens', {}),
+    id: t.exposeID('id'),
+    contractAddress: t.exposeString('contractAddress'),
+    network: t.relation('network', {}),
+    users: t.relation('users', {}),
   }),
 });
 
-builder.prismaObject('Token', {
-  name: 'Token',
+builder.prismaObject('Network', {
+  name: 'Network',
   fields: (t) => ({
-    id: t.exposeID('id', {
-      description: 'The global id of the token',
-    }),
-    tokenId: t.exposeString('tokenId', {
-      description: 'The local id of the token within the contract',
-    }),
-    smartContract: t.relation('smartContract', {}),
-    owner: t.relation('owner', {}),
-    imageURL: t.exposeString('imageURL', {
-      nullable: true,
-    }),
+    id: t.exposeID('id'),
+    name: t.exposeString('name'),
+  }),
+});
+
+builder.prismaObject('UserOnContract', {
+  name: 'UserOnContract',
+  fields: (t) => ({
+    id: t.exposeID('id'),
+    smartContractId: t.exposeInt('smartContractId'),
+    userId: t.exposeInt('userId'),
   }),
 });
 
 builder.queryType({
   fields: (t) => ({
-    smartContract: t.prismaField({
+    user: t.prismaField({
       errors: {
         types: [NotFoundError],
         directResult: false,
       },
-      type: 'SmartContract',
+      type: 'User',
       args: {
-        address: t.arg.string({
+        username: t.arg.string({
           required: true,
         }),
       },
-      resolve: async (query, _, { address }) => {
-        // TODO: findUnique should return "OR NULL"
-        const contract = await prismaClient.smartContract.findUnique({
+      resolve: async (query, _, { username }) => {
+        const user = await prismaClient.user.findUnique({
           ...query,
           where: {
-            address,
+            username: username,
           },
         });
-        if (!contract) {
+        if (!user) {
           throw new NotFoundError();
         }
-        return contract;
-      },
-    }),
-    chainAccount: t.prismaField({
-      errors: {
-        types: [NotFoundError],
-        directResult: false,
-      },
-      type: 'ChainAccount',
-      args: {
-        address: t.arg.string({
-          required: true,
-        }),
-      },
-      resolve: async (query, _, { address }) => {
-        // TODO: findUnique should return "OR NULL"
-        const account = await prismaClient.chainAccount.findUnique({
-          ...query,
-          where: {
-            address,
-          },
-        });
-        if (!account) {
-          throw new NotFoundError();
-        }
-        return account;
-      },
-    }),
-    token: t.prismaField({
-      errors: {
-        types: [NotFoundError],
-        directResult: false,
-      },
-      type: 'Token',
-      args: {
-        id: t.arg.string({
-          required: false,
-        }),
-        contractAddress: t.arg.string({
-          required: false,
-        }),
-        tokenId: t.arg.string({
-          required: false,
-        }),
-      },
-      resolve: async (query, _, { id, contractAddress, tokenId }) => {
-        // TODO: findUnique should return "OR NULL"
-        let token: Token;
-        if (id) {
-          token = await prismaClient.token.findUnique({
-            ...query,
-            where: {
-              id,
-            },
-          });
-        } else if (contractAddress && tokenId) {
-          token = await prismaClient.token.findUnique({
-            ...query,
-            where: {
-              tokenId_contractAddress: {
-                tokenId,
-                contractAddress,
-              },
-            },
-          });
-        } else {
-          // TODO: throw a bad input union error here
-        }
-        if (!token) {
-          throw new NotFoundError();
-        }
-        return token;
+        return user;
       },
     }),
   }),
 });
+
+const UserInput = builder.inputType('UserInput', {
+  fields: (t) => ({
+    username: t.string({ required: true }),
+    address: t.string({ required: true }),
+    description: t.string({ required: false }),
+  }),
+});
+
+builder.mutationType({
+  fields: (t) => ({
+    createUser: t.field({
+      type: User,
+      args: {
+        input: t.arg({ type: UserInput, required: true }),
+      },
+      resolve: async (root, args) => {
+        const user = await prismaClient.user.upsert({
+          where: { address: args.input.address },
+          update: {
+            address: args.input.address,
+            username: args.input.username,
+            description: args.input.description,
+          },
+          create: {
+            address: args.input.address,
+            username: args.input.username,
+            description: args.input.description,
+          },
+        });
+        return user;
+      },
+    }),
+  }),
+});
+
+// const ContractInput = builder.inputType('ContractInput', {
+//   fields: (t) => ({
+//     username: t.string({ required: true }),
+//     address: t.string({ required: true }),
+//   }),
+// });
+
+// builder.mutationType({
+//   fields: (t) => ({
+//     createContract: t.field({
+//       type: SmartContract,
+//       args: {
+//         input: t.arg({ type: ContractInput, required: true }),
+//       },
+//       resolve: async (root, args) => {
+
+//       },
+//     }),
+//   }),
+// });
+
+
 
 const server = createServer({
   schema: builder.toSchema(),

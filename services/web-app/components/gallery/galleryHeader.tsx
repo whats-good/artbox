@@ -1,8 +1,8 @@
 import styled from "styled-components"
 import { useState } from "react";
 import { ButtonOuter, ButtonInner } from "../button";
-import { ArtistBioModalInside } from "./artistBioModal";
-import { Modal } from "./artistBioModal";
+import { ArtistBioModalInside } from "./artistInfoModalContent";
+import { Modal } from "../modal";
 
 type GalleryHeaderProps = {
   user: string;
@@ -50,7 +50,7 @@ const ArtistInfoButton = ({ bio } : ArtistInfoButtonProps) => {
       </ButtonOuter>
     </ArtistInfoButtonWrapper>
     {showModal && (
-        <Modal toggleShowModal={toggleShowModal} title="Additional Artist Info">
+        <Modal toggleShowModal={toggleShowModal} title="Additional Artist Info" height="600px" width="450px">
           <ArtistBioModalInside bio={bio} />
         </Modal>
     )}
