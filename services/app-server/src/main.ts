@@ -139,6 +139,28 @@ builder.queryType({
         return user;
       },
     }),
+    discoverUsers: t.prismaField({
+      errors: {
+        types: [NotFoundError],
+        directResult: false,
+      },
+      args: {
+        page: t.arg.int({
+          required: false,
+        }),
+      },
+      type: [User],
+      resolve: async (query, _, { page }) => {
+        const users = await prismaClient.user.findMany({
+          ...query,
+          take: 10,
+        });
+        if (!users) {
+          throw new NotFoundError();
+        }
+        return users;
+      },
+    }),
   }),
 });
 
@@ -178,6 +200,9 @@ builder.mutationType({
             description: args.input.description,
           },
         });
+        if (!user) {
+          throw new UnknownError();
+        }
         return user;
       },
     }),
