@@ -14,7 +14,6 @@ import ErrorsPlugin from '@pothos/plugin-errors';
 import PrismaPlugin from '@pothos/plugin-prisma';
 import type PrismaTypes from '@pothos/plugin-prisma/generated';
 import { PrismaClient } from '@prisma/client';
-import { Console } from 'console';
 
 export class ArtBoxBaseError extends Error {}
 
@@ -64,7 +63,7 @@ builder.objectType(UnknownError, {
   interfaces: [IError],
 });
 
-builder.prismaObject('User', {
+const User = builder.prismaObject('User', {
   fields: (t) => ({
     id: t.exposeID('id'),
     address: t.exposeString('address'),
@@ -142,6 +141,64 @@ builder.queryType({
     }),
   }),
 });
+
+const UserInput = builder.inputType('UserInput', {
+  fields: (t) => ({
+    username: t.string({ required: true }),
+    address: t.string({ required: true }),
+    description: t.string({ required: false }),
+  }),
+});
+
+builder.mutationType({
+  fields: (t) => ({
+    createUser: t.field({
+      type: User,
+      args: {
+        input: t.arg({ type: UserInput, required: true }),
+      },
+      resolve: async (root, args) => {
+        const user = await prismaClient.user.upsert({
+          where: { address: args.input.address },
+          update: {
+            address: args.input.address,
+            username: args.input.username,
+            description: args.input.description,
+          },
+          create: {
+            address: args.input.address,
+            username: args.input.username,
+            description: args.input.description,
+          },
+        });
+        return user;
+      },
+    }),
+  }),
+});
+
+// const ContractInput = builder.inputType('ContractInput', {
+//   fields: (t) => ({
+//     username: t.string({ required: true }),
+//     address: t.string({ required: true }),
+//   }),
+// });
+
+// builder.mutationType({
+//   fields: (t) => ({
+//     createContract: t.field({
+//       type: SmartContract,
+//       args: {
+//         input: t.arg({ type: ContractInput, required: true }),
+//       },
+//       resolve: async (root, args) => {
+
+//       },
+//     }),
+//   }),
+// });
+
+
 
 const server = createServer({
   schema: builder.toSchema(),
