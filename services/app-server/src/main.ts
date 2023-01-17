@@ -150,6 +150,13 @@ const UserInput = builder.inputType('UserInput', {
   }),
 });
 
+const ContractInput = builder.inputType('ContractInput', {
+  fields: (t) => ({
+    userAddress: t.string({ required: true }),
+    contractAddress: t.string({ required: true }),
+  }),
+});
+
 builder.mutationType({
   fields: (t) => ({
     createUser: t.field({
@@ -174,31 +181,45 @@ builder.mutationType({
         return user;
       },
     }),
+    createContract: t.field({
+      type: SmartContract,
+      args: {
+        input: t.arg({ type: ContractInput, required: true }),
+      },
+      resolve: async (root, args) => {
+        const contract = await prismaClient.smartContract.upsert({
+          where: { contractAddress: args.input.contractAddress },
+          update: {
+            contractAddress: args.input.contractAddress,
+            network: {
+              connect: { name: 'Ethereum' },
+            },
+          },
+          create: {
+            contractAddress: args.input.contractAddress,
+            network: {
+              connect: { name: 'Ethereum' },
+            },
+          },
+        });
+        const connectUser = await prismaClient.userOnContract.create({
+          data: {
+            user: {
+              connect: { address: args.input.userAddress },
+            },
+            smartContract: {
+              connect: { contractAddress: args.input.contractAddress },
+            },
+          },
+        });
+        if (!connectUser || !contract) {
+          throw new UnknownError();
+        }
+        return contract;
+      },
+    }),
   }),
 });
-
-// const ContractInput = builder.inputType('ContractInput', {
-//   fields: (t) => ({
-//     username: t.string({ required: true }),
-//     address: t.string({ required: true }),
-//   }),
-// });
-
-// builder.mutationType({
-//   fields: (t) => ({
-//     createContract: t.field({
-//       type: SmartContract,
-//       args: {
-//         input: t.arg({ type: ContractInput, required: true }),
-//       },
-//       resolve: async (root, args) => {
-
-//       },
-//     }),
-//   }),
-// });
-
-
 
 const server = createServer({
   schema: builder.toSchema(),
