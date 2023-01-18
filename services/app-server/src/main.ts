@@ -145,15 +145,23 @@ builder.queryType({
         directResult: false,
       },
       args: {
-        page: t.arg.int({
+        take: t.arg.int({
           required: false,
+          defaultValue: 10,
+        }),
+        cursor: t.arg.int({
+          required: false,
+          defaultValue: 1,
         }),
       },
       type: [User],
-      resolve: async (query, _, { page }) => {
+      resolve: async (query, _, { take, cursor }) => {
         const users = await prismaClient.user.findMany({
           ...query,
-          take: 10,
+          take: take,
+          cursor: {
+            id: cursor,
+          },
         });
         if (!users) {
           throw new NotFoundError();
