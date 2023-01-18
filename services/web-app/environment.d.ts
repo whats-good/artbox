@@ -6,6 +6,7 @@ declare global {
       NEXT_PUBLIC_ZORA_GRAPHQL_URI: string;
       ZORA_GRAPHQL_URI: string;
       USER_API: string;
+      INTERNAL_API: string;
     }
   }
 }

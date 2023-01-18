@@ -1,7 +1,20 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from "@apollo/client";
+
+
+const zoraEndpoint = new HttpLink({
+    uri: process.env.ZORA_GRAPHQL_URI,
+})
+const userEndpoint = new HttpLink({
+    uri: process.env.INTERNAL_API,
+})
+
 
 const apolloClient = new ApolloClient({
-    uri: process.env.NEXT_PUBLIC_ZORA_GRAPHQL_URI,
+    link: ApolloLink.split(
+        operation => operation.getContext().clientName === "zora",
+        zoraEndpoint,
+        userEndpoint,
+    ),
     cache: new InMemoryCache(),
 });
 

@@ -2,7 +2,7 @@ import { InferGetServerSidePropsType } from 'next';
 import { GetServerSideProps } from 'next';
 import client from '../../utils/apollo-client';
 import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
-import { collectionInfo } from '../../querys';
+import { collectionInfo, userInfo } from '../../querys';
 import { PageWrapper, BlueBar, TopBar, Gallery, ConnectedAccount } from '../../components/'
 
 type Profile = {
@@ -41,7 +41,31 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
     }
   }
   //TODO: Check if User exists
+  try {
+    const { data } = await client.query({
+      variables: {
 
+      },
+      query: userInfo,
+    });
+
+    return {
+      props: {
+        __typename: "Success",
+        user: {}
+      }
+    }
+
+  } catch(e) {
+    console.log(e);
+    return {
+      props: {
+        __typename: "FetchError",
+        message: "There was an error fetching token Data: ", e,
+        notFound: true
+      }
+    }
+  }
   //Finding user's 'liked' collections
   try {
     const res = await fetch(process.env.USER_API);

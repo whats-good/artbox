@@ -1,15 +1,17 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
-  schema: 'https://api.zora.co/graphql',
   documents: ['pages/**/*.tsx', 'components/**/*.tsx', 'querys/**/*.ts', '!utils/gql/**/*'],
   generates: {
-    '.utils/gql/types/': {
+    '.utils/internalTypes': {
+      schema: process.env.INTERNAL_API,
       preset: 'client',
-      plugins: [],
-      presetConfig: {
-        gqlTagName: 'gql',
-      },
+      plugins: ['typescript'],
+    },
+    '.utils/zoraTypes': {
+      schema: process.env.ZORA_GRAPHQL_URI,
+      preset: 'client',
+      plugins: ['typescript'],
     },
   },
 };
