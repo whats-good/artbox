@@ -1,4 +1,4 @@
-import { gql } from '../.utils/gql/types'
+import { gql } from "../../.utils/zoraTypes";
 
 export const collectionInfo = gql(`
   query CollectionInfo(
@@ -70,4 +70,4 @@ export const collectionInfo = gql(`
         )
       }
     }
-`)
+`);

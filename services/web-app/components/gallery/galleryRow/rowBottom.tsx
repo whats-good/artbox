@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components";
 import { useQuery } from "@apollo/client";
-import { tokenGallery } from "../../../querys";
+import { tokenGallery } from "../../../querys/zora";
 import { ButtonInner, ButtonOuter } from '../../button';
 import { parseIpfs } from '../../../helpers';
 

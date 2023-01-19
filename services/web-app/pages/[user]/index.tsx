@@ -1,8 +1,8 @@
 import { InferGetServerSidePropsType } from 'next';
 import { GetServerSideProps } from 'next';
 import client from '../../utils/apollo-client';
-import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
-import { collectionInfo, userInfo } from '../../querys';
+import type { CollectionInfoQuery } from '../../.utils/zoraTypes/graphql'
+import { collectionInfo, userInfo } from '../../querys/zora';
 import { PageWrapper, BlueBar, TopBar, Gallery, ConnectedAccount } from '../../components/'
 
 type Profile = {
@@ -41,31 +41,31 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
     }
   }
   //TODO: Check if User exists
-  try {
-    const { data } = await client.query({
-      variables: {
+  // try {
+  //   const { data } = await client.query({
+  //     variables: {
 
-      },
-      query: userInfo,
-    });
+  //     },
+  //     query: userInfo,
+  //   });
 
-    return {
-      props: {
-        __typename: "Success",
-        user: {}
-      }
-    }
+  //   return {
+  //     props: {
+  //       __typename: "Success",
+  //       user: {}
+  //     }
+  //   }
 
-  } catch(e) {
-    console.log(e);
-    return {
-      props: {
-        __typename: "FetchError",
-        message: "There was an error fetching token Data: ", e,
-        notFound: true
-      }
-    }
-  }
+  // } catch(e) {
+  //   console.log(e);
+  //   return {
+  //     props: {
+  //       __typename: "FetchError",
+  //       message: "There was an error fetching token Data: ", e,
+  //       notFound: true
+  //     }
+  //   }
+  // }
   //Finding user's 'liked' collections
   try {
     const res = await fetch(process.env.USER_API);
@@ -84,7 +84,7 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
   //For each collection, query the Zora API
   try {
 
-    let contracts = [];
+    const contracts = [];
 
     for (let i = 0; i < profile.collections.length; i++) {
       const { data } = await client.query({
@@ -94,6 +94,7 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
           aggregateStatAddress: {collectionAddresses: [profile.collections[i]]},
           ownerCountAddress: {collectionAddresses: [profile.collections[i]]},
         },
+        context: {clientName: 'zora'},
         query: collectionInfo,
       });
       contracts.push(data);

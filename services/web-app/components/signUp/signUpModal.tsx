@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { ButtonInner, ButtonOuter } from "../button";
 import { useQuery } from '@apollo/client';
-import { validateContract } from "../../querys";
+import { validateContract } from "../../querys/zora";
 import { ValidateContractQuery } from "../../.utils/gql/types/graphql";
 import { useAccount } from 'wagmi';
 

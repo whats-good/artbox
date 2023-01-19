@@ -1,7 +1,7 @@
 import { InferGetServerSidePropsType, GetServerSidePropsResult } from 'next';
 import { GetServerSideProps } from 'next';
 import client from '../../../utils/apollo-client';
-import { tokenInfo } from '../../../querys';
+import { tokenInfo } from '../../../querys/zora';
 import type { TokenInfoQuery } from '../../../.utils/gql/types/graphql';
 import { PageWrapper, TopBar, SingleTokenView, BlueBar } from '../../../components';
 

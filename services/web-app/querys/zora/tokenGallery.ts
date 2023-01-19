@@ -1,4 +1,4 @@
-import { gql } from '../.utils/gql/types'
+import { gql } from "../../.utils/zoraTypes";
 
 export const tokenGallery = gql(`
   query tokenGallery($tokenAddress: TokensQueryInput, $page: PaginationInput) {

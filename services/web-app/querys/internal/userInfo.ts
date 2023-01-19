@@ -1,4 +1,4 @@
-import { gql } from '../.utils/gql/types';
+import { gql } from "../../.utils/internalTypes";
 
 export const userInfo = gql(`
   query userInfo {

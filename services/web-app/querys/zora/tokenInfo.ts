@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client"
+import { gql } from "@apollo/client";
 
 export const tokenInfo = gql`
   query tokenInfo($token: TokenInput!) {
@@ -29,7 +29,7 @@ export const tokenInfo = gql`
         }
         tokenStandard
       }
-      events(sort: {sortKey: CREATED, sortDirection: DESC}) {
+      events(sort: { sortKey: CREATED, sortDirection: DESC }) {
         eventType
         transactionInfo {
           transactionHash
@@ -68,5 +68,4 @@ export const tokenInfo = gql`
       }
     }
   }
-`
-
+`;
