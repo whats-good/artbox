@@ -2,7 +2,8 @@ import { InferGetServerSidePropsType } from 'next';
 import { GetServerSideProps } from 'next';
 import client from '../../utils/apollo-client';
 import type { CollectionInfoQuery } from '../../.utils/zoraTypes/graphql'
-import { collectionInfo, userInfo } from '../../querys/zora';
+import { collectionInfo } from '../../querys/zora';
+import { userInfo } from '../../querys/internal';
 import { PageWrapper, BlueBar, TopBar, Gallery, ConnectedAccount } from '../../components/'
 
 type Profile = {
@@ -40,80 +41,97 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
       }
     }
   }
-  //TODO: Check if User exists
-  // try {
-  //   const { data } = await client.query({
-  //     variables: {
 
-  //     },
-  //     query: userInfo,
-  //   });
-
-  //   return {
-  //     props: {
-  //       __typename: "Success",
-  //       user: {}
-  //     }
-  //   }
-
-  // } catch(e) {
-  //   console.log(e);
-  //   return {
-  //     props: {
-  //       __typename: "FetchError",
-  //       message: "There was an error fetching token Data: ", e,
-  //       notFound: true
-  //     }
-  //   }
-  // }
-  //Finding user's 'liked' collections
+  //Requesting User Info
   try {
-    const res = await fetch(process.env.USER_API);
-    profile = await res.json();
+    const { data } = await client.query({
+      variables: {
+        name: user,
+      },
+      query: userInfo,
+    });
+
+    //If request is not successful, return error
+    if (data.user.__typename === "UnknownError" || data.user.__typename === "NotFoundError") {
+      return {
+        props: {
+          __typename: "SSRError",
+          message: "Error Fetching User",
+          notFound: true
+        }
+      }
+    }
+
+    if (data.user.__typename === "QueryUserSuccess") {
+
+      // Check if the object is not empty AKA there is a user
+      if (data.user.data.address) {
+        profile = {
+          id: parseInt(data.user.data.id),
+          username: data.user.data.username,
+          bio: data.user.data.description,
+          collections: data.user.data.contracts.map(({contractAddress}) => contractAddress)
+        }
+
+        try {
+          const contracts = [];
+          for (let i = 0; i < profile.collections.length; i++) {
+            const { data } = await client.query({
+              variables: {
+                tokenAddress: {collectionAddresses: [profile.collections[i]]},
+                collectionAddress: {collectionAddresses: [profile.collections[i]]},
+                aggregateStatAddress: {collectionAddresses: [profile.collections[i]]},
+                ownerCountAddress: {collectionAddresses: [profile.collections[i]]},
+              },
+              context: {clientName: 'zora'},
+              query: collectionInfo,
+            });
+            contracts.push(data);
+          }
+          return {
+            props: {
+              __typename: "Success",
+              contracts: JSON.parse(JSON.stringify(contracts)),
+              user: profile.username,
+              bio: profile.bio
+            }
+          }
+        } catch(e) {
+          return {
+            props: {
+              __typename: "SSRError",
+              message: "Failed to Fetch Collection data" + (JSON.parse(JSON.stringify(e))),
+              notFound: true,
+            }
+          }
+        }
+      } else {
+        //If user is not found, then return back to homepage
+        return {
+          props: {
+            __typename: "SSRError",
+            message: "User not found",
+            notFound: true
+          }
+        }
+      }
+    }
   } catch(e) {
     console.log(e);
     return {
       props: {
         __typename: "SSRError",
-        message: "Could not fetch collections",
-        notFound: true,
+        message: "There was an error fetching token Data: ", e,
+        notFound: true
       }
     }
   }
 
-  //For each collection, query the Zora API
-  try {
-
-    const contracts = [];
-
-    for (let i = 0; i < profile.collections.length; i++) {
-      const { data } = await client.query({
-        variables: {
-          tokenAddress: {collectionAddresses: [profile.collections[i]]},
-	        collectionAddress: {collectionAddresses: [profile.collections[i]]},
-          aggregateStatAddress: {collectionAddresses: [profile.collections[i]]},
-          ownerCountAddress: {collectionAddresses: [profile.collections[i]]},
-        },
-        context: {clientName: 'zora'},
-        query: collectionInfo,
-      });
-      contracts.push(data);
-    }
-    return {
-      props: {
-        __typename: "Success",
-        contracts: JSON.parse(JSON.stringify(contracts)),
-        user: profile.username,
-        bio: profile.bio
-      }
-    }
-  } catch(e) {
-    return {
-      props: {
-        __typename: "SSRError",
-        message: "Failed to Fetch Collection data" + (JSON.parse(JSON.stringify(e))),
-        notFound: true,
-      }
+  return {
+    props: {
+      __typename: "SSRError",
+      message: "User not found",
+      notFound: true
     }
   }
 }

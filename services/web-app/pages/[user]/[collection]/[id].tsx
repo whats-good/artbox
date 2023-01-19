@@ -56,6 +56,7 @@ export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (con
           tokenId: id
         }
       },
+      context: {clientName: 'zora'},
       query: tokenInfo,
     });
 

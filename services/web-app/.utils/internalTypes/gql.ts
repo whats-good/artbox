@@ -13,7 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel-plugin for production.
  */
 const documents = {
-    "\n  query userInfo {\n    user(username: \"Oxlogan\") {\n      ... on QueryUserSuccess {\n        __typename\n        data {\n          address\n          description\n          username\n          contracts {\n            contractAddress\n          }\n        }\n      }\n    }\n  }\n": types.UserInfoDocument,
+    "\n  query userInfo($name: String!) {\n    user(username: $name) {\n      ... on QueryUserSuccess {\n        __typename\n        data {\n          address\n          contracts {\n            contractAddress\n          }\n          description\n          username\n          id\n        }\n      }\n    }\n  }\n": types.UserInfoDocument,
 };
 
 /**
@@ -33,7 +33,7 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query userInfo {\n    user(username: \"Oxlogan\") {\n      ... on QueryUserSuccess {\n        __typename\n        data {\n          address\n          description\n          username\n          contracts {\n            contractAddress\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query userInfo {\n    user(username: \"Oxlogan\") {\n      ... on QueryUserSuccess {\n        __typename\n        data {\n          address\n          description\n          username\n          contracts {\n            contractAddress\n          }\n        }\n      }\n    }\n  }\n"];
+export function gql(source: "\n  query userInfo($name: String!) {\n    user(username: $name) {\n      ... on QueryUserSuccess {\n        __typename\n        data {\n          address\n          contracts {\n            contractAddress\n          }\n          description\n          username\n          id\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query userInfo($name: String!) {\n    user(username: $name) {\n      ... on QueryUserSuccess {\n        __typename\n        data {\n          address\n          contracts {\n            contractAddress\n          }\n          description\n          username\n          id\n        }\n      }\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

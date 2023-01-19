@@ -127,6 +127,7 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
         tokenAddress: {collectionAddresses: [contractAddress]},
         page: {limit: count, after: page}
       },
+      context: {clientName: 'zora'},
       notifyOnNetworkStatusChange: true,
     }
   );
