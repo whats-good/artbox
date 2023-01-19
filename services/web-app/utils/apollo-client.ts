@@ -6,10 +6,10 @@ import {
 } from "@apollo/client";
 
 const zoraEndpoint = new HttpLink({
-  uri: process.env.ZORA_GRAPHQL_URI,
+  uri: process.env.NEXT_PUBLIC_ZORA_GRAPHQL_URI,
 });
 const userEndpoint = new HttpLink({
-  uri: process.env.INTERNAL_API,
+  uri: process.env.NEXT_PUBLIC_INTERNAL_API,
 });
 
 const apolloClient = new ApolloClient({
