@@ -119,6 +119,11 @@ export type UserOnContract = {
   userId: Scalars['Int'];
 };
 
+export type DiscoverUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DiscoverUserQuery = { __typename?: 'Query', discoverUsers: { __typename?: 'NotFoundError' } | { __typename: 'QueryDiscoverUsersSuccess', data: Array<{ __typename?: 'User', username: string }> } | { __typename?: 'UnknownError' } };
+
 export type UserInfoQueryVariables = Exact<{
   name: Scalars['String'];
 }>;
@@ -127,6 +132,7 @@ export type UserInfoQueryVariables = Exact<{
 export type UserInfoQuery = { __typename?: 'Query', user: { __typename?: 'NotFoundError' } | { __typename: 'QueryUserSuccess', data: { __typename?: 'User', address: string, description: string, username: string, id: string, contracts: Array<{ __typename?: 'SmartContract', contractAddress: string }> } } | { __typename?: 'UnknownError' } };
 
 
+export const DiscoverUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"discoverUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"discoverUsers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"QueryDiscoverUsersSuccess"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]}}]} as unknown as DocumentNode<DiscoverUserQuery, DiscoverUserQueryVariables>;
 export const UserInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"userInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"username"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"QueryUserSuccess"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"contracts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contractAddress"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]}}]} as unknown as DocumentNode<UserInfoQuery, UserInfoQueryVariables>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {

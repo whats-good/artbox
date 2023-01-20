@@ -1,11 +1,14 @@
 import { Modal } from "../../components/modal";
 import { Dispatch, SetStateAction } from "react";
+import { useQuery } from "@apollo/client";
+import { discoverUser } from "../../querys/internal";
 
 type DiscoverModalProps = {
   toggleShowModal: Dispatch<SetStateAction<Boolean>>;
 }
 
 export const DiscoverModal = ({ toggleShowModal } : DiscoverModalProps) => {
+
   return (
     <>
       <Modal
@@ -18,8 +21,32 @@ export const DiscoverModal = ({ toggleShowModal } : DiscoverModalProps) => {
           y: 40,
         }}
       >
-        <div>Discover Modal Here!</div>
+        <InnerDiscoverModal />
       </Modal>
     </>
+  )
+}
+
+const InnerDiscoverModal = ({}) => {
+
+  const { loading, error, data, refetch, networkStatus } = useQuery(
+    discoverUser,
+    {
+      variables: {},
+      notifyOnNetworkStatusChange: true,
+    }
+  );
+
+  if (loading) return (
+    <p>Loading....</p>
+  );
+  if (error) return (
+    <p>Error</p>
+  );
+
+  return (
+    <>{data?.discoverUsers.__typename === "QueryDiscoverUsersSuccess" ?
+      data.discoverUsers.data.map((contract) => contract.username)
+    :<></>}</>
   )
 }
