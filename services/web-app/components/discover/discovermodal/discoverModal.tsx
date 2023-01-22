@@ -1,11 +1,21 @@
-import { Modal } from "../../components/modal";
+import styled from "styled-components";
+import { Modal } from "../../modal";
 import { Dispatch, SetStateAction } from "react";
 import { useQuery } from "@apollo/client";
-import { discoverUser } from "../../querys/internal";
+import { discoverUser } from "../../../querys/internal";
+import { UsersList } from "./usersList"
+import { DiscoverModalTop } from './discoverModalTop';
 
+//Types
 type DiscoverModalProps = {
   toggleShowModal: Dispatch<SetStateAction<Boolean>>;
 }
+
+//Styles
+const InnerDiscoverModalWrapper = styled.div`
+  display: grid;
+  grid-template-rows: 20% auto;
+`
 
 export const DiscoverModal = ({ toggleShowModal } : DiscoverModalProps) => {
 
@@ -45,8 +55,9 @@ const InnerDiscoverModal = ({}) => {
   );
 
   return (
-    <>{data?.discoverUsers.__typename === "QueryDiscoverUsersSuccess" ?
-      data.discoverUsers.data.map((contract) => contract.username)
-    :<></>}</>
+    <InnerDiscoverModalWrapper>
+        <DiscoverModalTop />
+        <UsersList data={data}/>
+    </InnerDiscoverModalWrapper>
   )
 }

@@ -1,2 +1,2 @@
 export * from "./discoverButton";
-export * from "./discoverModal";
+export * from "./discovermodal/discoverModal";

@@ -1,0 +1,8 @@
+
+
+
+export const DiscoverModalTop = () => {
+  return (
+    <></>
+  )
+}
