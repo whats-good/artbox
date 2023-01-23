@@ -92,7 +92,7 @@ const ExpandRowBottomWrapper = styled.div`
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
 `;
-const PageButtonsWrapper = styled.div`
+export const PageButtonsWrapper = styled.div`
   display: flex;
   grid-template-columns: 1fr 1fr;
   margin-right: 15px;

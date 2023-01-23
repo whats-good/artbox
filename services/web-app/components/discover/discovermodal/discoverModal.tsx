@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client";
 import { discoverUser } from "../../../querys/internal";
 import { UsersList } from "./usersList"
 import { DiscoverModalTop } from './discoverModalTop';
+import { PageButtons } from "./pageButtons";
 
 //Types
 type DiscoverModalProps = {
@@ -14,7 +15,7 @@ type DiscoverModalProps = {
 //Styles
 const InnerDiscoverModalWrapper = styled.div`
   display: grid;
-  grid-template-rows: 20% auto;
+  grid-template-rows: 8% auto 8%;
 `
 
 export const DiscoverModal = ({ toggleShowModal } : DiscoverModalProps) => {
@@ -24,8 +25,8 @@ export const DiscoverModal = ({ toggleShowModal } : DiscoverModalProps) => {
       <Modal
         toggleShowModal={toggleShowModal}
         title="Discover"
-        height="300px"
-        width="400px"
+        height="620px"
+        width="555px"
         defaultPosition={{
           x: 40,
           y: 40,
@@ -58,6 +59,7 @@ const InnerDiscoverModal = ({}) => {
     <InnerDiscoverModalWrapper>
         <DiscoverModalTop />
         <UsersList data={data}/>
+        <PageButtons />
     </InnerDiscoverModalWrapper>
   )
 }

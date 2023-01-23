@@ -5,8 +5,10 @@ import { DiscoverUserQuery } from "../../../.utils/internalTypes/graphql";
 
 const UsersListWrapper = styled.div`
   border: 1px solid black;
-
-`
+  background-color: #EBEBEB;
+  margin-right: 20px;
+  margin-left: 20px;
+`;
 
 type UsersListProps = {
   data?: DiscoverUserQuery
@@ -24,7 +26,7 @@ export const UsersList = ( props : UsersListProps)  => {
 
   // If data prop was not passed down return error
   return (
-    <>Sorry there was an error here</>
+    <>Sorry there was an error.</>
   )
 }
 
