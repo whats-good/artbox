@@ -53,7 +53,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     <WagmiConfig client={client}>
         <ApolloProvider client={ApolloClient}>
           {loading ? <PageLoading /> : <Component {...pageProps} />}
-          {/* <Component {...pageProps} /> */}
         </ApolloProvider>
     </WagmiConfig>
   );
