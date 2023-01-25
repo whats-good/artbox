@@ -1,19 +1,14 @@
-// import type { SmartContract } from './../prisma/@prisma/client/index.d';
-// import { NestFactory } from '@nestjs/core';
-// import { AppModule } from '@/modules/app/app.module';
-
-// async function bootstrap() {
-//   const app = await NestFactory.create(AppModule);
-//   await app.listen(3000);
-// }
-// bootstrap();
-
-import { createServer } from '@graphql-yoga/node';
+// import { createServer } from '@graphql-yoga/node';
 import SchemaBuilder from '@pothos/core';
 import ErrorsPlugin from '@pothos/plugin-errors';
 import PrismaPlugin from '@pothos/plugin-prisma';
 import type PrismaTypes from '@pothos/plugin-prisma/generated';
 import { PrismaClient } from '@prisma/client';
+import { ethers } from 'ethers';
+import * as express from 'express';
+import { createYoga } from 'graphql-yoga';
+import { generateNonce, SiweMessage } from 'siwe';
+import Session from 'express-session';
 
 export class ArtBoxBaseError extends Error {}
 
@@ -25,11 +20,39 @@ export class NotFoundError extends ArtBoxBaseError {
   }
 }
 
+// Infura Endpoint
+// https://mainnet.infura.io/v3/769e786d4b7d41ae86475b916510b455
+
+// async function authorize(req, context) {
+//   const signature = req.headers['x-ethereum-signature'];
+//   if (!signature) {
+//     throw new Error('No Ethereum signature provided');
+//   }
+
+//   const provider = new ethers.providers.JsonRpcProvider(
+//     'https://mainnet.infura.io/v3/769e786d4b7d41ae86475b916510b455',
+//   );
+
+//   const recoveredAddress = ethers.utils.verifyMessage();
+
+//   //Check if recovered address matches arg address
+
+//   // Use the address to look up the user in a database or smart contract
+//   const user = await users.findByAddress(address);
+
+//   if (!user) {
+//     throw new Error('Invalid Ethereum address');
+//   }
+// }
+
 // TODO: this should come from a factory via nest
 const prismaClient = new PrismaClient({});
 
 // TODO: the builder should be a part of the nest factory chain
 const builder = new SchemaBuilder<{
+  Context: {
+    user: string;
+  };
   PrismaTypes: PrismaTypes;
 }>({
   notStrict:
@@ -194,7 +217,14 @@ builder.mutationType({
       args: {
         input: t.arg({ type: UserInput, required: true }),
       },
-      resolve: async (root, args) => {
+      resolve: async (root, args, context) => {
+        const digest = ethers.utils.arrayify(ethers.utils.hashMessage('sam'));
+        // const output = ethers.utils.verifyMessage('hello sam', context.user);
+
+        // console.log(output === '0x5D0f971BCDd15A222A7776d0171225ccfE5EEadE');
+        // console.log('ACTUAL: ', output);
+        console.log('EXPECTED: ', '0x5D0f971BCDd15A222A7776d0171225ccfE5EEadE');
+
         const user = await prismaClient.user.upsert({
           where: { address: args.input.address },
           update: {
@@ -254,10 +284,88 @@ builder.mutationType({
   }),
 });
 
-const server = createServer({
+const app = express();
+
+const yoga = createYoga({
   schema: builder.toSchema(),
-  maskedErrors: false, // TODO: turn this off on prod
-  port: 4001, // TODO: this should come from config
+  maskedErrors: process.env.NODE_ENV === 'production',
+  // context: async ({ req }) => ({
+  //   user: req.headers['x-ethereum-signature'],
+  // }),
+  // context: { req },
 });
 
-server.start();
+app.use(
+  Session({
+    name: 'siwe-quickstart',
+    secret: 'siwe-quickstart-secret',
+    resave: true,
+    saveUninitialized: true,
+    cookie: { secure: false, sameSite: true },
+  }),
+);
+
+app.use('/graphql', yoga);
+
+app.get('/nonce', async function (req, res) {
+  req.session.nonce = generateNonce();
+  res.setHeader('Content-Type', 'text/plain');
+  res.status(200).send(req.session.nonce);
+});
+
+app.post('/verify', async function (req, res) {
+  try {
+    if (!req.body.message) {
+      res
+        .status(422)
+        .json({ message: 'Expected prepareMessage object as body.' });
+      return;
+    }
+
+    const message = new SiweMessage(req.body.message);
+    const fields = await message.validate(req.body.signature);
+    if (fields.nonce !== req.session.nonce) {
+      console.log(req.session);
+      res.status(422).json({
+        message: `Invalid nonce.`,
+      });
+      return;
+    }
+    req.session.siwe = fields;
+    req.session.cookie.expires = new Date(fields.expirationTime);
+    req.session.save(() => res.status(200).end());
+  } catch (e) {
+    req.session.siwe = null;
+    req.session.nonce = null;
+    console.error(e);
+    switch (e) {
+      case ErrorTypes.EXPIRED_MESSAGE: {
+        req.session.save(() => res.status(440).json({ message: e.message }));
+        break;
+      }
+      case ErrorTypes.INVALID_SIGNATURE: {
+        req.session.save(() => res.status(422).json({ message: e.message }));
+        break;
+      }
+      default: {
+        req.session.save(() => res.status(500).json({ message: e.message }));
+        break;
+      }
+    }
+  }
+});
+
+app.listen(4001, () => {
+  console.log('Running a GraphQL API server at http://localhost:4000/graphql');
+});
+
+// const server = createServer({
+//   schema: builder.toSchema(),
+//   maskedErrors: false, // TODO: turn this off on prod
+//   port: 4001, // TODO: this should come from config
+//   context: async ({ req }) => ({
+//     user: req.headers['x-ethereum-signature'],
+//   }),
+// });
+
+// server.start();
