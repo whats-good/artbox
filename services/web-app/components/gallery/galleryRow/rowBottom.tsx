@@ -115,7 +115,7 @@ const GalleryRowItemWrapper = styled.div`
 //Components
 
 const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandRowBottomProps ) => {
-
+  console.log('PAGE PROP: ', page);
   const router = useRouter();
 
   const [previousPage, setPreviousPage] = useState(page);
@@ -172,6 +172,7 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
           <ButtonOuter>
             <ButtonInner
               onClick={() => {
+                console.log('BACK CURSOR: ', data?.tokens.pageInfo.endCursor);
                 setPreviousPage(data?.tokens.pageInfo.endCursor)
                 refetch({
                   tokenAddress: {collectionAddresses: [contractAddress]},
@@ -185,6 +186,7 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
         <ButtonOuter>
           <ButtonInner
             onClick={() => {
+              console.log('NEXT CURSOR: ', data?.tokens.pageInfo.endCursor);
               setPreviousPage(data?.tokens.pageInfo.endCursor)
               refetch({
                 tokenAddress: {collectionAddresses: [contractAddress]},
