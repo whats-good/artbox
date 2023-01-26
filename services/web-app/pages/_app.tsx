@@ -14,6 +14,7 @@ import { mainnet } from '@wagmi/core/chains';
 import { ApolloProvider } from '@apollo/client';
 import ApolloClient from '../utils/apollo-client'
 import { PageLoading } from "../components/loading";
+import { LoggedInContext } from "../utils/loggedInContext";
 
 // Configure chains & providers with the Alchemy provider.
 const { chains, provider, webSocketProvider } = configureChains([mainnet], [
@@ -22,7 +23,7 @@ const { chains, provider, webSocketProvider } = configureChains([mainnet], [
 ])
 
 const client = createClient({
-  autoConnect: false,
+  autoConnect: true,
   connectors: [
     new MetaMaskConnector({ chains }),
   ],
@@ -32,7 +33,8 @@ const client = createClient({
 function MyApp({ Component, pageProps }: AppProps) {
 
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
     const handleStart = (url : string) => url !== router.asPath && setLoading(true);
@@ -52,7 +54,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={client}>
         <ApolloProvider client={ApolloClient}>
-          {loading ? <PageLoading /> : <Component {...pageProps} />}
+          <LoggedInContext.Provider value={[loggedIn, setLoggedIn]}>
+            {loading ? <PageLoading /> : <Component {...pageProps} />}
+          </LoggedInContext.Provider>
         </ApolloProvider>
     </WagmiConfig>
   );

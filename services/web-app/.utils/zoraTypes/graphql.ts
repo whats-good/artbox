@@ -556,6 +556,8 @@ export type Nouns = {
   nounsDaos: NounsDaoConnection;
   nounsEvents: NounsEventConnection;
   nounsMarkets: NounsBuilderAuctionConnection;
+  nounsProposal?: Maybe<NounsProposal>;
+  nounsProposals: NounsProposalConnection;
 };
 
 
@@ -588,6 +590,20 @@ export type NounsNounsMarketsArgs = {
   pagination?: InputMaybe<PaginationInput>;
   sort?: InputMaybe<MarketSortKeySortInput>;
   where?: InputMaybe<NounsMarketsQueryInput>;
+};
+
+
+export type NounsNounsProposalArgs = {
+  network?: InputMaybe<NetworkInput>;
+  where: NounsProposalQueryInput;
+};
+
+
+export type NounsNounsProposalsArgs = {
+  networks?: InputMaybe<Array<NetworkInput>>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<NounsProposalSortKeySortInput>;
+  where?: InputMaybe<NounsProposalsQueryInput>;
 };
 
 export type NounsActiveMarketQueryInput = {
@@ -993,6 +1009,88 @@ export type NounsMarketsQueryInput = {
   tokens?: InputMaybe<Array<TokenInput>>;
 };
 
+export type NounsProposal = {
+  __typename?: 'NounsProposal';
+  abstainVotes: Scalars['Int'];
+  againstVotes: Scalars['Int'];
+  auction: Scalars['String'];
+  calldatas: Array<Scalars['String']>;
+  collectionAddress: Scalars['String'];
+  description: Scalars['String'];
+  descriptionHash: Scalars['String'];
+  eta?: Maybe<Scalars['Int']>;
+  forVotes: Scalars['Int'];
+  governor: Scalars['String'];
+  manager: Scalars['String'];
+  metadata: Scalars['String'];
+  networkInfo: NetworkInfo;
+  proposalId: Scalars['String'];
+  proposalNumber: Scalars['Int'];
+  proposalThreshold: Scalars['Int'];
+  proposer: Scalars['String'];
+  quorumVotes: Scalars['Int'];
+  status: NounsProposalStatus;
+  targets: Array<Scalars['String']>;
+  timeCreated: Scalars['Int'];
+  transactionInfo: TransactionInfo;
+  treasury: Scalars['String'];
+  values: Array<Scalars['String']>;
+  voteEnd: Scalars['Int'];
+  voteStart: Scalars['Int'];
+  votes: Array<NounsProposalVote>;
+};
+
+export type NounsProposalConnection = {
+  __typename?: 'NounsProposalConnection';
+  nodes: Array<NounsProposal>;
+  pageInfo: PageInfo;
+};
+
+export type NounsProposalQueryInput = {
+  proposal?: InputMaybe<ProposalInput>;
+  proposalId?: InputMaybe<Scalars['String']>;
+};
+
+export enum NounsProposalSortKey {
+  Created = 'CREATED',
+  None = 'NONE'
+}
+
+export type NounsProposalSortKeySortInput = {
+  sortDirection: SortDirection;
+  sortKey: NounsProposalSortKey;
+};
+
+export enum NounsProposalStatus {
+  Active = 'ACTIVE',
+  Canceled = 'CANCELED',
+  Created = 'CREATED',
+  Defeated = 'DEFEATED',
+  Executable = 'EXECUTABLE',
+  Executed = 'EXECUTED',
+  Expired = 'EXPIRED',
+  Pending = 'PENDING',
+  Queued = 'QUEUED',
+  Succeeded = 'SUCCEEDED',
+  Vetoed = 'VETOED'
+}
+
+export type NounsProposalVote = {
+  __typename?: 'NounsProposalVote';
+  proposalId: Scalars['String'];
+  reason: Scalars['String'];
+  support: Support;
+  transactionInfo: TransactionInfo;
+  voter: Scalars['String'];
+  weight: Scalars['Int'];
+};
+
+export type NounsProposalsQueryInput = {
+  collectionAddresses?: InputMaybe<Array<Scalars['String']>>;
+  proposalIds?: InputMaybe<Array<Scalars['String']>>;
+  proposals?: InputMaybe<Array<ProposalInput>>;
+};
+
 export type NounsQueryInput = {
   collectionAddresses?: InputMaybe<Array<Scalars['String']>>;
   memberAddresses?: InputMaybe<Array<Scalars['String']>>;
@@ -1103,6 +1201,11 @@ export type PriceFilter = {
   maximumNativePrice?: InputMaybe<Scalars['String']>;
   minimumChainTokenPrice?: InputMaybe<Scalars['String']>;
   minimumNativePrice?: InputMaybe<Scalars['String']>;
+};
+
+export type ProposalInput = {
+  address: Scalars['String'];
+  proposalNumber: Scalars['String'];
 };
 
 export type ReceivedItem = {
@@ -1425,6 +1528,12 @@ export type SpentItem = {
   price?: Maybe<PriceAtTime>;
   tokenId: Scalars['String'];
 };
+
+export enum Support {
+  Abstain = 'ABSTAIN',
+  Against = 'AGAINST',
+  For = 'FOR'
+}
 
 export type TimeFilter = {
   endBlock?: InputMaybe<Scalars['Int']>;
@@ -2644,6 +2753,8 @@ export type Nouns = {
   nounsDaos: NounsDaoConnection;
   nounsEvents: NounsEventConnection;
   nounsMarkets: NounsBuilderAuctionConnection;
+  nounsProposal?: Maybe<NounsProposal>;
+  nounsProposals: NounsProposalConnection;
 };
 
 
@@ -2676,6 +2787,20 @@ export type NounsNounsMarketsArgs = {
   pagination?: InputMaybe<PaginationInput>;
   sort?: InputMaybe<MarketSortKeySortInput>;
   where?: InputMaybe<NounsMarketsQueryInput>;
+};
+
+
+export type NounsNounsProposalArgs = {
+  network?: InputMaybe<NetworkInput>;
+  where: NounsProposalQueryInput;
+};
+
+
+export type NounsNounsProposalsArgs = {
+  networks?: InputMaybe<Array<NetworkInput>>;
+  pagination?: InputMaybe<PaginationInput>;
+  sort?: InputMaybe<NounsProposalSortKeySortInput>;
+  where?: InputMaybe<NounsProposalsQueryInput>;
 };
 
 export type NounsActiveMarketQueryInput = {
@@ -3081,6 +3206,88 @@ export type NounsMarketsQueryInput = {
   tokens?: InputMaybe<Array<TokenInput>>;
 };
 
+export type NounsProposal = {
+  __typename?: 'NounsProposal';
+  abstainVotes: Scalars['Int'];
+  againstVotes: Scalars['Int'];
+  auction: Scalars['String'];
+  calldatas: Array<Scalars['String']>;
+  collectionAddress: Scalars['String'];
+  description: Scalars['String'];
+  descriptionHash: Scalars['String'];
+  eta?: Maybe<Scalars['Int']>;
+  forVotes: Scalars['Int'];
+  governor: Scalars['String'];
+  manager: Scalars['String'];
+  metadata: Scalars['String'];
+  networkInfo: NetworkInfo;
+  proposalId: Scalars['String'];
+  proposalNumber: Scalars['Int'];
+  proposalThreshold: Scalars['Int'];
+  proposer: Scalars['String'];
+  quorumVotes: Scalars['Int'];
+  status: NounsProposalStatus;
+  targets: Array<Scalars['String']>;
+  timeCreated: Scalars['Int'];
+  transactionInfo: TransactionInfo;
+  treasury: Scalars['String'];
+  values: Array<Scalars['String']>;
+  voteEnd: Scalars['Int'];
+  voteStart: Scalars['Int'];
+  votes: Array<NounsProposalVote>;
+};
+
+export type NounsProposalConnection = {
+  __typename?: 'NounsProposalConnection';
+  nodes: Array<NounsProposal>;
+  pageInfo: PageInfo;
+};
+
+export type NounsProposalQueryInput = {
+  proposal?: InputMaybe<ProposalInput>;
+  proposalId?: InputMaybe<Scalars['String']>;
+};
+
+export enum NounsProposalSortKey {
+  Created = 'CREATED',
+  None = 'NONE'
+}
+
+export type NounsProposalSortKeySortInput = {
+  sortDirection: SortDirection;
+  sortKey: NounsProposalSortKey;
+};
+
+export enum NounsProposalStatus {
+  Active = 'ACTIVE',
+  Canceled = 'CANCELED',
+  Created = 'CREATED',
+  Defeated = 'DEFEATED',
+  Executable = 'EXECUTABLE',
+  Executed = 'EXECUTED',
+  Expired = 'EXPIRED',
+  Pending = 'PENDING',
+  Queued = 'QUEUED',
+  Succeeded = 'SUCCEEDED',
+  Vetoed = 'VETOED'
+}
+
+export type NounsProposalVote = {
+  __typename?: 'NounsProposalVote';
+  proposalId: Scalars['String'];
+  reason: Scalars['String'];
+  support: Support;
+  transactionInfo: TransactionInfo;
+  voter: Scalars['String'];
+  weight: Scalars['Int'];
+};
+
+export type NounsProposalsQueryInput = {
+  collectionAddresses?: InputMaybe<Array<Scalars['String']>>;
+  proposalIds?: InputMaybe<Array<Scalars['String']>>;
+  proposals?: InputMaybe<Array<ProposalInput>>;
+};
+
 export type NounsQueryInput = {
   collectionAddresses?: InputMaybe<Array<Scalars['String']>>;
   memberAddresses?: InputMaybe<Array<Scalars['String']>>;
@@ -3191,6 +3398,11 @@ export type PriceFilter = {
   maximumNativePrice?: InputMaybe<Scalars['String']>;
   minimumChainTokenPrice?: InputMaybe<Scalars['String']>;
   minimumNativePrice?: InputMaybe<Scalars['String']>;
+};
+
+export type ProposalInput = {
+  address: Scalars['String'];
+  proposalNumber: Scalars['String'];
 };
 
 export type ReceivedItem = {
@@ -3513,6 +3725,12 @@ export type SpentItem = {
   price?: Maybe<PriceAtTime>;
   tokenId: Scalars['String'];
 };
+
+export enum Support {
+  Abstain = 'ABSTAIN',
+  Against = 'AGAINST',
+  For = 'FOR'
+}
 
 export type TimeFilter = {
   endBlock?: InputMaybe<Scalars['Int']>;

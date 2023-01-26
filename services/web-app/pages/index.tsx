@@ -4,11 +4,8 @@ import styled from "styled-components";
 import { TopBar } from "../components/connectwallet/topbar";
 import { SignUpButton, SignUpModal } from "../components/signUp";
 import { DiscoverButton, DiscoverModal } from "../components/discover";
-import { ethers } from "ethers";
-import { useAccount } from "wagmi";
-import { SiweMessage } from 'siwe';
-
-
+import { useAccount, useSigner } from "wagmi";
+import { signInWithEthereum } from "../siwe";
 
 const ButtonWrapper = styled.div`
   width: 200px;
@@ -25,9 +22,8 @@ const ModalAnchor = styled.div`
 
 const Home: NextPage = () => {
 
-  const [signUpModal, toggleSignUpModal] = useState<Boolean>(false);
-  const [discoverModal, toggleDiscoverModal] = useState<Boolean>(false);
-
+  const [signUpModal, toggleSignUpModal] = useState<boolean>(false);
+  const [discoverModal, toggleDiscoverModal] = useState<boolean>(false);
 
   const { address, isConnecting, isDisconnected } = useAccount();
 
@@ -51,40 +47,45 @@ const Home: NextPage = () => {
 
 export default Home;
 
-
-function createSiweMessage (address, statement) {
-  const message = new SiweMessage({
-    domain,
-    address,
-    statement,
-    uri: origin,
-    version: '1',
-    chainId: '1'
-  });
-  return message.prepareMessage();
-}
-
-
 const SignIn = () => {
 
+  const [reload, setReload] = useState<boolean>(false);
 
+  const { address, isConnecting, isDisconnected } = useAccount()
 
+  const { data: signer, isError, isLoading } = useSigner({
+  })
+
+  if (isError) {
+    return <>isError...</>
+  }
+  if (isLoading) {
+    return <>Loading...</>
+  }
+  if (signer && address) {
+    return (
+      <>
+        <button onClick={ async () => {
+          await signInWithEthereum(address, signer, window.location.host, window.location.origin);
+          setReload(!reload)
+        }}>
+          Sign in
+        </button>
+        <button onClick={async () => await getInformation() }>Try this next</button>
+      </>
+    )
+  }
   return (
-    <>
-
-    </>
+    <>Something went wrong...</>
   )
 }
 
-
-function getAddress(sig : string) {
-
-  const digest = ethers.utils.arrayify(ethers.utils.hashMessage('sam'));
-
-  const output = ethers.utils.verifyMessage(digest, sig);
-
-  console.log(output === "0x47f172C3Aed744dE18A77d1db426effC89750EDb");
-  console.log('ACTUAL: ', output);
-  console.log('EXPECTED: ', "0x47f172C3Aed744dE18A77d1db426effC89750EDb")
-  return output;
+async function getInformation() {
+  const res = await fetch('http://localhost:4001/personal_information', {
+    method: 'GET',
+      credentials: 'include',
+  });
+  const output = await res.text();
+  console.log(output);
+  return output
 }

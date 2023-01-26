@@ -9,7 +9,7 @@ import { PageButtons } from "./pageButtons";
 
 //Types
 type DiscoverModalProps = {
-  toggleShowModal: Dispatch<SetStateAction<Boolean>>;
+  toggleShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
 //Styles
@@ -40,7 +40,7 @@ export const DiscoverModal = ({ toggleShowModal } : DiscoverModalProps) => {
 
 const InnerDiscoverModal = ({}) => {
 
-  const { loading, error, data, refetch, networkStatus } = useQuery(
+  const { loading, error, data } = useQuery(
     discoverUser,
     {
       variables: {},

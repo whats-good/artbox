@@ -22,14 +22,14 @@ export async function getImageUrls(
   address: string,
   abi: any,
   provider: ethers.providers.JsonRpcProvider | undefined,
-  count: number = 1
+  count = 1
 ): Promise<any> {
-  let output: any = [];
+  const output: any = [];
   const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
   try {
     const contract = new Contract(address, abi, provider);
     for (let i = 0; i < arr.length; i++) {
-      let url = await getUrl(contract, count);
+      const url = await getUrl(contract, count);
       output.push(url);
       count++;
     }

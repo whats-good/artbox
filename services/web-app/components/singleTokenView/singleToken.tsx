@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { shortenAddress } from '../../helpers/shortenAddress';
-import type { TokenInfoQuery, TokenAttribute } from '../../.utils/gql/types/graphql';
+import type { TokenInfoQuery, TokenAttribute } from '../../.utils/zoraTypes/graphql';
 import { useState } from "react";
 import { parseIpfs } from "../../helpers";
 import { EventsList } from "./eventLog";

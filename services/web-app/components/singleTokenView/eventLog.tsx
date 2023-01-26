@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { shortenAddress } from '../../helpers/shortenAddress';
-import { EventType, Chain } from '../../.utils/gql/types/graphql';
+import { EventType, Chain } from '../../.utils/zoraTypes/graphql';
 
 //Types
 type EventsListProps = {

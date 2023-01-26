@@ -41,13 +41,13 @@ export const getNftMetaData = async (
 //Gets bulk NFTs metadata
 export const getBulkNftMetaData = async (
   address: string,
-  page: number = 1
+  page = 1
 ): Promise<BulkNftMetaData | BulkNftMetaDataError> => {
   // This initializes the count correctly depending on the page. Each page is 15 tokens
   let count = page * 15 - 14;
 
   //Create Return Array
-  let output = [];
+  const output = [];
 
   //Create Array with length of 15 to map over
   const arr = Array(15).fill("0");
@@ -55,7 +55,7 @@ export const getBulkNftMetaData = async (
   //Fetch 15 token's metadata
   try {
     for (let i = 0; i < arr.length; i++) {
-      let metaData = await parser.fetchMetadata(address, count.toString());
+      const metaData = await parser.fetchMetadata(address, count.toString());
       output.push(metaData);
       count++;
     }

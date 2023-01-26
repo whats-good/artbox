@@ -8,6 +8,8 @@ declare global {
       USER_API: string;
       INTERNAL_API: string;
       NEXT_PUBLIC_INTERNAL_API: string;
+      NEXT_PUBLIC_BACKEND_URL: string;
+      BACKEND_URL: string;
     }
   }
 }

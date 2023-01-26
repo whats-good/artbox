@@ -6,7 +6,7 @@ import { ButtonOuter, ButtonInner } from "../button";
 type ModalProps = {
   children?: JSX.Element;
   title: string;
-  toggleShowModal: Dispatch<SetStateAction<Boolean>>;
+  toggleShowModal: Dispatch<SetStateAction<boolean>>;
   defaultPosition?: {
     x: number;
     y: number;
@@ -16,7 +16,7 @@ type ModalProps = {
 }
 type ModalTopBarProps = {
   title: string;
-  toggleShowModal: Dispatch<SetStateAction<Boolean>>;
+  toggleShowModal: Dispatch<SetStateAction<boolean>>;
 }
 type ModalWrapperProps = {
   height: string;
