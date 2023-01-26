@@ -6,9 +6,8 @@ import { PrismaClient } from '@prisma/client';
 import { createYoga } from 'graphql-yoga';
 import { generateNonce, SiweMessage } from 'siwe';
 import session from 'express-session';
-import express from 'express';
+import express, { Request } from 'express';
 import cors from 'cors';
-import { SessionData } from 'express-session';
 
 export class ArtBoxBaseError extends Error {}
 
@@ -32,11 +31,7 @@ const prismaClient = new PrismaClient({});
 
 // TODO: the builder should be a part of the nest factory chain
 const builder = new SchemaBuilder<{
-  Context: {
-    request: {
-      session: SessionData;
-    };
-  };
+  Context: Request;
   PrismaTypes: PrismaTypes;
 }>({
   notStrict:
@@ -201,23 +196,20 @@ builder.mutationType({
       args: {
         input: t.arg({ type: UserInput, required: true }),
       },
-      resolve: async (root, args, { request }) => {
-        console.log(
-          'REQUEST INSIDE MUTATION FUNCTION',
-          request.session.siwe.address,
-        );
-        if (!request.session.siwe) {
+      resolve: async (root, args, { session }) => {
+        console.log('createUser invoked. Value of request object: ', session);
+        if (!session.siwe.address) {
           throw new UnknownError('No session token');
         }
         const user = await prismaClient.user.upsert({
-          where: { address: request.session.siwe.address },
+          where: { address: session.siwe.address },
           update: {
-            address: request.session.siwe.address,
+            address: session.siwe.address,
             username: args.input.username,
             description: args.input.description,
           },
           create: {
-            address: request.session.siwe.address,
+            address: session.siwe.address,
             username: args.input.username,
             description: args.input.description,
           },
@@ -233,8 +225,9 @@ builder.mutationType({
       args: {
         input: t.arg({ type: ContractInput, required: true }),
       },
-      resolve: async (root, args, { request }) => {
-        if (!request.session.siwe) {
+      resolve: async (root, args, { session }) => {
+        console.log('createContract Mutation. Request object: ', session);
+        if (!session.siwe.address) {
           throw new UnknownError('No session token');
         }
         const contract = await prismaClient.smartContract.upsert({
@@ -255,7 +248,7 @@ builder.mutationType({
         const connectUser = await prismaClient.userOnContract.create({
           data: {
             user: {
-              connect: { address: args.input.userAddress },
+              connect: { address: session.siwe.address },
             },
             smartContract: {
               connect: { contractAddress: args.input.contractAddress },
@@ -277,10 +270,8 @@ const yoga = createYoga({
   schema: builder.toSchema(),
   maskedErrors: process.env.NODE_ENV === 'production',
   context: async ({ request }) => {
-    console.log('HELOOO', request);
-    return {
-      request: request,
-    };
+    console.log('Context invoked. Value of request object: ', request);
+    return request;
   },
 });
 
@@ -293,11 +284,8 @@ app.use(
     cookie: { secure: false, sameSite: false },
   }),
 );
-
 app.use(express.json());
-
 app.use('/graphql', yoga);
-
 app.use(
   cors({
     origin: 'http://localhost:3000',
@@ -311,18 +299,18 @@ app.get('/nonce', async function (req, res) {
   res.status(200).send(req.session.nonce);
 });
 
-app.get('/personal_information', function (req, res) {
-  console.log('INVOKED: ', req.session.siwe.address);
-  if (!req.session.siwe) {
-    res.status(401).json({ message: 'You have to first sign_in' });
-    return;
-  }
-  console.log('User is authenticated!');
-  res.setHeader('Content-Type', 'text/plain');
-  res.send(
-    `You are authenticated and your address is: ${req.session.siwe.address}`,
-  );
-});
+// app.get('/personal_information', function (req, res) {
+//   console.log('INVOKED: ', req.session.siwe.address);
+//   if (!req.session.siwe) {
+//     res.status(401).json({ message: 'You have to first sign_in' });
+//     return;
+//   }
+//   console.log('User is authenticated!');
+//   res.setHeader('Content-Type', 'text/plain');
+//   res.send(
+//     `You are authenticated and your address is: ${req.session.siwe.address}`,
+//   );
+// });
 
 app.post('/verify', async function (req, res) {
   try {
@@ -345,7 +333,9 @@ app.post('/verify', async function (req, res) {
     req.session.siwe = fields;
     req.session.cookie.expires = new Date(fields.expirationTime);
     req.session.save(() => res.status(200).end());
+    console.log('THIS IS BEEN VALIDATED!!');
   } catch (e) {
+    console.log('ERROR CREATING SESSION!!!');
     req.session.siwe = null;
     req.session.nonce = null;
     console.error(e);
