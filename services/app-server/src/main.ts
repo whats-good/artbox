@@ -1,14 +1,14 @@
-// import { createServer } from '@graphql-yoga/node';
 import SchemaBuilder from '@pothos/core';
 import ErrorsPlugin from '@pothos/plugin-errors';
 import PrismaPlugin from '@pothos/plugin-prisma';
 import type PrismaTypes from '@pothos/plugin-prisma/generated';
 import { PrismaClient } from '@prisma/client';
-import { ethers } from 'ethers';
-import * as express from 'express';
 import { createYoga } from 'graphql-yoga';
 import { generateNonce, SiweMessage } from 'siwe';
-import Session from 'express-session';
+import session from 'express-session';
+import express from 'express';
+import cors from 'cors';
+import { SessionData } from 'express-session';
 
 export class ArtBoxBaseError extends Error {}
 
@@ -20,30 +20,12 @@ export class NotFoundError extends ArtBoxBaseError {
   }
 }
 
-// Infura Endpoint
-// https://mainnet.infura.io/v3/769e786d4b7d41ae86475b916510b455
-
-// async function authorize(req, context) {
-//   const signature = req.headers['x-ethereum-signature'];
-//   if (!signature) {
-//     throw new Error('No Ethereum signature provided');
-//   }
-
-//   const provider = new ethers.providers.JsonRpcProvider(
-//     'https://mainnet.infura.io/v3/769e786d4b7d41ae86475b916510b455',
-//   );
-
-//   const recoveredAddress = ethers.utils.verifyMessage();
-
-//   //Check if recovered address matches arg address
-
-//   // Use the address to look up the user in a database or smart contract
-//   const user = await users.findByAddress(address);
-
-//   if (!user) {
-//     throw new Error('Invalid Ethereum address');
-//   }
-// }
+declare module 'express-session' {
+  interface SessionData {
+    siwe: SiweMessage;
+    nonce: string;
+  }
+}
 
 // TODO: this should come from a factory via nest
 const prismaClient = new PrismaClient({});
@@ -51,7 +33,9 @@ const prismaClient = new PrismaClient({});
 // TODO: the builder should be a part of the nest factory chain
 const builder = new SchemaBuilder<{
   Context: {
-    user: string;
+    request: {
+      session: SessionData;
+    };
   };
   PrismaTypes: PrismaTypes;
 }>({
@@ -217,23 +201,23 @@ builder.mutationType({
       args: {
         input: t.arg({ type: UserInput, required: true }),
       },
-      resolve: async (root, args, context) => {
-        const digest = ethers.utils.arrayify(ethers.utils.hashMessage('sam'));
-        // const output = ethers.utils.verifyMessage('hello sam', context.user);
-
-        // console.log(output === '0x5D0f971BCDd15A222A7776d0171225ccfE5EEadE');
-        // console.log('ACTUAL: ', output);
-        console.log('EXPECTED: ', '0x5D0f971BCDd15A222A7776d0171225ccfE5EEadE');
-
+      resolve: async (root, args, { request }) => {
+        console.log(
+          'REQUEST INSIDE MUTATION FUNCTION',
+          request.session.siwe.address,
+        );
+        if (!request.session.siwe) {
+          throw new UnknownError('No session token');
+        }
         const user = await prismaClient.user.upsert({
-          where: { address: args.input.address },
+          where: { address: request.session.siwe.address },
           update: {
-            address: args.input.address,
+            address: request.session.siwe.address,
             username: args.input.username,
             description: args.input.description,
           },
           create: {
-            address: args.input.address,
+            address: request.session.siwe.address,
             username: args.input.username,
             description: args.input.description,
           },
@@ -249,7 +233,10 @@ builder.mutationType({
       args: {
         input: t.arg({ type: ContractInput, required: true }),
       },
-      resolve: async (root, args) => {
+      resolve: async (root, args, { request }) => {
+        if (!request.session.siwe) {
+          throw new UnknownError('No session token');
+        }
         const contract = await prismaClient.smartContract.upsert({
           where: { contractAddress: args.input.contractAddress },
           update: {
@@ -289,28 +276,52 @@ const app = express();
 const yoga = createYoga({
   schema: builder.toSchema(),
   maskedErrors: process.env.NODE_ENV === 'production',
-  // context: async ({ req }) => ({
-  //   user: req.headers['x-ethereum-signature'],
-  // }),
-  // context: { req },
+  context: async ({ request }) => {
+    console.log('HELOOO', request);
+    return {
+      request: request,
+    };
+  },
 });
 
 app.use(
-  Session({
+  session({
     name: 'siwe-quickstart',
     secret: 'siwe-quickstart-secret',
-    resave: true,
+    resave: false,
     saveUninitialized: true,
-    cookie: { secure: false, sameSite: true },
+    cookie: { secure: false, sameSite: false },
   }),
 );
 
+app.use(express.json());
+
 app.use('/graphql', yoga);
+
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }),
+);
 
 app.get('/nonce', async function (req, res) {
   req.session.nonce = generateNonce();
   res.setHeader('Content-Type', 'text/plain');
   res.status(200).send(req.session.nonce);
+});
+
+app.get('/personal_information', function (req, res) {
+  console.log('INVOKED: ', req.session.siwe.address);
+  if (!req.session.siwe) {
+    res.status(401).json({ message: 'You have to first sign_in' });
+    return;
+  }
+  console.log('User is authenticated!');
+  res.setHeader('Content-Type', 'text/plain');
+  res.send(
+    `You are authenticated and your address is: ${req.session.siwe.address}`,
+  );
 });
 
 app.post('/verify', async function (req, res) {
@@ -324,8 +335,8 @@ app.post('/verify', async function (req, res) {
 
     const message = new SiweMessage(req.body.message);
     const fields = await message.validate(req.body.signature);
+
     if (fields.nonce !== req.session.nonce) {
-      console.log(req.session);
       res.status(422).json({
         message: `Invalid nonce.`,
       });
@@ -338,34 +349,10 @@ app.post('/verify', async function (req, res) {
     req.session.siwe = null;
     req.session.nonce = null;
     console.error(e);
-    switch (e) {
-      case ErrorTypes.EXPIRED_MESSAGE: {
-        req.session.save(() => res.status(440).json({ message: e.message }));
-        break;
-      }
-      case ErrorTypes.INVALID_SIGNATURE: {
-        req.session.save(() => res.status(422).json({ message: e.message }));
-        break;
-      }
-      default: {
-        req.session.save(() => res.status(500).json({ message: e.message }));
-        break;
-      }
-    }
+    req.session.save(() => res.status(440).json({ message: e }));
   }
 });
 
 app.listen(4001, () => {
-  console.log('Running a GraphQL API server at http://localhost:4000/graphql');
+  console.log('Running a GraphQL API server at http://localhost:4001/graphql');
 });
-
-// const server = createServer({
-//   schema: builder.toSchema(),
-//   maskedErrors: false, // TODO: turn this off on prod
-//   port: 4001, // TODO: this should come from config
-//   context: async ({ req }) => ({
-//     user: req.headers['x-ethereum-signature'],
-//   }),
-// });
-
-// server.start();
