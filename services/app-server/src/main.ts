@@ -8,6 +8,7 @@ import { generateNonce, SiweMessage } from 'siwe';
 import session from 'express-session';
 import express, { Request } from 'express';
 import cors from 'cors';
+import { nextTick } from 'process';
 
 export class ArtBoxBaseError extends Error {}
 
@@ -196,20 +197,21 @@ builder.mutationType({
       args: {
         input: t.arg({ type: UserInput, required: true }),
       },
-      resolve: async (root, args, { session }) => {
-        console.log('createUser invoked. Value of request object: ', session);
-        if (!session.siwe.address) {
+      resolve: async (root, args, request: any) => {
+        console.log('INSIDE RESOLVE FUNCTION', request.request.body.session);
+        // console.log('createUser invoked. Value of request object: ', request.sessionID);
+        if (!request.session.siwe.address) {
           throw new UnknownError('No session token');
         }
         const user = await prismaClient.user.upsert({
-          where: { address: session.siwe.address },
+          where: { address: request.session.siwe.address },
           update: {
-            address: session.siwe.address,
+            address: request.session.siwe.address,
             username: args.input.username,
             description: args.input.description,
           },
           create: {
-            address: session.siwe.address,
+            address: request.session.siwe.address,
             username: args.input.username,
             description: args.input.description,
           },
@@ -264,16 +266,20 @@ builder.mutationType({
   }),
 });
 
-const app = express();
-
 const yoga = createYoga({
   schema: builder.toSchema(),
   maskedErrors: process.env.NODE_ENV === 'production',
-  context: async ({ request }) => {
-    console.log('Context invoked. Value of request object: ', request);
-    return request;
+  cors: {
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  },
+  context: async (request) => {
+    console.log('HEADERS', request.request.headers);
+    return request.request;
   },
 });
+
+const app = express();
 
 app.use(
   session({
@@ -284,8 +290,11 @@ app.use(
     cookie: { secure: false, sameSite: false },
   }),
 );
-app.use(express.json());
+
 app.use('/graphql', yoga);
+
+app.use(express.json());
+
 app.use(
   cors({
     origin: 'http://localhost:3000',
@@ -299,18 +308,33 @@ app.get('/nonce', async function (req, res) {
   res.status(200).send(req.session.nonce);
 });
 
-// app.get('/personal_information', function (req, res) {
-//   console.log('INVOKED: ', req.session.siwe.address);
-//   if (!req.session.siwe) {
-//     res.status(401).json({ message: 'You have to first sign_in' });
-//     return;
-//   }
-//   console.log('User is authenticated!');
-//   res.setHeader('Content-Type', 'text/plain');
-//   res.send(
-//     `You are authenticated and your address is: ${req.session.siwe.address}`,
-//   );
-// });
+app.get('/personal_information', function (req, res) {
+  console.log('REST headers: ', req.headers);
+  console.log('SESSION OBJECT: ', req.session);
+  console.log('ADDRESS: ', req.session.siwe.address);
+  if (!req.session.siwe) {
+    res.status(401).json({ message: 'You have to first sign_in' });
+    return;
+  }
+  console.log('User is authenticated!');
+  res.setHeader('Content-Type', 'text/plain');
+  res.send(
+    `You are authenticated and your address is: ${req.session.siwe.address}`,
+  );
+});
+
+app.post('/test', function (req, res) {
+  console.log('SESSION OBJECT: ', req.session);
+  if (!req.session.siwe) {
+    res.status(401).json({ message: 'You have to first sign_in' });
+    return;
+  }
+  console.log('User is authenticated!');
+  res.setHeader('Content-Type', 'text/plain');
+  res.send(
+    `You are authenticated and your address is: ${req.session.siwe.address}`,
+  );
+});
 
 app.post('/verify', async function (req, res) {
   try {
@@ -333,9 +357,7 @@ app.post('/verify', async function (req, res) {
     req.session.siwe = fields;
     req.session.cookie.expires = new Date(fields.expirationTime);
     req.session.save(() => res.status(200).end());
-    console.log('THIS IS BEEN VALIDATED!!');
   } catch (e) {
-    console.log('ERROR CREATING SESSION!!!');
     req.session.siwe = null;
     req.session.nonce = null;
     console.error(e);
