@@ -8,7 +8,6 @@ import { generateNonce, SiweMessage } from 'siwe';
 import session from 'express-session';
 import express, { Request } from 'express';
 import cors from 'cors';
-import { nextTick } from 'process';
 
 export class ArtBoxBaseError extends Error {}
 
@@ -32,7 +31,9 @@ const prismaClient = new PrismaClient({});
 
 // TODO: the builder should be a part of the nest factory chain
 const builder = new SchemaBuilder<{
-  Context: Request;
+  Context: {
+    userAddress: string;
+  };
   PrismaTypes: PrismaTypes;
 }>({
   notStrict:
@@ -197,21 +198,23 @@ builder.mutationType({
       args: {
         input: t.arg({ type: UserInput, required: true }),
       },
-      resolve: async (root, args, request: any) => {
-        console.log('INSIDE RESOLVE FUNCTION', request.request.body.session);
-        // console.log('createUser invoked. Value of request object: ', request.sessionID);
-        if (!request.session.siwe.address) {
+      resolve: async (root, args, { userAddress }) => {
+        console.log('createUser: ', userAddress);
+        if (!userAddress) {
           throw new UnknownError('No session token');
         }
+        if (userAddress !== args.input.address) {
+          throw new UnknownError('Authenticated adress does not match arg');
+        }
         const user = await prismaClient.user.upsert({
-          where: { address: request.session.siwe.address },
+          where: { address: userAddress },
           update: {
-            address: request.session.siwe.address,
+            address: userAddress,
             username: args.input.username,
             description: args.input.description,
           },
           create: {
-            address: request.session.siwe.address,
+            address: userAddress,
             username: args.input.username,
             description: args.input.description,
           },
@@ -227,10 +230,14 @@ builder.mutationType({
       args: {
         input: t.arg({ type: ContractInput, required: true }),
       },
-      resolve: async (root, args, { session }) => {
-        console.log('createContract Mutation. Request object: ', session);
-        if (!session.siwe.address) {
+      resolve: async (root, args, { userAddress }) => {
+        console.log('createContract: ', userAddress);
+        // console.log('createContract Mutation. Request object: ', session);
+        if (!userAddress) {
           throw new UnknownError('No session token');
+        }
+        if (userAddress !== args.input.userAddress) {
+          throw new UnknownError('Authenticated adress does not match arg');
         }
         const contract = await prismaClient.smartContract.upsert({
           where: { contractAddress: args.input.contractAddress },
@@ -250,7 +257,7 @@ builder.mutationType({
         const connectUser = await prismaClient.userOnContract.create({
           data: {
             user: {
-              connect: { address: session.siwe.address },
+              connect: { address: userAddress },
             },
             smartContract: {
               connect: { contractAddress: args.input.contractAddress },
@@ -273,10 +280,9 @@ const yoga = createYoga({
     origin: ['http://localhost:3000'],
     credentials: true,
   },
-  context: async (request) => {
-    console.log('HEADERS', request.request.headers);
-    return request.request;
-  },
+  context: async ({ req }: any) => ({
+    userAddress: req.session.siwe.address,
+  }),
 });
 
 const app = express();
@@ -285,11 +291,21 @@ app.use(
   session({
     name: 'siwe-quickstart',
     secret: 'siwe-quickstart-secret',
-    resave: false,
+    resave: true,
     saveUninitialized: true,
     cookie: { secure: false, sameSite: false },
   }),
 );
+
+app.use('/graphql', (req, res, next) => {
+  // console.log('INCOMING SESSION AT /GRAPHQL', req.session);
+  next();
+});
+
+app.use((req, res, next) => {
+  // console.log('INCOMING SESSION AT /', req.session);
+  next();
+});
 
 app.use('/graphql', yoga);
 
