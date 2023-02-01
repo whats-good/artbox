@@ -1,5 +1,6 @@
 import { useProvider } from "wagmi";
 import styled from "styled-components";
+import { uuid } from "uuidv4";
 import { useState, Dispatch, SetStateAction } from "react";
 import { StyledForm, StyledLabel, StyledInput } from "./commonStyles";
 import { ButtonInner, ButtonOuter } from "../../button";
@@ -63,7 +64,7 @@ export const ShowCollections = ({ contracts, setContracts } : ShowCollectionsPro
 
   return (
     <ShowCollectionsWrapper>
-      {contracts.map((contract, i, contracts) => <CollectionDisplay contracts={contracts} contract={contract} setContracts={setContracts}/>)}
+      {contracts.map((contract, i, contracts) => <CollectionDisplay key={uuid()} contracts={contracts} contract={contract} setContracts={setContracts}/>)}
     </ShowCollectionsWrapper>
   )
 }

@@ -40,20 +40,27 @@ export const DiscoverModal = ({ toggleShowModal } : DiscoverModalProps) => {
 
 const InnerDiscoverModal = ({}) => {
 
-  const { loading, error, data } = useQuery(
+  const { loading, error, data, refetch } = useQuery(
     discoverUser,
     {
       variables: {},
       notifyOnNetworkStatusChange: true,
+
     }
   );
 
   if (loading) return (
     <p>Loading....</p>
   );
-  if (error) return (
-    <p>Error</p>
-  );
+  if (error) {
+    console.log(error);
+    return (
+      <>
+      <p>Error</p>
+      {/* <button onClick={() => refetch()}>Refetch</button> */}
+      </>
+    );
+  }
 
   return (
     <InnerDiscoverModalWrapper>

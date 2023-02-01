@@ -1,18 +1,6 @@
 import { Modal } from "../../modal";
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
-import styled from "styled-components";
-import { ButtonInner, ButtonOuter } from "../../button";
-import { useQuery, useMutation } from '@apollo/client';
-import { useAccount, useSigner } from 'wagmi';
-import { shortenAddress } from "../../../helpers/shortenAddress";
-import { useProvider } from 'wagmi';
-import { validateContract } from "../../../helpers"
+import { Dispatch, SetStateAction } from "react";
 import { InsideSignUpModal } from "./insideSignUpModal";
-import { StyledLabel, StyledInput, StyledForm } from "./commonStyles";
-import { createUser } from "../../../querys/internal";
-import { signInWithEthereum } from "../../../siwe";
-import { LoggedInContext } from "../../../utils/loggedInContext";
-import { createOrUpdateUser } from "../../../helpers/createUser";
 
 //Types
 

@@ -5,3 +5,4 @@ export * from "./getipfs";
 export * from "./parseIpfs";
 export * from "./validateContract";
 export * from "./createUser";
+export * from "./populateSignUpForm";

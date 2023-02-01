@@ -558,6 +558,7 @@ export type Nouns = {
   nounsMarkets: NounsBuilderAuctionConnection;
   nounsProposal?: Maybe<NounsProposal>;
   nounsProposals: NounsProposalConnection;
+  nounsSearch: NounsSearchResultConnection;
 };
 
 
@@ -604,6 +605,14 @@ export type NounsNounsProposalsArgs = {
   pagination?: InputMaybe<PaginationInput>;
   sort?: InputMaybe<NounsProposalSortKeySortInput>;
   where?: InputMaybe<NounsProposalsQueryInput>;
+};
+
+
+export type NounsNounsSearchArgs = {
+  filterModel?: InputMaybe<NounsSearchFilter>;
+  networks?: InputMaybe<Array<NetworkInput>>;
+  pagination: SearchPaginationInput;
+  query: NounsSearchQueryInput;
 };
 
 export type NounsActiveMarketQueryInput = {
@@ -1018,7 +1027,8 @@ export type NounsProposal = {
   collectionAddress: Scalars['String'];
   description: Scalars['String'];
   descriptionHash: Scalars['String'];
-  eta?: Maybe<Scalars['Int']>;
+  executableFrom?: Maybe<Scalars['Int']>;
+  expiresAt?: Maybe<Scalars['Int']>;
   forVotes: Scalars['Int'];
   governor: Scalars['String'];
   manager: Scalars['String'];
@@ -1032,6 +1042,7 @@ export type NounsProposal = {
   status: NounsProposalStatus;
   targets: Array<Scalars['String']>;
   timeCreated: Scalars['Int'];
+  title: Scalars['String'];
   transactionInfo: TransactionInfo;
   treasury: Scalars['String'];
   values: Array<Scalars['String']>;
@@ -1094,6 +1105,28 @@ export type NounsProposalsQueryInput = {
 export type NounsQueryInput = {
   collectionAddresses?: InputMaybe<Array<Scalars['String']>>;
   memberAddresses?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type NounsSearchFilter = {
+  collectionAddresses?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type NounsSearchQueryInput = {
+  text: Scalars['String'];
+};
+
+export type NounsSearchResult = {
+  __typename?: 'NounsSearchResult';
+  collectionAddress: Scalars['String'];
+  entityType: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  networkInfo: NetworkInfo;
+};
+
+export type NounsSearchResultConnection = {
+  __typename?: 'NounsSearchResultConnection';
+  nodes: Array<NounsSearchResult>;
+  pageInfo: PageInfo;
 };
 
 export enum NounsSortKey {
@@ -2755,6 +2788,7 @@ export type Nouns = {
   nounsMarkets: NounsBuilderAuctionConnection;
   nounsProposal?: Maybe<NounsProposal>;
   nounsProposals: NounsProposalConnection;
+  nounsSearch: NounsSearchResultConnection;
 };
 
 
@@ -2801,6 +2835,14 @@ export type NounsNounsProposalsArgs = {
   pagination?: InputMaybe<PaginationInput>;
   sort?: InputMaybe<NounsProposalSortKeySortInput>;
   where?: InputMaybe<NounsProposalsQueryInput>;
+};
+
+
+export type NounsNounsSearchArgs = {
+  filterModel?: InputMaybe<NounsSearchFilter>;
+  networks?: InputMaybe<Array<NetworkInput>>;
+  pagination: SearchPaginationInput;
+  query: NounsSearchQueryInput;
 };
 
 export type NounsActiveMarketQueryInput = {
@@ -3215,7 +3257,8 @@ export type NounsProposal = {
   collectionAddress: Scalars['String'];
   description: Scalars['String'];
   descriptionHash: Scalars['String'];
-  eta?: Maybe<Scalars['Int']>;
+  executableFrom?: Maybe<Scalars['Int']>;
+  expiresAt?: Maybe<Scalars['Int']>;
   forVotes: Scalars['Int'];
   governor: Scalars['String'];
   manager: Scalars['String'];
@@ -3229,6 +3272,7 @@ export type NounsProposal = {
   status: NounsProposalStatus;
   targets: Array<Scalars['String']>;
   timeCreated: Scalars['Int'];
+  title: Scalars['String'];
   transactionInfo: TransactionInfo;
   treasury: Scalars['String'];
   values: Array<Scalars['String']>;
@@ -3291,6 +3335,28 @@ export type NounsProposalsQueryInput = {
 export type NounsQueryInput = {
   collectionAddresses?: InputMaybe<Array<Scalars['String']>>;
   memberAddresses?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type NounsSearchFilter = {
+  collectionAddresses?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type NounsSearchQueryInput = {
+  text: Scalars['String'];
+};
+
+export type NounsSearchResult = {
+  __typename?: 'NounsSearchResult';
+  collectionAddress: Scalars['String'];
+  entityType: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  networkInfo: NetworkInfo;
+};
+
+export type NounsSearchResultConnection = {
+  __typename?: 'NounsSearchResultConnection';
+  nodes: Array<NounsSearchResult>;
+  pageInfo: PageInfo;
 };
 
 export enum NounsSortKey {

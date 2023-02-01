@@ -10,6 +10,7 @@ const zoraEndpoint = new HttpLink({
 });
 const userEndpoint = new HttpLink({
   uri: process.env.NEXT_PUBLIC_INTERNAL_API,
+  credentials: "include",
 });
 
 const apolloClient = new ApolloClient({

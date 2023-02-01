@@ -1,6 +1,6 @@
 
-import { useContext, useState } from "react";
 import styled from "styled-components";
+import { useContext, useEffect, useState } from "react";
 import { useSigner } from "wagmi";
 import { createOrUpdateUser } from "../../../helpers"
 import { signInWithEthereum } from "../../../siwe";
@@ -8,6 +8,7 @@ import { LoggedInContext } from "../../../utils/loggedInContext";
 import { ButtonInner, ButtonOuter } from "../../button";
 import { StyledLabel, StyledInput, StyledForm } from "./commonStyles";
 import { AddCollections, ShowCollections } from "./addCollections";
+import { populateSignUpForm } from "../../../helpers"
 
 //Types
 type CreateProfileProps = {
@@ -17,6 +18,7 @@ type CreateProfileProps = {
 //Styles
 const CreateProfileWrapper = styled.div`
 `;
+
 const StyledTextArea = styled.textarea`
   width: 90%;
   margin-left: 14px;
@@ -27,7 +29,6 @@ const StyledTextArea = styled.textarea`
 
 export const CreateProfile = ({ address } : CreateProfileProps) => {
 
-
   const [loggedIn, setLoggedIn] = useContext<any>(LoggedInContext);
   const [username, setUsername] = useState<string>('');
   const [bio, setBio] = useState<string>('');
@@ -35,6 +36,15 @@ export const CreateProfile = ({ address } : CreateProfileProps) => {
 
   const { data: signer } = useSigner()
 
+  useEffect(() => {
+    populateSignUpForm({address: address}).then((res) => {
+      if (res.userExists) {
+        setUsername(res.username);
+        setBio(res.description);
+        setContracts(res.contracts)
+      }
+    })
+  })
 
   if (!loggedIn) {
     return (
@@ -77,6 +87,7 @@ export const CreateProfile = ({ address } : CreateProfileProps) => {
               console.log('This DID NOT Work');
             } else {
               console.log('THIS WORKED!!');
+              //Close Window
             }
           }}>
             Submit

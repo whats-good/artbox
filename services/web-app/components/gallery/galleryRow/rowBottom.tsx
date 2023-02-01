@@ -6,6 +6,7 @@ import { useQuery } from "@apollo/client";
 import { tokenGallery } from "../../../querys/zora";
 import { ButtonInner, ButtonOuter } from '../../button';
 import { parseIpfs } from '../../../helpers';
+import Image from "next/image";
 
 //Types
 
@@ -216,6 +217,7 @@ const GalleryRowItem = ({ urls, title, contract, user } : GalleryRowItemProps) =
     <GalleryRowItemWrapper>
       <Link href={`${user}/${contract}/${title}`}>
         <img
+          alt={title}
           style={{width: "100%", height: "75%", objectFit: "cover", borderBottom: "1px solid black"}}
           src={src}
           onError={() => {

@@ -74,7 +74,7 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
         profile = {
           id: parseInt(data.user.data.id),
           username: data.user.data.username,
-          bio: data.user.data.description,
+          bio: data.user.data.description ? data.user.data.description : '',
           collections: data.user.data.contracts.map(({contractAddress}) => contractAddress)
         }
 
@@ -146,7 +146,7 @@ function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
   if (props.__typename === "Success") {
     return (
       <>
-        <Sign />
+        {/* <Sign /> */}
         <TopBar />
         <PageWrapper>
           <BlueBar />
@@ -166,55 +166,55 @@ function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
 export default User;
 
 
-function Sign() {
+// function Sign() {
 
-  const digest = ethers.utils.arrayify(ethers.utils.hashMessage("gm wagmi frens"));
+//   const digest = ethers.utils.arrayify(ethers.utils.hashMessage("gm wagmi frens"));
 
-  const { data, isError, isLoading, isSuccess, signMessage } = useSignMessage({
-    message: 'hello sam',
-  })
+//   const { data, isError, isLoading, isSuccess, signMessage } = useSignMessage({
+//     message: 'hello sam',
+//   })
 
-  return (
-    <div>
-      <button disabled={isLoading} onClick={() => signMessage()}>
-        Sign message
-      </button>
-      <SendMut signature={data}/>
-      {isError && <div>Error signing message</div>}
-    </div>
-  )
-}
+//   return (
+//     <div>
+//       <button disabled={isLoading} onClick={() => signMessage()}>
+//         Sign message
+//       </button>
+//       <SendMut signature={data}/>
+//       {isError && <div>Error signing message</div>}
+//     </div>
+//   )
+// }
 
-type SendMutProps = {
-  signature: `0x${string}` | undefined;
-}
+// type SendMutProps = {
+//   signature: `0x${string}` | undefined;
+// }
 
-const SendMut = ({ signature } : SendMutProps) => {
+// const SendMut = ({ signature } : SendMutProps) => {
 
-  //Add connected Wallet
-  const { address, isConnecting, isDisconnected } = useAccount();
+//   //Add connected Wallet
+//   const { address, isConnecting, isDisconnected } = useAccount();
 
-  const [createUserFunction, { data, loading, error }] = useMutation(createUser);
+//   const [createUserFunction, { data, loading, error }] = useMutation(createUser);
 
-    return (
-      <>
-      <button onClick={(e) => {
-        e.preventDefault();
-        createUserFunction({
-          variables: {
-            newUserDetails: {
-              address: address as string,
-              username: "sam2"
-            }
-          },
-          context: {
-            headers: {
-              "x-ethereum-signature": ( signature ? signature : '' )
-            }
-          },
-          notifyOnNetworkStatusChange: true,
-        })
-      }}>Send Mutation</button>
-      </>
-    )
-}
+//     return (
+//       <>
+//       <button onClick={(e) => {
+//         e.preventDefault();
+//         createUserFunction({
+//           variables: {
+//             newUserDetails: {
+//               address: address as string,
+//               username: "sam2"
+//             }
+//           },
+//           context: {
+//             headers: {
+//               "x-ethereum-signature": ( signature ? signature : '' )
+//             }
+//           },
+//           notifyOnNetworkStatusChange: true,
+//         })
+//       }}>Send Mutation</button>
+//       </>
+//     )
+// }

@@ -26,6 +26,7 @@
     "react-draggable": "^4.4.5",
     "siwe": "^1.1.6",
     "styled-components": "^5.3.6",
+    "uuidv4": "^6.2.13",
     "wagmi": "0.8.10",
     "zod": "^3.20.2"
   },

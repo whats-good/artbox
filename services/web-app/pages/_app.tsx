@@ -2,13 +2,9 @@ import "../styles/globals.css";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import type { AppProps } from "next/app";
-import {
-  WagmiConfig,
-  createClient,
-  configureChains,
-} from 'wagmi';
+import { WagmiConfig, createClient, configureChains } from "wagmi";
 import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { publicProvider } from 'wagmi/providers/public'
+import { publicProvider } from "wagmi/providers/public";
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { mainnet } from '@wagmi/core/chains';
 import { ApolloProvider } from '@apollo/client';

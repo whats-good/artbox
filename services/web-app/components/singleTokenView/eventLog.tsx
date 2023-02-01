@@ -84,6 +84,7 @@ export const EventsList = ({ events } : EventsListProps) => {
         if (event.properties.__typename === "Sale") {
           return (
             <SaleEventItem
+              key={event.transactionInfo.blockTimestamp}
               date={event.transactionInfo.blockTimestamp}
               to={event.properties.buyerAddress}
               from={event.properties.sellerAddress}

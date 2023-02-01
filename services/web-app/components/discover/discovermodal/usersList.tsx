@@ -19,7 +19,7 @@ export const UsersList = ( props : UsersListProps)  => {
   if (props.data && props.data.discoverUsers.__typename === "QueryDiscoverUsersSuccess") {
     return (
       <UsersListWrapper>
-        {props.data.discoverUsers.data.map(({username}) => <UserListItem username={username}/>)}
+        {props.data.discoverUsers.data.map(({username}) => <UserListItem key={username} username={username}/>)}
       </UsersListWrapper>
     )
   }
