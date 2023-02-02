@@ -12,9 +12,10 @@ export const signInWithEthereum = async (
     domain,
     origin
   );
+
   const signature = await signer.signMessage(message);
 
-  const res = await fetch(`http://localhost:4001/verify`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/verify`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

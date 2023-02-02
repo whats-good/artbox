@@ -6,8 +6,7 @@ export const createSiweMessage = async (
   domain: string,
   origin: string
 ) => {
-  console.log("ENV: ", process.env.NEXT_PUBLIC_BACKEND_URL);
-  const res = await fetch(`http://localhost:4001/nonce`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/nonce`, {
     credentials: "include",
   });
   const message = new SiweMessage({

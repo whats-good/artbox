@@ -145,12 +145,10 @@ function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
   if (props.__typename === "Success") {
     return (
       <>
-        {/* <Sign /> */}
         <TopBar />
         <PageWrapper>
           <BlueBar />
           <ConnectedAccount />
-          {/* {address ? <ConnectedAccount /> : <></>} */}
           <Gallery user={props.user} bio={props.bio} contracts={props.contracts} userAddress={props.userAddress}/>
         </PageWrapper>
       </>
