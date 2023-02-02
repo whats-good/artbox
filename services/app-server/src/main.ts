@@ -32,7 +32,7 @@ interface YogaContext {
 // & Record<string, any>
 
 // TODO: this should come from a factory via nest
-const prismaClient = new PrismaClient({});
+export const prismaClient = new PrismaClient({});
 
 // TODO: the builder should be a part of the nest factory chain
 const builder = new SchemaBuilder<{
