@@ -1,5 +1,6 @@
 import { InferGetServerSidePropsType } from 'next';
 import { GetServerSideProps } from 'next';
+import { useAccount } from "wagmi";
 import client from '../../utils/apollo-client';
 import type { CollectionInfoQuery } from '../../.utils/zoraTypes/graphql'
 import { collectionInfo } from '../../querys/zora';
@@ -139,6 +140,8 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
 
 function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
 
+  const { address, isConnecting, isConnected } = useAccount()
+
   if (props.__typename === "Success") {
     return (
       <>
@@ -147,6 +150,7 @@ function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
         <PageWrapper>
           <BlueBar />
           <ConnectedAccount />
+          {/* {address ? <ConnectedAccount /> : <></>} */}
           <Gallery user={props.user} bio={props.bio} contracts={props.contracts} userAddress={props.userAddress}/>
         </PageWrapper>
       </>

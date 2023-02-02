@@ -57,7 +57,6 @@ const InnerDiscoverModal = ({}) => {
     return (
       <>
       <p>Error</p>
-      {/* <button onClick={() => refetch()}>Refetch</button> */}
       </>
     );
   }

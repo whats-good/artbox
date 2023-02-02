@@ -76,7 +76,7 @@ const ArtistBioTopBar = ({ editable, setEditable, newBio } : ArtistBioTopBarProp
 
   return (
     <ArtistBioTopBarWrapper>
-      {editable
+      {/* {editable
         ?
         <ButtonOuter>
           <ButtonInner onClick={() => {setEditable(false)}}>Save</ButtonInner>
@@ -85,7 +85,7 @@ const ArtistBioTopBar = ({ editable, setEditable, newBio } : ArtistBioTopBarProp
         <ButtonOuter>
           <ButtonInner onClick={() => {setEditable(true)}}>Edit</ButtonInner>
         </ButtonOuter>
-      }
+      } */}
     </ArtistBioTopBarWrapper>
   )
 }

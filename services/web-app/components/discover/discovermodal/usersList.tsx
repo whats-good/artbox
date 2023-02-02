@@ -42,10 +42,9 @@ const UserListItemWrapper = styled.div`
 const UserListItem = ({ username } : UserListItemProps) => {
 
   const router = useRouter();
-
   return (
     <UserListItemWrapper>
-      <Link href={`${router.asPath}/${username}`}>{username}</Link>
+      <Link href={`${router.asPath}${username}`}>{username}</Link>
     </UserListItemWrapper>
   )
 }
