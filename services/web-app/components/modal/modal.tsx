@@ -45,14 +45,14 @@ const ModalTitle = styled.p`
   align-self: center;
   color: white;
 `
-const ModelExitButtonWrapper = styled(ButtonOuter)`
+export const ModelExitButtonWrapper = styled(ButtonOuter)`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 14px;
   width: 18px;
 `
-const ModelExitButton = styled(ButtonInner)`
+export const ModelExitButton = styled(ButtonInner)`
   padding: 0px;
   height: 14px;
   width: 18px;

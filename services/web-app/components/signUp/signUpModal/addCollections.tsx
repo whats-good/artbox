@@ -4,22 +4,26 @@ import { uuid } from "uuidv4";
 import { useState, Dispatch, SetStateAction } from "react";
 import { StyledForm, StyledLabel, StyledInput } from "./commonStyles";
 import { ButtonInner, ButtonOuter } from "../../button";
-import { validateContract } from "../../../helpers";
+import { addContract, deleteContract } from "../../../helpers";
 import { shortenAddress } from "../../../helpers/shortenAddress";
+import { ModelExitButtonWrapper, ModelExitButton } from "../../modal"
 
 //Types
 type AddCollectionsProps = {
   setContracts: Dispatch<SetStateAction<string[]>>;
   contracts: string[];
+  userAddress: string;
 }
 type ShowCollectionsProps = {
   contracts: string[];
   setContracts: Dispatch<SetStateAction<string[]>>;
+  userAddress: string;
 }
 type CollectionDisplayProps = {
   contracts: string[];
   contract: string;
   setContracts: Dispatch<SetStateAction<string[]>>;
+  userAddress: string;
 }
 
 //Styles
@@ -28,7 +32,7 @@ const ShowCollectionsWrapper = styled.div`
 const CollectionDisplayWrapper = styled.div`
 `
 
-export const AddCollections = ({ contracts, setContracts } : AddCollectionsProps) => {
+export const AddCollections = ({ contracts, setContracts, userAddress } : AddCollectionsProps) => {
 
   const [ contractAddress, setContractAddress ] = useState<string>('')
 
@@ -41,17 +45,17 @@ export const AddCollections = ({ contracts, setContracts } : AddCollectionsProps
           <StyledInput required type="text" name="name" value={contractAddress} onChange={(e) => setContractAddress(e.target.value)} />
         </StyledLabel>
         <ButtonOuter>
-          <ButtonInner onClick={(e) => {
-
+          <ButtonInner onClick={ async (e) => {
             //Check if contract is valid before pushing it into state array
             e.preventDefault();
-
-            const validatedContract = validateContract(contractAddress, provider);
-
-            if (validatedContract.valid) {
-              setContracts([...contracts, contractAddress])
+            const contract = await addContract({
+              contractAddress: contractAddress,
+              userAddress: userAddress,
+              provider: provider,
+            })
+            if (contract.success) {
+              setContracts([...contracts, contract.addedContract])
             }
-
           }}>
             Submit
           </ButtonInner>
@@ -60,29 +64,35 @@ export const AddCollections = ({ contracts, setContracts } : AddCollectionsProps
   )
 }
 
-export const ShowCollections = ({ contracts, setContracts } : ShowCollectionsProps) => {
+export const ShowCollections = ({ contracts, setContracts, userAddress } : ShowCollectionsProps) => {
 
   return (
     <ShowCollectionsWrapper>
-      {contracts.map((contract, i, contracts) => <CollectionDisplay key={uuid()} contracts={contracts} contract={contract} setContracts={setContracts}/>)}
+      {contracts.map((contract, i, contracts) => <CollectionDisplay userAddress={userAddress} key={uuid()} contracts={contracts} contract={contract} setContracts={setContracts}/>)}
     </ShowCollectionsWrapper>
   )
 }
 
-const CollectionDisplay = ({ contracts, contract, setContracts } : CollectionDisplayProps) => {
+const CollectionDisplay = ({ contracts, contract, setContracts, userAddress } : CollectionDisplayProps) => {
+
   return (
     <CollectionDisplayWrapper>
       {shortenAddress(contract)}
-      {/* <button onClick={(e) => {
-
-        //This removes contract from state
-        e.preventDefault();
-        const index = contracts.indexOf(contract);
-        if (index > -1) {
-          const newArr = contracts.splice(index, 1);
-          setContracts(newArr);
-        }
-      }}>X</button> */}
+      <ModelExitButtonWrapper>
+        <ModelExitButton onClick={ async (e) => {
+          e.preventDefault();
+          const deletedContract = await deleteContract({
+            contractAddress: contract,
+            userAddress: userAddress,
+          })
+          if (deletedContract.success) {
+            const newArr = contracts.filter((item) => item !== deletedContract.deletedAddress);
+            setContracts(newArr);
+          }
+        }}>
+          x
+        </ModelExitButton>
+      </ModelExitButtonWrapper>
     </CollectionDisplayWrapper>
   )
 }

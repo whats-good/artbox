@@ -2,7 +2,7 @@ import { InferGetServerSidePropsType, GetServerSidePropsResult } from 'next';
 import { GetServerSideProps } from 'next';
 import client from '../../../utils/apollo-client';
 import { tokenInfo } from '../../../querys/zora';
-import type { TokenInfoQuery } from '../../../.utils/gql/types/graphql';
+import type { TokenInfoQuery } from '../../../.utils/zoraTypes/graphql';
 import { PageWrapper, TopBar, SingleTokenView, BlueBar } from '../../../components';
 
 type FetchError = {
@@ -59,7 +59,7 @@ export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (con
       context: {clientName: 'zora'},
       query: tokenInfo,
     });
-    console.log(data.token.token.image);
+
     return {
       props: {
         __typename: "Success",

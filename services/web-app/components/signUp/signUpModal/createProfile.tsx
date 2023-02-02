@@ -44,7 +44,7 @@ export const CreateProfile = ({ address } : CreateProfileProps) => {
         setContracts(res.contracts)
       }
     })
-  })
+  }, [address])
 
   if (!loggedIn) {
     return (
@@ -72,8 +72,8 @@ export const CreateProfile = ({ address } : CreateProfileProps) => {
           Set Description: <br/>
           <StyledTextArea required maxLength={280} value={bio} name="description" onChange={(e) => setBio(e.target.value)}/>
         </StyledLabel>
-        <AddCollections contracts={contracts} setContracts={setContracts}/>
-        <ShowCollections contracts={contracts} setContracts={setContracts}/>
+        <AddCollections contracts={contracts} setContracts={setContracts} userAddress={address}/>
+        <ShowCollections userAddress={address} contracts={contracts} setContracts={setContracts}/>
         <ButtonOuter>
           <ButtonInner type="submit" onClick={ async (e) => {
             e.preventDefault();

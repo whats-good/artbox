@@ -4,8 +4,6 @@ import { userInfoWithAddress } from "../querys/internal";
 type PopulateSignUpFormArgs = {
   address: string
 }
-type PopulateSignUpFormArgsOutput = PopulateSignUpFormArgsSuccess | PopulateSignUpFormArgsFailed;
-
 type PopulateSignUpFormArgsSuccess = {
   userExists: true;
   username: string;
@@ -16,9 +14,9 @@ type PopulateSignUpFormArgsSuccess = {
 type PopulateSignUpFormArgsFailed = {
   userExists: false;
 }
+type PopulateSignUpFormArgsOutput = PopulateSignUpFormArgsSuccess | PopulateSignUpFormArgsFailed;
 
 export const populateSignUpForm = async ({ address } : PopulateSignUpFormArgs): Promise<PopulateSignUpFormArgsOutput> => {
-
   try {
     const data = await apolloClient.query({
       query: userInfoWithAddress,
@@ -27,7 +25,7 @@ export const populateSignUpForm = async ({ address } : PopulateSignUpFormArgs): 
       }
     })
 
-    //Checks if Query was successful, and there is an account
+    //Checks if Query was successful and there is an account
     if (data.data.user.__typename === "QueryUserSuccess" && data.data.user.data.username) {
       return {
         userExists: true,

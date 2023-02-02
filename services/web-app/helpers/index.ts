@@ -6,3 +6,5 @@ export * from "./parseIpfs";
 export * from "./validateContract";
 export * from "./createUser";
 export * from "./populateSignUpForm";
+export * from "./addContract";
+export * from "./deleteContract";
