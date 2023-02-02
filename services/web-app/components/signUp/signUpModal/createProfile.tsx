@@ -1,6 +1,6 @@
 
 import styled from "styled-components";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, Dispatch, SetStateAction } from "react";
 import { useSigner } from "wagmi";
 import { createOrUpdateUser } from "../../../helpers"
 import { signInWithEthereum } from "../../../siwe";
@@ -13,6 +13,7 @@ import { populateSignUpForm } from "../../../helpers"
 //Types
 type CreateProfileProps = {
   address: string;
+  toggleShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
 //Styles
@@ -27,13 +28,13 @@ const StyledTextArea = styled.textarea`
   height: 150px;
 `;
 
-export const CreateProfile = ({ address } : CreateProfileProps) => {
+export const CreateProfile = ({ address, toggleShowModal } : CreateProfileProps) => {
 
   const [loggedIn, setLoggedIn] = useContext<any>(LoggedInContext);
   const [username, setUsername] = useState<string>('');
   const [bio, setBio] = useState<string>('');
   const [contracts, setContracts] = useState<string[]>([]);
-
+  const [message, setMessage] = useState<string>('');
   const { data: signer } = useSigner()
 
   useEffect(() => {
@@ -74,6 +75,7 @@ export const CreateProfile = ({ address } : CreateProfileProps) => {
         </StyledLabel>
         <AddCollections contracts={contracts} setContracts={setContracts} userAddress={address}/>
         <ShowCollections userAddress={address} contracts={contracts} setContracts={setContracts}/>
+        <p>{message}</p>
         <ButtonOuter>
           <ButtonInner type="submit" onClick={ async (e) => {
             e.preventDefault();
@@ -83,11 +85,11 @@ export const CreateProfile = ({ address } : CreateProfileProps) => {
               username: username,
               contracts: contracts,
             })
-            if (!createProfile.success) {
-              console.log('This DID NOT Work');
+            if (createProfile.success) {
+              // toggleShowModal(false);
+              setMessage("Success!")
             } else {
-              console.log('THIS WORKED!!');
-              //Close Window
+              setMessage("Something went wrong...Please make sure username is not taken")
             }
           }}>
             Submit

@@ -21,7 +21,7 @@ export const SignUpModal = ({ toggleShowModal } : SignUpModalProps) => {
           y: 40,
         }}
       >
-        <InsideSignUpModal />
+        <InsideSignUpModal toggleShowModal={toggleShowModal}/>
       </Modal>
     </>
   )

@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { useAccount } from "wagmi";
 import styled from "styled-components";
 import { ConnectWallet } from "../../connectwallet";
@@ -9,6 +10,9 @@ import { CreateProfile } from "./createProfile";
 type ConnectedAddressProps = {
   address: string;
 }
+type InsideSignUpModalProps = {
+  toggleShowModal: Dispatch<SetStateAction<boolean>>;
+}
 
 //Styles
 
@@ -19,7 +23,7 @@ const InsideSignUpModalWrapper = styled.div`
   width: 450px;
 `;
 
-export const InsideSignUpModal = () => {
+export const InsideSignUpModal = ({ toggleShowModal }: InsideSignUpModalProps) => {
 
   const { address } = useAccount();
 
@@ -30,7 +34,7 @@ export const InsideSignUpModal = () => {
       {address ?
         <>
           <ConnectedAddress address={address}/>
-          <CreateProfile address={address}/>
+          <CreateProfile address={address} toggleShowModal={toggleShowModal}/>
         </>
       : <ConnectWalletMessage />}
     </InsideSignUpModalWrapper>
