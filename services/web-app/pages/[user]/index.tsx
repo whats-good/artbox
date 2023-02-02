@@ -5,11 +5,6 @@ import type { CollectionInfoQuery } from '../../.utils/zoraTypes/graphql'
 import { collectionInfo } from '../../querys/zora';
 import { userInfo } from '../../querys/internal';
 import { PageWrapper, BlueBar, TopBar, Gallery, ConnectedAccount } from '../../components/'
-import { ethers } from 'ethers';
-import { useMutation } from "@apollo/client";
-import { useSignMessage, useAccount } from 'wagmi';
-import { createUser } from '../../querys/internal/createUser';
-import { useState } from 'react';
 
 type Profile = {
   id: number,
@@ -25,7 +20,8 @@ type Success = {
     __typename: "Success",
     contracts: CollectionInfoQuery[],
     user: string,
-    bio: string
+    bio: string,
+    userAddress: string,
 }
 type FetchContractsProps = SSRError | Success
 
@@ -77,7 +73,6 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
           bio: data.user.data.description ? data.user.data.description : '',
           collections: data.user.data.contracts.map(({contractAddress}) => contractAddress)
         }
-
         try {
           const contracts = [];
           for (let i = 0; i < profile.collections.length; i++) {
@@ -98,7 +93,8 @@ export const getServerSideProps : GetServerSideProps<FetchContractsProps> = asyn
               __typename: "Success",
               contracts: JSON.parse(JSON.stringify(contracts)),
               user: profile.username,
-              bio: profile.bio
+              bio: profile.bio,
+              userAddress: data.user.data.address,
             }
           }
         } catch(e) {
@@ -151,7 +147,7 @@ function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
         <PageWrapper>
           <BlueBar />
           <ConnectedAccount />
-          <Gallery user={props.user} bio={props.bio} contracts={props.contracts}/>
+          <Gallery user={props.user} bio={props.bio} contracts={props.contracts} userAddress={props.userAddress}/>
         </PageWrapper>
       </>
     );
@@ -164,57 +160,3 @@ function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
   }
 };
 export default User;
-
-
-// function Sign() {
-
-//   const digest = ethers.utils.arrayify(ethers.utils.hashMessage("gm wagmi frens"));
-
-//   const { data, isError, isLoading, isSuccess, signMessage } = useSignMessage({
-//     message: 'hello sam',
-//   })
-
-//   return (
-//     <div>
-//       <button disabled={isLoading} onClick={() => signMessage()}>
-//         Sign message
-//       </button>
-//       <SendMut signature={data}/>
-//       {isError && <div>Error signing message</div>}
-//     </div>
-//   )
-// }
-
-// type SendMutProps = {
-//   signature: `0x${string}` | undefined;
-// }
-
-// const SendMut = ({ signature } : SendMutProps) => {
-
-//   //Add connected Wallet
-//   const { address, isConnecting, isDisconnected } = useAccount();
-
-//   const [createUserFunction, { data, loading, error }] = useMutation(createUser);
-
-//     return (
-//       <>
-//       <button onClick={(e) => {
-//         e.preventDefault();
-//         createUserFunction({
-//           variables: {
-//             newUserDetails: {
-//               address: address as string,
-//               username: "sam2"
-//             }
-//           },
-//           context: {
-//             headers: {
-//               "x-ethereum-signature": ( signature ? signature : '' )
-//             }
-//           },
-//           notifyOnNetworkStatusChange: true,
-//         })
-//       }}>Send Mutation</button>
-//       </>
-//     )
-// }
