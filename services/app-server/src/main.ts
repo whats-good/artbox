@@ -6,7 +6,7 @@ import { PrismaClient } from '@prisma/client';
 import { createYoga } from 'graphql-yoga';
 import { generateNonce, SiweMessage } from 'siwe';
 import session from 'express-session';
-import express, { Request } from 'express';
+import express from 'express';
 import cors from 'cors';
 
 export class ArtBoxBaseError extends Error {}
@@ -26,13 +26,19 @@ declare module 'express-session' {
   }
 }
 
+interface YogaContext {
+  req: express.Request;
+}
+// & Record<string, any>
+
 // TODO: this should come from a factory via nest
 const prismaClient = new PrismaClient({});
 
 // TODO: the builder should be a part of the nest factory chain
 const builder = new SchemaBuilder<{
   Context: {
-    userAddress: string;
+    userAddress?: string;
+    signedIn: boolean;
   };
   PrismaTypes: PrismaTypes;
 }>({
@@ -72,7 +78,7 @@ const User = builder.prismaObject('User', {
     id: t.exposeID('id'),
     address: t.exposeString('address'),
     username: t.exposeString('username'),
-    description: t.exposeString('description'),
+    description: t.exposeString('description', { nullable: true }),
     contracts: t.field({
       select: (args, ctx, nestedSelection) => ({
         contracts: {
@@ -124,19 +130,36 @@ builder.queryType({
         types: [NotFoundError],
         directResult: false,
       },
-      type: 'User',
+      type: User,
       args: {
         username: t.arg.string({
-          required: true,
+          required: false,
+        }),
+        address: t.arg.string({
+          required: false,
         }),
       },
-      resolve: async (query, _, { username }) => {
-        const user = await prismaClient.user.findUnique({
-          ...query,
-          where: {
-            username: username,
-          },
-        });
+      resolve: async (query, _, { username, address }) => {
+        if (!username && !address) {
+          throw new UnknownError('Must provide either username or address');
+        }
+        let user = undefined;
+        if (address) {
+          user = await prismaClient.user.findUnique({
+            ...query,
+            where: {
+              address: address,
+            },
+          });
+        }
+        if (username) {
+          user = await prismaClient.user.findUnique({
+            ...query,
+            where: {
+              username: username,
+            },
+          });
+        }
         if (!user) {
           throw new NotFoundError();
         }
@@ -199,7 +222,6 @@ builder.mutationType({
         input: t.arg({ type: UserInput, required: true }),
       },
       resolve: async (root, args, { userAddress }) => {
-        console.log('createUser: ', userAddress);
         if (!userAddress) {
           throw new UnknownError('No session token');
         }
@@ -231,8 +253,6 @@ builder.mutationType({
         input: t.arg({ type: ContractInput, required: true }),
       },
       resolve: async (root, args, { userAddress }) => {
-        console.log('createContract: ', userAddress);
-        // console.log('createContract Mutation. Request object: ', session);
         if (!userAddress) {
           throw new UnknownError('No session token');
         }
@@ -254,8 +274,29 @@ builder.mutationType({
             },
           },
         });
-        const connectUser = await prismaClient.userOnContract.create({
-          data: {
+
+        const { id } = await prismaClient.user.findUnique({
+          where: {
+            address: userAddress,
+          },
+        });
+
+        const connectUser = await prismaClient.userOnContract.upsert({
+          where: {
+            unique_combo: {
+              smartContractId: contract.id,
+              userId: id,
+            },
+          },
+          create: {
+            user: {
+              connect: { address: userAddress },
+            },
+            smartContract: {
+              connect: { contractAddress: args.input.contractAddress },
+            },
+          },
+          update: {
             user: {
               connect: { address: userAddress },
             },
@@ -264,7 +305,44 @@ builder.mutationType({
             },
           },
         });
+
         if (!connectUser || !contract) {
+          throw new UnknownError();
+        }
+        return contract;
+      },
+    }),
+    deleteContract: t.field({
+      type: SmartContract,
+      args: {
+        input: t.arg({ type: ContractInput, required: true }),
+      },
+      resolve: async (root, args, { userAddress }) => {
+        if (!userAddress) {
+          throw new UnknownError('No session token');
+        }
+        if (userAddress !== args.input.userAddress) {
+          throw new UnknownError('Authenticated adress does not match arg');
+        }
+        const contract = await prismaClient.smartContract.findUnique({
+          where: {
+            contractAddress: args.input.contractAddress,
+          },
+        });
+        const user = await prismaClient.user.findUnique({
+          where: {
+            address: userAddress,
+          },
+        });
+        const deletedRelation = await prismaClient.userOnContract.delete({
+          where: {
+            unique_combo: {
+              userId: user.id,
+              smartContractId: contract.id,
+            },
+          },
+        });
+        if (!deletedRelation || !contract || !user) {
           throw new UnknownError();
         }
         return contract;
@@ -277,15 +355,43 @@ const yoga = createYoga({
   schema: builder.toSchema(),
   maskedErrors: process.env.NODE_ENV === 'production',
   cors: {
-    origin: ['http://localhost:3000'],
+    origin: [
+      process.env.CLIENT_URL,
+      `${process.env.BACKEND_URL}:${process.env.BACKEND_PORT}`,
+    ],
     credentials: true,
   },
-  context: async ({ req }: any) => ({
-    userAddress: req.session.siwe.address,
-  }),
+  context: async ({ req }: any) => {
+    if (!req.session) {
+      return {
+        signedIn: false,
+        userAddress: undefined,
+      };
+    }
+    if (req.session.siwe?.address) {
+      return {
+        userAddress: req.session.siwe.address,
+        signedIn: true,
+      };
+    }
+    return {
+      userAddress: undefined,
+      signedIn: true,
+    };
+  },
 });
 
 const app = express();
+
+app.use(
+  cors({
+    origin: [
+      process.env.CLIENT_URL,
+      `${process.env.BACKEND_URL}:${process.env.BACKEND_PORT}`,
+    ],
+    credentials: true,
+  }),
+);
 
 app.use(
   session({
@@ -294,62 +400,18 @@ app.use(
     resave: true,
     saveUninitialized: true,
     cookie: { secure: false, sameSite: false },
+    rolling: true,
   }),
 );
-
-app.use('/graphql', (req, res, next) => {
-  // console.log('INCOMING SESSION AT /GRAPHQL', req.session);
-  next();
-});
-
-app.use((req, res, next) => {
-  // console.log('INCOMING SESSION AT /', req.session);
-  next();
-});
 
 app.use('/graphql', yoga);
 
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  }),
-);
-
 app.get('/nonce', async function (req, res) {
   req.session.nonce = generateNonce();
   res.setHeader('Content-Type', 'text/plain');
   res.status(200).send(req.session.nonce);
-});
-
-app.get('/personal_information', function (req, res) {
-  console.log('REST headers: ', req.headers);
-  console.log('SESSION OBJECT: ', req.session);
-  console.log('ADDRESS: ', req.session.siwe.address);
-  if (!req.session.siwe) {
-    res.status(401).json({ message: 'You have to first sign_in' });
-    return;
-  }
-  console.log('User is authenticated!');
-  res.setHeader('Content-Type', 'text/plain');
-  res.send(
-    `You are authenticated and your address is: ${req.session.siwe.address}`,
-  );
-});
-
-app.post('/test', function (req, res) {
-  console.log('SESSION OBJECT: ', req.session);
-  if (!req.session.siwe) {
-    res.status(401).json({ message: 'You have to first sign_in' });
-    return;
-  }
-  console.log('User is authenticated!');
-  res.setHeader('Content-Type', 'text/plain');
-  res.send(
-    `You are authenticated and your address is: ${req.session.siwe.address}`,
-  );
 });
 
 app.post('/verify', async function (req, res) {
@@ -381,6 +443,8 @@ app.post('/verify', async function (req, res) {
   }
 });
 
-app.listen(4001, () => {
-  console.log('Running a GraphQL API server at http://localhost:4001/graphql');
+app.listen(process.env.BACKEND_PORT, () => {
+  console.log(
+    `Running a GraphQL API server at ${process.env.BACKEND_URL}:${process.env.BACKEND_PORT}/graphql`,
+  );
 });

@@ -38,11 +38,13 @@
     "@pothos/plugin-errors": "^3.8.6",
     "@pothos/plugin-prisma": "^3.35.6",
     "@prisma/client": "^4.5.0",
+    "@quixo3/prisma-session-store": "^3.1.10",
     "apollo-server-express": "^3.10.3",
     "cors": "^2.8.5",
     "ethers": "^5.7.2",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+    "express-winston": "^4.2.0",
     "graphql": "^16.6.0",
     "graphql-yoga": "^3.3.0",
     "reflect-metadata": "^0.1.13",
@@ -50,7 +52,8 @@
     "rxjs": "^7.2.0",
     "siwe": "^1.1.6",
     "uuid": "^9.0.0",
-    "webpack": "^5.74.0"
+    "webpack": "^5.74.0",
+    "winston": "^3.8.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
