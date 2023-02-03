@@ -8,6 +8,7 @@ import { generateNonce, SiweMessage } from 'siwe';
 import session from 'express-session';
 import express from 'express';
 import cors from 'cors';
+import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 
 export class ArtBoxBaseError extends Error {}
 
@@ -395,12 +396,22 @@ app.use(
 
 app.use(
   session({
-    name: 'siwe-quickstart',
-    secret: 'siwe-quickstart-secret',
+    name: 'siwe',
+    secret: process.env.EXP_SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
-    cookie: { secure: false, sameSite: false },
-    rolling: true,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: false,
+      maxAge: 60000,
+    },
+    // store: new PrismaSessionStore(new PrismaClient(), {
+    //   checkPeriod: 2 * 60 * 1000, //ms
+    //   dbRecordIdIsSessionId: true,
+    //   dbRecordIdFunction: undefined,
+    //   // enableConcurrentSetInvocationsForSameSessionID: true,
+    //   // enableConcurrentTouchInvocationsForSameSessionID: true,
+    // }),
   }),
 );
 
