@@ -31,6 +31,13 @@ const ShowCollectionsWrapper = styled.div`
 `
 const CollectionDisplayWrapper = styled.div`
 `
+const AddButton = styled(ButtonOuter)`
+  width: 25%;
+`
+const AddCollectionInput = styled(StyledInput)`
+  margin-left: none;
+  width: 95%;
+`;
 
 export const AddCollections = ({ contracts, setContracts, userAddress } : AddCollectionsProps) => {
 
@@ -42,9 +49,9 @@ export const AddCollections = ({ contracts, setContracts, userAddress } : AddCol
     <StyledForm>
       <StyledLabel>
           Add Collection: <br/>
-          <StyledInput required type="text" name="name" value={contractAddress} onChange={(e) => setContractAddress(e.target.value)} />
+          <AddCollectionInput required type="text" name="name" value={contractAddress} onChange={(e) => setContractAddress(e.target.value)} />
         </StyledLabel>
-        <ButtonOuter>
+        <AddButton>
           <ButtonInner onClick={ async (e) => {
             //Check if contract is valid before pushing it into state array
             e.preventDefault();
@@ -57,9 +64,9 @@ export const AddCollections = ({ contracts, setContracts, userAddress } : AddCol
               setContracts([...contracts, contract.addedContract])
             }
           }}>
-            Submit
+            Add
           </ButtonInner>
-        </ButtonOuter>
+        </AddButton>
       </StyledForm>
   )
 }

@@ -44,7 +44,7 @@ export const InsideSignUpModal = ({ toggleShowModal }: InsideSignUpModalProps) =
 const ConnectWalletMessage = () => {
   return (
     <ConnectWalletMessageWrapper>
-      <h1>Please connect your wallet to create an account</h1>
+      <p>Please connect your wallet to create an account</p>
       <ConnectWallet/>
     </ConnectWalletMessageWrapper>
   )

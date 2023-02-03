@@ -19,6 +19,11 @@ type CreateProfileProps = {
 //Styles
 const CreateProfileWrapper = styled.div`
 `;
+const PleaseSignMessageButton = styled(ButtonOuter)`
+  width: 90%;
+  margin: auto;
+`
+
 
 const StyledTextArea = styled.textarea`
   width: 90%;
@@ -49,16 +54,16 @@ export const CreateProfile = ({ address, toggleShowModal } : CreateProfileProps)
 
   if (!loggedIn) {
     return (
-      <ButtonOuter>
+      <PleaseSignMessageButton>
         <ButtonInner onClick={ async () => {
           const signedIn = await signInWithEthereum(address, signer, window.location.host, window.location.origin);
           if (signedIn.ok) {
             setLoggedIn(true);
           }
         }}>
-          Please Sign a message to create or edit your account.
+          Please sign a message to create or edit your account.
         </ButtonInner>
-    </ButtonOuter>
+    </PleaseSignMessageButton>
     )
   }
 

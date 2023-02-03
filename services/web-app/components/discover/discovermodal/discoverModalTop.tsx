@@ -9,28 +9,32 @@ const DiscoverModalTopWrapper = styled.div`
   justify-content: space-between;
 `;
 
+const DiscoverModalFilterButton = styled(ButtonInner)`
+  padding: 0px;
+`
+
 export const DiscoverModalTop = () => {
   return (
     <DiscoverModalTopWrapper>
       <ButtonOuter>
-        <ButtonInner>
+        <DiscoverModalFilterButton>
           Artists
-        </ButtonInner>
+        </DiscoverModalFilterButton>
       </ButtonOuter>
       <ButtonOuter>
-        <ButtonInner>
+        <DiscoverModalFilterButton>
           Random
-        </ButtonInner>
+        </DiscoverModalFilterButton>
       </ButtonOuter>
       <ButtonOuter>
-        <ButtonInner>
+        <DiscoverModalFilterButton>
           Newest
-        </ButtonInner>
+        </DiscoverModalFilterButton>
       </ButtonOuter>
       <ButtonOuter>
-        <ButtonInner>
+        <DiscoverModalFilterButton>
           Genre
-        </ButtonInner>
+        </DiscoverModalFilterButton>
       </ButtonOuter>
       <SearchBar />
     </DiscoverModalTopWrapper>
