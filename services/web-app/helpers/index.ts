@@ -3,3 +3,8 @@ export * from "./erc721";
 export * from "./getNftMetaData";
 export * from "./getipfs";
 export * from "./parseIpfs";
+export * from "./validateContract";
+export * from "./createUser";
+export * from "./populateSignUpForm";
+export * from "./addContract";
+export * from "./deleteContract";

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { shortenAddress } from '../../helpers/shortenAddress';
-import type { TokenInfoQuery, TokenAttribute } from '../../.utils/gql/types/graphql';
+import type { TokenInfoQuery, TokenAttribute } from '../../.utils/zoraTypes/graphql';
 import { useState } from "react";
 import { parseIpfs } from "../../helpers";
 import { EventsList } from "./eventLog";
@@ -48,6 +48,7 @@ const ImageColumn = ({ urls }: ImageColumnProps) => {
   return (
     <ImageColumnWrapper>
         <img
+          alt={"NFT Image QR8"}
           style={{width: 'auto', height: '70%', marginBottom: '40px'}}
           src={src}
           onError={() => {

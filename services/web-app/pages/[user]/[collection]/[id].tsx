@@ -1,8 +1,8 @@
 import { InferGetServerSidePropsType, GetServerSidePropsResult } from 'next';
 import { GetServerSideProps } from 'next';
 import client from '../../../utils/apollo-client';
-import { tokenInfo } from '../../../querys';
-import type { TokenInfoQuery } from '../../../.utils/gql/types/graphql';
+import { tokenInfo } from '../../../querys/zora';
+import type { TokenInfoQuery } from '../../../.utils/zoraTypes/graphql';
 import { PageWrapper, TopBar, SingleTokenView, BlueBar } from '../../../components';
 
 type FetchError = {
@@ -56,6 +56,7 @@ export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (con
           tokenId: id
         }
       },
+      context: {clientName: 'zora'},
       query: tokenInfo,
     });
 

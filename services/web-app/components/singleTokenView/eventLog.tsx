@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { shortenAddress } from '../../helpers/shortenAddress';
-import { EventType, Chain } from '../../.utils/gql/types/graphql';
+import { EventType, Chain } from '../../.utils/zoraTypes/graphql';
 
 //Types
 type EventsListProps = {
@@ -84,6 +84,7 @@ export const EventsList = ({ events } : EventsListProps) => {
         if (event.properties.__typename === "Sale") {
           return (
             <SaleEventItem
+              key={event.transactionInfo.blockTimestamp}
               date={event.transactionInfo.blockTimestamp}
               to={event.properties.buyerAddress}
               from={event.properties.sellerAddress}

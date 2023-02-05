@@ -24,6 +24,13 @@ model User {
   contracts   UserOnContract[]
 }
 
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt   DateTime
+}
+
 model UserOnContract {
   id               Int           @id @default(autoincrement())
   createdAt        DateTime      @default(now())
@@ -32,6 +39,7 @@ model UserOnContract {
   userId           Int
   smartContract    SmartContract @relation(fields: [smartContractId], references: [id])
   smartContractId  Int
+  @@unique([userId, smartContractId], name: "unique_combo")
 }
 
 model SmartContract {

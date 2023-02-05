@@ -3,9 +3,10 @@ import Link from 'next/link';
 import { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components";
 import { useQuery } from "@apollo/client";
-import { tokenGallery } from "../../../querys";
+import { tokenGallery } from "../../../querys/zora";
 import { ButtonInner, ButtonOuter } from '../../button';
 import { parseIpfs } from '../../../helpers';
+import Image from "next/image";
 
 //Types
 
@@ -115,7 +116,7 @@ const GalleryRowItemWrapper = styled.div`
 //Components
 
 const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandRowBottomProps ) => {
-
+  console.log('PAGE PROP: ', page);
   const router = useRouter();
 
   const [previousPage, setPreviousPage] = useState(page);
@@ -127,6 +128,7 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
         tokenAddress: {collectionAddresses: [contractAddress]},
         page: {limit: count, after: page}
       },
+      context: {clientName: 'zora'},
       notifyOnNetworkStatusChange: true,
     }
   );
@@ -171,6 +173,7 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
           <ButtonOuter>
             <ButtonInner
               onClick={() => {
+                console.log('BACK CURSOR: ', data?.tokens.pageInfo.endCursor);
                 setPreviousPage(data?.tokens.pageInfo.endCursor)
                 refetch({
                   tokenAddress: {collectionAddresses: [contractAddress]},
@@ -184,6 +187,7 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
         <ButtonOuter>
           <ButtonInner
             onClick={() => {
+              console.log('NEXT CURSOR: ', data?.tokens.pageInfo.endCursor);
               setPreviousPage(data?.tokens.pageInfo.endCursor)
               refetch({
                 tokenAddress: {collectionAddresses: [contractAddress]},
@@ -213,6 +217,7 @@ const GalleryRowItem = ({ urls, title, contract, user } : GalleryRowItemProps) =
     <GalleryRowItemWrapper>
       <Link href={`${user}/${contract}/${title}`}>
         <img
+          alt={title}
           style={{width: "100%", height: "75%", objectFit: "cover", borderBottom: "1px solid black"}}
           src={src}
           onError={() => {

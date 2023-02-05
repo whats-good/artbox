@@ -1,4 +1,4 @@
-import { gql } from '../.utils/gql/types';
+import { gql } from "../../.utils/zoraTypes";
 
 export const validateContract = gql(`
   query ValidateContract($contractAddress: CollectionsQueryInput) {
@@ -9,5 +9,3 @@ export const validateContract = gql(`
     }
   }
 `);
-
-

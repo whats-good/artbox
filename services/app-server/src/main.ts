@@ -1,19 +1,14 @@
-// import type { SmartContract } from './../prisma/@prisma/client/index.d';
-// import { NestFactory } from '@nestjs/core';
-// import { AppModule } from '@/modules/app/app.module';
-
-// async function bootstrap() {
-//   const app = await NestFactory.create(AppModule);
-//   await app.listen(3000);
-// }
-// bootstrap();
-
-import { createServer } from '@graphql-yoga/node';
 import SchemaBuilder from '@pothos/core';
 import ErrorsPlugin from '@pothos/plugin-errors';
 import PrismaPlugin from '@pothos/plugin-prisma';
 import type PrismaTypes from '@pothos/plugin-prisma/generated';
 import { PrismaClient } from '@prisma/client';
+import { createYoga } from 'graphql-yoga';
+import { generateNonce, SiweMessage } from 'siwe';
+import session from 'express-session';
+import express from 'express';
+import cors from 'cors';
+import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 
 export class ArtBoxBaseError extends Error {}
 
@@ -25,11 +20,27 @@ export class NotFoundError extends ArtBoxBaseError {
   }
 }
 
+declare module 'express-session' {
+  interface SessionData {
+    siwe: SiweMessage;
+    nonce: string;
+  }
+}
+
+interface YogaContext {
+  req: express.Request;
+}
+// & Record<string, any>
+
 // TODO: this should come from a factory via nest
-const prismaClient = new PrismaClient({});
+export const prismaClient = new PrismaClient({});
 
 // TODO: the builder should be a part of the nest factory chain
 const builder = new SchemaBuilder<{
+  Context: {
+    userAddress?: string;
+    signedIn: boolean;
+  };
   PrismaTypes: PrismaTypes;
 }>({
   notStrict:
@@ -68,7 +79,7 @@ const User = builder.prismaObject('User', {
     id: t.exposeID('id'),
     address: t.exposeString('address'),
     username: t.exposeString('username'),
-    description: t.exposeString('description'),
+    description: t.exposeString('description', { nullable: true }),
     contracts: t.field({
       select: (args, ctx, nestedSelection) => ({
         contracts: {
@@ -120,23 +131,70 @@ builder.queryType({
         types: [NotFoundError],
         directResult: false,
       },
-      type: 'User',
+      type: User,
       args: {
         username: t.arg.string({
-          required: true,
+          required: false,
+        }),
+        address: t.arg.string({
+          required: false,
         }),
       },
-      resolve: async (query, _, { username }) => {
-        const user = await prismaClient.user.findUnique({
-          ...query,
-          where: {
-            username: username,
-          },
-        });
+      resolve: async (query, _, { username, address }) => {
+        if (!username && !address) {
+          throw new UnknownError('Must provide either username or address');
+        }
+        let user = undefined;
+        if (address) {
+          user = await prismaClient.user.findUnique({
+            ...query,
+            where: {
+              address: address,
+            },
+          });
+        }
+        if (username) {
+          user = await prismaClient.user.findUnique({
+            ...query,
+            where: {
+              username: username,
+            },
+          });
+        }
         if (!user) {
           throw new NotFoundError();
         }
         return user;
+      },
+    }),
+    discoverUsers: t.prismaField({
+      errors: {
+        types: [NotFoundError],
+        directResult: false,
+      },
+      args: {
+        take: t.arg.int({
+          required: false,
+          defaultValue: 10,
+        }),
+        cursor: t.arg.int({
+          required: false,
+          defaultValue: 1,
+        }),
+      },
+      type: [User],
+      resolve: async (query, _, { take, cursor }) => {
+        const users = await prismaClient.user.findMany({
+          ...query,
+          take: take,
+          cursor: {
+            id: cursor,
+          },
+        });
+        if (!users) {
+          throw new NotFoundError();
+        }
+        return users;
       },
     }),
   }),
@@ -150,6 +208,13 @@ const UserInput = builder.inputType('UserInput', {
   }),
 });
 
+const ContractInput = builder.inputType('ContractInput', {
+  fields: (t) => ({
+    userAddress: t.string({ required: true }),
+    contractAddress: t.string({ required: true }),
+  }),
+});
+
 builder.mutationType({
   fields: (t) => ({
     createUser: t.field({
@@ -157,53 +222,240 @@ builder.mutationType({
       args: {
         input: t.arg({ type: UserInput, required: true }),
       },
-      resolve: async (root, args) => {
+      resolve: async (root, args, { userAddress }) => {
+        if (!userAddress) {
+          throw new UnknownError('No session token');
+        }
+        if (userAddress !== args.input.address) {
+          throw new UnknownError('Authenticated adress does not match arg');
+        }
         const user = await prismaClient.user.upsert({
-          where: { address: args.input.address },
+          where: { address: userAddress },
           update: {
-            address: args.input.address,
+            address: userAddress,
             username: args.input.username,
             description: args.input.description,
           },
           create: {
-            address: args.input.address,
+            address: userAddress,
             username: args.input.username,
             description: args.input.description,
           },
         });
+        if (!user) {
+          throw new UnknownError();
+        }
         return user;
+      },
+    }),
+    createContract: t.field({
+      type: SmartContract,
+      args: {
+        input: t.arg({ type: ContractInput, required: true }),
+      },
+      resolve: async (root, args, { userAddress }) => {
+        if (!userAddress) {
+          throw new UnknownError('No session token');
+        }
+        if (userAddress !== args.input.userAddress) {
+          throw new UnknownError('Authenticated adress does not match arg');
+        }
+        const contract = await prismaClient.smartContract.upsert({
+          where: { contractAddress: args.input.contractAddress },
+          update: {
+            contractAddress: args.input.contractAddress,
+            network: {
+              connect: { name: 'Ethereum' },
+            },
+          },
+          create: {
+            contractAddress: args.input.contractAddress,
+            network: {
+              connect: { name: 'Ethereum' },
+            },
+          },
+        });
+
+        const { id } = await prismaClient.user.findUnique({
+          where: {
+            address: userAddress,
+          },
+        });
+
+        const connectUser = await prismaClient.userOnContract.upsert({
+          where: {
+            unique_combo: {
+              smartContractId: contract.id,
+              userId: id,
+            },
+          },
+          create: {
+            user: {
+              connect: { address: userAddress },
+            },
+            smartContract: {
+              connect: { contractAddress: args.input.contractAddress },
+            },
+          },
+          update: {
+            user: {
+              connect: { address: userAddress },
+            },
+            smartContract: {
+              connect: { contractAddress: args.input.contractAddress },
+            },
+          },
+        });
+
+        if (!connectUser || !contract) {
+          throw new UnknownError();
+        }
+        return contract;
+      },
+    }),
+    deleteContract: t.field({
+      type: SmartContract,
+      args: {
+        input: t.arg({ type: ContractInput, required: true }),
+      },
+      resolve: async (root, args, { userAddress }) => {
+        if (!userAddress) {
+          throw new UnknownError('No session token');
+        }
+        if (userAddress !== args.input.userAddress) {
+          throw new UnknownError('Authenticated adress does not match arg');
+        }
+        const contract = await prismaClient.smartContract.findUnique({
+          where: {
+            contractAddress: args.input.contractAddress,
+          },
+        });
+        const user = await prismaClient.user.findUnique({
+          where: {
+            address: userAddress,
+          },
+        });
+        const deletedRelation = await prismaClient.userOnContract.delete({
+          where: {
+            unique_combo: {
+              userId: user.id,
+              smartContractId: contract.id,
+            },
+          },
+        });
+        if (!deletedRelation || !contract || !user) {
+          throw new UnknownError();
+        }
+        return contract;
       },
     }),
   }),
 });
 
-// const ContractInput = builder.inputType('ContractInput', {
-//   fields: (t) => ({
-//     username: t.string({ required: true }),
-//     address: t.string({ required: true }),
-//   }),
-// });
-
-// builder.mutationType({
-//   fields: (t) => ({
-//     createContract: t.field({
-//       type: SmartContract,
-//       args: {
-//         input: t.arg({ type: ContractInput, required: true }),
-//       },
-//       resolve: async (root, args) => {
-
-//       },
-//     }),
-//   }),
-// });
-
-
-
-const server = createServer({
+const yoga = createYoga({
   schema: builder.toSchema(),
-  maskedErrors: false, // TODO: turn this off on prod
-  port: 4001, // TODO: this should come from config
+  maskedErrors: process.env.NODE_ENV === 'production',
+  cors: {
+    origin: [
+      process.env.CLIENT_URL,
+      `${process.env.BACKEND_URL}:${process.env.BACKEND_PORT}`,
+    ],
+    credentials: true,
+  },
+  context: async ({ req }: any) => {
+    if (!req.session) {
+      return {
+        signedIn: false,
+        userAddress: undefined,
+      };
+    }
+    if (req.session.siwe?.address) {
+      return {
+        userAddress: req.session.siwe.address,
+        signedIn: true,
+      };
+    }
+    return {
+      userAddress: undefined,
+      signedIn: true,
+    };
+  },
 });
 
-server.start();
+const app = express();
+
+app.use(
+  cors({
+    origin: [
+      process.env.CLIENT_URL,
+      `${process.env.BACKEND_URL}:${process.env.BACKEND_PORT}`,
+    ],
+    credentials: true,
+  }),
+);
+
+app.use(
+  session({
+    name: 'siwe',
+    secret: process.env.EXP_SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: false,
+      maxAge: 60000,
+    },
+    // store: new PrismaSessionStore(new PrismaClient(), {
+    //   checkPeriod: 2 * 60 * 1000, //ms
+    //   dbRecordIdIsSessionId: true,
+    //   dbRecordIdFunction: undefined,
+    //   // enableConcurrentSetInvocationsForSameSessionID: true,
+    //   // enableConcurrentTouchInvocationsForSameSessionID: true,
+    // }),
+  }),
+);
+
+app.use('/graphql', yoga);
+
+app.use(express.json());
+
+app.get('/nonce', async function (req, res) {
+  req.session.nonce = generateNonce();
+  res.setHeader('Content-Type', 'text/plain');
+  res.status(200).send(req.session.nonce);
+});
+
+app.post('/verify', async function (req, res) {
+  try {
+    if (!req.body.message) {
+      res
+        .status(422)
+        .json({ message: 'Expected prepareMessage object as body.' });
+      return;
+    }
+
+    const message = new SiweMessage(req.body.message);
+    const fields = await message.validate(req.body.signature);
+
+    if (fields.nonce !== req.session.nonce) {
+      res.status(422).json({
+        message: `Invalid nonce.`,
+      });
+      return;
+    }
+    req.session.siwe = fields;
+    req.session.cookie.expires = new Date(fields.expirationTime);
+    req.session.save(() => res.status(200).end());
+  } catch (e) {
+    req.session.siwe = null;
+    req.session.nonce = null;
+    console.error(e);
+    req.session.save(() => res.status(440).json({ message: e }));
+  }
+});
+
+app.listen(process.env.BACKEND_PORT, () => {
+  console.log(
+    `Running a GraphQL API server at ${process.env.BACKEND_URL}:${process.env.BACKEND_PORT}/graphql`,
+  );
+});

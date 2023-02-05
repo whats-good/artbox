@@ -1,2 +1,2 @@
 export * from "./signUpButton";
-export * from "./signUpModal";
+export * from "./signUpModal/signUpModal";

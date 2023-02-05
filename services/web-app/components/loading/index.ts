@@ -1,1 +1,1 @@
-export * from './galleryItemLoading';
+export * from "./galleryItemLoading";

@@ -1,12 +1,13 @@
 import styled from 'styled-components';
-import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
+import type { CollectionInfoQuery } from '../../.utils/zoraTypes/graphql';
 import { GalleryHeader } from './galleryHeader';
 import { GalleryRows } from './galleryRows';
 
 type GalleryProps = {
   user: string,
   bio: string,
-  contracts: CollectionInfoQuery[]
+  contracts: CollectionInfoQuery[],
+  userAddress: string,
 }
 
 const GalleryWrapper = styled.div`
@@ -18,10 +19,10 @@ const GalleryWrapper = styled.div`
   grid-template-rows: 100px;
 `
 
-export const Gallery = ({user, bio, contracts} : GalleryProps) => {
+export const Gallery = ({user, bio, contracts, userAddress} : GalleryProps) => {
   return (
     <GalleryWrapper>
-      <GalleryHeader user={user} bio={bio}/>
+      <GalleryHeader user={user} bio={bio} userAddress={userAddress}/>
       <GalleryRows contracts={contracts}/>
     </GalleryWrapper>
   )

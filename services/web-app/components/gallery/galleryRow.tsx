@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components"
-import type { CollectionInfoQuery } from '../../.utils/gql/types/graphql'
+import type { CollectionInfoQuery } from "../../.utils/zoraTypes/graphql";
 import { RowTopBar } from "./galleryRow/rowTop";
 import { RowBottom } from "./galleryRow/rowBottom";
 
