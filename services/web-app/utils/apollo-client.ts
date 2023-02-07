@@ -9,7 +9,7 @@ const zoraEndpoint = new HttpLink({
   uri: process.env.NEXT_PUBLIC_ZORA_GRAPHQL_URI,
 });
 const userEndpoint = new HttpLink({
-  uri: process.env.NEXT_PUBLIC_INTERNAL_API,
+  uri: `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
   credentials: "include",
 });
 
