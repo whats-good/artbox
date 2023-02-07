@@ -8,9 +8,7 @@ const config: CodegenConfig = {
         "!utils/gql/**/*",
         "!querys/zora/*.ts",
       ],
-      // TODO: ENV variables are undefined.
-      // schema: process.env.NEXT_PUBLIC_INTERNAL_API,
-      schema: "http://0.0.0.0:4001/graphql",
+      schema: `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
       preset: "client",
       plugins: ["typescript"],
       presetConfig: {

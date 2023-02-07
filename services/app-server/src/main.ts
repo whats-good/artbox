@@ -454,8 +454,8 @@ app.post('/verify', async function (req, res) {
   }
 });
 
-app.listen(process.env.BACKEND_PORT, () => {
+app.listen(process.env.PORT || 4001, () => {
   console.log(
-    `Running a GraphQL API server at ${process.env.BACKEND_URL}:${process.env.BACKEND_PORT}/graphql`,
+    `Running a GraphQL API server at ${process.env.BACKEND_URL}:${process.env.PORT}/graphql`,
   );
 });
