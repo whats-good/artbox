@@ -354,7 +354,8 @@ builder.mutationType({
 
 const yoga = createYoga({
   schema: builder.toSchema(),
-  maskedErrors: process.env.NODE_ENV === 'production',
+  // maskedErrors: process.env.NODE_ENV === 'production',
+  maskedErrors: false,
   cors: {
     origin: [
       process.env.CLIENT_URL,
@@ -397,21 +398,23 @@ app.use(
 app.use(
   session({
     name: 'siwe',
+    rolling: true,
     secret: process.env.EXP_SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
     cookie: {
       secure: process.env.NODE_ENV === 'production',
+      httpOnly: !(process.env.NODE_ENV === 'production'),
       sameSite: false,
-      maxAge: 60000,
+      maxAge: 6000000,
     },
-    // store: new PrismaSessionStore(new PrismaClient(), {
-    //   checkPeriod: 2 * 60 * 1000, //ms
-    //   dbRecordIdIsSessionId: true,
-    //   dbRecordIdFunction: undefined,
-    //   // enableConcurrentSetInvocationsForSameSessionID: true,
-    //   // enableConcurrentTouchInvocationsForSameSessionID: true,
-    // }),
+    store: new PrismaSessionStore(new PrismaClient(), {
+      checkPeriod: 2 * 60 * 10000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+      enableConcurrentSetInvocationsForSameSessionID: true,
+      enableConcurrentTouchInvocationsForSameSessionID: true,
+    }),
   }),
 );
 
@@ -420,12 +423,14 @@ app.use('/graphql', yoga);
 app.use(express.json());
 
 app.get('/nonce', async function (req, res) {
+  console.log('Nonce Invoked');
   req.session.nonce = generateNonce();
   res.setHeader('Content-Type', 'text/plain');
   res.status(200).send(req.session.nonce);
 });
 
 app.post('/verify', async function (req, res) {
+  console.log('Verify Invoked');
   try {
     if (!req.body.message) {
       res
@@ -444,7 +449,7 @@ app.post('/verify', async function (req, res) {
       return;
     }
     req.session.siwe = fields;
-    req.session.cookie.expires = new Date(fields.expirationTime);
+    // req.session.cookie.expires = new Date(fields.expirationTime);
     req.session.save(() => res.status(200).end());
   } catch (e) {
     req.session.siwe = null;
@@ -456,6 +461,8 @@ app.post('/verify', async function (req, res) {
 
 app.listen(process.env.PORT || 4001, () => {
   console.log(
-    `Running a GraphQL API server at ${process.env.BACKEND_URL}:${process.env.PORT}/graphql`,
+    `Running a GraphQL API server at ${process.env.BACKEND_URL}:${
+      process.env.PORT || 4001
+    }/graphql`,
   );
 });
