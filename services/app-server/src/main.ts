@@ -404,7 +404,7 @@ app.use(
     saveUninitialized: true,
     cookie: {
       // secure: process.env.NODE_ENV === 'production',
-      secure: false,
+      secure: true,
       httpOnly: true,
       sameSite: 'none',
       maxAge: 6000000,
@@ -422,6 +422,7 @@ app.use(
 app.use('/graphql', yoga);
 
 app.use(express.json());
+app.set('trust proxy', 1);
 
 app.get('/nonce', async function (req, res) {
   console.log('Nonce Invoked');
