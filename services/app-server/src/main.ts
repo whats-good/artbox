@@ -403,7 +403,8 @@ app.use(
     resave: true,
     saveUninitialized: true,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      // secure: process.env.NODE_ENV === 'production',
+      secure: false,
       httpOnly: !(process.env.NODE_ENV === 'production'),
       sameSite: false,
       maxAge: 6000000,
