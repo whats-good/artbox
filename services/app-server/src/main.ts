@@ -405,7 +405,7 @@ app.use(
     cookie: {
       // secure: process.env.NODE_ENV === 'production',
       secure: 'auto',
-      httpOnly: !(process.env.NODE_ENV === 'production'),
+      httpOnly: true,
       sameSite: 'none',
       maxAge: 6000000,
     },
