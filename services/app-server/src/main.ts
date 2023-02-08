@@ -406,7 +406,7 @@ app.use(
       // secure: process.env.NODE_ENV === 'production',
       secure: true,
       httpOnly: true,
-      sameSite: 'none',
+      sameSite: false,
       maxAge: 6000000,
     },
     store: new PrismaSessionStore(new PrismaClient(), {
