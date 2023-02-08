@@ -404,7 +404,7 @@ app.use(
     saveUninitialized: true,
     cookie: {
       // secure: process.env.NODE_ENV === 'production',
-      secure: true,
+      secure: false,
       httpOnly: true,
       sameSite: false,
       maxAge: 6000000,
