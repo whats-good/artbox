@@ -403,10 +403,9 @@ app.use(
     resave: true,
     saveUninitialized: true,
     cookie: {
-      // secure: process.env.NODE_ENV === 'production',
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
-      sameSite: 'none',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : false,
       maxAge: 6000000,
     },
     store: new PrismaSessionStore(new PrismaClient(), {

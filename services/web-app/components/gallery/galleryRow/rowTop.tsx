@@ -79,7 +79,7 @@ const ExpandButton = ({ expand, setExpand } : ExpandButtonProps) => {
     <ExpandButtonWrapper>
       <ButtonOuter>
         <ButtonInner onClick={() => setExpand(!expand)}>
-          Expand
+          {expand ? "Collapse" : "Expand"}
         </ButtonInner>
       </ButtonOuter>
     </ExpandButtonWrapper>
