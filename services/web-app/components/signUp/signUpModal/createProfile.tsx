@@ -26,6 +26,7 @@ const PleaseSignMessageButton = styled(ButtonOuter)`
 
 
 const StyledTextArea = styled.textarea`
+  resize: none;
   width: 90%;
   margin-left: 14px;
   border: 1px solid black;
