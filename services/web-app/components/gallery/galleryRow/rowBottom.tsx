@@ -79,7 +79,6 @@ const RowBottomWrapper = styled.div`
   margin: 5px 15px 5px 5px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  height: 80%;
 `;
 const GalleryRowItemBottomWrapper = styled.div`
   padding-left: 5px;
@@ -116,7 +115,6 @@ const GalleryRowItemWrapper = styled.div`
 //Components
 
 const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandRowBottomProps ) => {
-  console.log('PAGE PROP: ', page);
   const router = useRouter();
 
   const [previousPage, setPreviousPage] = useState(page);
@@ -173,7 +171,6 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
           <ButtonOuter>
             <ButtonInner
               onClick={() => {
-                console.log('BACK CURSOR: ', data?.tokens.pageInfo.endCursor);
                 setPreviousPage(data?.tokens.pageInfo.endCursor)
                 refetch({
                   tokenAddress: {collectionAddresses: [contractAddress]},
@@ -187,7 +184,6 @@ const ExpandRowBottom = ({ contractAddress, page, count = 27, hasNext} : ExpandR
         <ButtonOuter>
           <ButtonInner
             onClick={() => {
-              console.log('NEXT CURSOR: ', data?.tokens.pageInfo.endCursor);
               setPreviousPage(data?.tokens.pageInfo.endCursor)
               refetch({
                 tokenAddress: {collectionAddresses: [contractAddress]},

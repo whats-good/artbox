@@ -23,8 +23,6 @@ const PleaseSignMessageButton = styled(ButtonOuter)`
   width: 90%;
   margin: auto;
 `
-
-
 const StyledTextArea = styled.textarea`
   resize: none;
   width: 90%;
@@ -92,7 +90,6 @@ export const CreateProfile = ({ address, toggleShowModal } : CreateProfileProps)
               contracts: contracts,
             })
             if (createProfile.success) {
-              // toggleShowModal(false);
               setMessage("Success!")
             } else {
               setMessage("Something went wrong...Please make sure username is not taken")
