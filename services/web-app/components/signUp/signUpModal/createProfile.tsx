@@ -16,17 +16,22 @@ type CreateProfileProps = {
   toggleShowModal: Dispatch<SetStateAction<boolean>>;
 }
 
+const SubmitButton = styled(ButtonOuter)`
+  margin: -18px -6px 0px 0px;
+  align-self: flex-end;
+  width: 25%;
+`;
+
 //Styles
 const CreateProfileWrapper = styled.div`
+  width: 85%;
 `;
 const PleaseSignMessageButton = styled(ButtonOuter)`
   width: 90%;
-  margin: auto;
 `
 const StyledTextArea = styled.textarea`
   resize: none;
-  width: 90%;
-  margin-left: 14px;
+  width: 100%;
   border: 1px solid black;
   background-color: #EBEBEB;
   height: 150px;
@@ -65,7 +70,6 @@ export const CreateProfile = ({ address, toggleShowModal } : CreateProfileProps)
     </PleaseSignMessageButton>
     )
   }
-
   return (
     <CreateProfileWrapper>
       <StyledForm>
@@ -80,7 +84,7 @@ export const CreateProfile = ({ address, toggleShowModal } : CreateProfileProps)
         <AddCollections contracts={contracts} setContracts={setContracts} userAddress={address}/>
         <ShowCollections userAddress={address} contracts={contracts} setContracts={setContracts}/>
         <p>{message}</p>
-        <ButtonOuter>
+        <SubmitButton>
           <ButtonInner type="submit" onClick={ async (e) => {
             e.preventDefault();
             const createProfile = await createOrUpdateUser({
@@ -97,7 +101,7 @@ export const CreateProfile = ({ address, toggleShowModal } : CreateProfileProps)
           }}>
             Submit
           </ButtonInner>
-        </ButtonOuter>
+        </SubmitButton>
       </StyledForm>
     </CreateProfileWrapper>
   )

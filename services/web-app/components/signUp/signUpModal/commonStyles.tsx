@@ -1,17 +1,19 @@
 import styled from "styled-components";
 
 export const StyledInput = styled.input`
-  width: 90%;
   height: 20px;
-  margin-left: 14px;
   margin-Bottom: 8px;
   border: 1px solid black;
   background-color: #EBEBEB;
+  width: 100%;
 `;
-
 export const StyledLabel = styled.label`
-margin-left: 14px;
+  width: 100%;
 `;
 export const StyledForm = styled.form`
-margin: 15px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
 `;

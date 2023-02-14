@@ -14,7 +14,7 @@ export const SignUpModal = ({ toggleShowModal } : SignUpModalProps) => {
       <Modal
         toggleShowModal={toggleShowModal}
         title="Create Profile"
-        height="500px"
+        height="510px"
         width="450px"
         defaultPosition={{
           x: 40,

@@ -28,15 +28,26 @@ type CollectionDisplayProps = {
 
 //Styles
 const ShowCollectionsWrapper = styled.div`
+  width: 388px;
+  background-color: #EBEBEB;
+  height: 80px;
+  overflow-y: scroll;
+  border: 1px solid black;
+  margin: 10px 0px 0px 5px;
 `
 const CollectionDisplayWrapper = styled.div`
+  justify-content: space-between;
+  padding: 4px 4px;
+  display: flex;
+  border-bottom: 1px solid black;
 `
 const AddButton = styled(ButtonOuter)`
+  align-self: flex-end;
   width: 25%;
+  margin-right: -6px;
 `
 const AddCollectionInput = styled(StyledInput)`
-  margin-left: none;
-  width: 95%;
+  width: 100%;
 `;
 
 export const AddCollections = ({ contracts, setContracts, userAddress } : AddCollectionsProps) => {

@@ -17,10 +17,20 @@ type InsideSignUpModalProps = {
 //Styles
 
 const ConnectWalletMessageWrapper = styled.div`
+  height: 500px;
+  width: 450px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 `;
 const InsideSignUpModalWrapper = styled.div`
   height: 500px;
   width: 450px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 export const InsideSignUpModal = ({ toggleShowModal }: InsideSignUpModalProps) => {
