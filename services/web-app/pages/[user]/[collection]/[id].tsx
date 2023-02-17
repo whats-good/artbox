@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next';
 import client from '../../../utils/apollo-client';
 import { tokenInfo } from '../../../querys/zora';
 import type { TokenInfoQuery } from '../../../.utils/zoraTypes/graphql';
-import { PageWrapper, TopBar, SingleTokenView, BlueBar } from '../../../components';
+import { PageWrapper, SingleTokenView } from '../../../components';
 
 type FetchError = {
     __typename: "FetchError",
@@ -82,14 +82,9 @@ export const getServerSideProps : GetServerSideProps<FetchNftProps> = async (con
 function Token(props : InferGetServerSidePropsType<typeof getServerSideProps>){
   if (props.__typename === "Success") {
     return (
-      <>
-        <TopBar />
-        <PageWrapper>
-          <BlueBar />
-          {/* Connected Address Here */} <div />
+      <PageWrapper>
           {props.token.token ? <SingleTokenView token={props.token.token}/> : <p>There was an error.</p>}
-        </PageWrapper>
-      </>
+      </PageWrapper>
     )
   }
 };

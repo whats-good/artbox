@@ -22,18 +22,20 @@ type MetaDataInfoPointProps = {
 //Styles
 
 const SingleTokenViewWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 50% 50%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 const ImageColumnWrapper = styled.div`
+  width: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 75vh;
   border-right: 1px solid black;
-  margin-bottom: 5vh;
 `;
 const ImageInfoWrapper = styled.div`
+  width: 50%;
   height: 75vh;
   padding: 0px 10px 10px;
 `;

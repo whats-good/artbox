@@ -1,10 +1,8 @@
 import type { NextPage } from "next";
 import { useState } from "react";
 import styled from "styled-components";
-import { TopBar } from "../components/connectwallet/topbar";
 import { SignUpButton, SignUpModal } from "../components/signUp";
 import { DiscoverButton, DiscoverModal } from "../components/discover";
-import { Footer } from "../components/footer";
 
 const ButtonWrapper = styled.div`
   width: 200px;
@@ -26,7 +24,6 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <TopBar />
       <ModalAnchor>
         {signUpModal ? <SignUpModal toggleShowModal={toggleSignUpModal} /> : <></>}
         {discoverModal ? <DiscoverModal toggleShowModal={toggleDiscoverModal} /> : <></>}
@@ -37,7 +34,6 @@ const Home: NextPage = () => {
           <DiscoverButton toggleShowModal={toggleDiscoverModal} showModal={discoverModal}/>
         </ButtonWrapper>
       </BodyWrapper>
-      <Footer />
     </>
   );
 };

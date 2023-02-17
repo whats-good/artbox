@@ -9,8 +9,8 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { mainnet } from '@wagmi/core/chains';
 import { ApolloProvider } from '@apollo/client';
 import ApolloClient from '../utils/apollo-client'
-import { PageLoading } from "../components/loading";
 import { LoggedInContext } from "../utils/loggedInContext";
+import { FullPageWrap, PageLoading } from "../components";
 
 // Configure chains & providers with the Alchemy provider.
 const { chains, provider, webSocketProvider } = configureChains([mainnet], [
@@ -46,12 +46,11 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   });
 
-
   return (
     <WagmiConfig client={client}>
         <ApolloProvider client={ApolloClient}>
           <LoggedInContext.Provider value={[loggedIn, setLoggedIn]}>
-            {loading ? <PageLoading /> : <Component {...pageProps} />}
+            {loading ? <PageLoading /> : <FullPageWrap><Component {...pageProps} /></FullPageWrap>}
           </LoggedInContext.Provider>
         </ApolloProvider>
     </WagmiConfig>

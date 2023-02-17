@@ -11,7 +11,7 @@ type GalleryProps = {
 }
 
 const GalleryWrapper = styled.div`
-  height: 90%;
+  height: 93%;
   border: 1px solid black;
   margin: 10px;
   background-color: #ebebeb;

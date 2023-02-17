@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const TopBarWrapper = styled.div`
   width: 90vw;
-  height: 50px;
+  height: 5vh;
   display: grid;
   grid-template-columns: 20% 60% 20%;
   margin: auto;
