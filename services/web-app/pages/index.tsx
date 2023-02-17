@@ -4,12 +4,13 @@ import styled from "styled-components";
 import { TopBar } from "../components/connectwallet/topbar";
 import { SignUpButton, SignUpModal } from "../components/signUp";
 import { DiscoverButton, DiscoverModal } from "../components/discover";
+import { Footer } from "../components/footer";
 
 const ButtonWrapper = styled.div`
   width: 200px;
 `;
 const BodyWrapper = styled.div`
-  height: calc(100vh - 52px);
+  height: calc(100vh - 87px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -36,6 +37,7 @@ const Home: NextPage = () => {
           <DiscoverButton toggleShowModal={toggleDiscoverModal} showModal={discoverModal}/>
         </ButtonWrapper>
       </BodyWrapper>
+      <Footer />
     </>
   );
 };

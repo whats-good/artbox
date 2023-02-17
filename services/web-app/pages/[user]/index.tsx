@@ -5,7 +5,8 @@ import client from '../../utils/apollo-client';
 import type { CollectionInfoQuery } from '../../.utils/zoraTypes/graphql'
 import { collectionInfo } from '../../querys/zora';
 import { userInfo } from '../../querys/internal';
-import { PageWrapper, BlueBar, TopBar, Gallery, ConnectedAccount } from '../../components/'
+import { PageWrapper, BlueBar, TopBar, Gallery, ConnectedAccount } from '../../components/';
+import { Footer } from '../../components/footer';
 
 type Profile = {
   id: number,
@@ -155,6 +156,7 @@ function User(props : InferGetServerSidePropsType<typeof getServerSideProps>){
           <BlueBar />
           <ConnectedAccount />
           <Gallery user={props.user} bio={props.bio} contracts={props.contracts} userAddress={props.userAddress}/>
+          <Footer />
         </PageWrapper>
       </>
     );
