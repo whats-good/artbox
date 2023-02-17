@@ -59,12 +59,3 @@ model Network {
   name  String   @unique
   smartContract SmartContract[]
 }
-
-// TODO: add lists later
-// model TokenList {
-//   id          String   @id
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
-//   name        String
-//   description String?
-// }
