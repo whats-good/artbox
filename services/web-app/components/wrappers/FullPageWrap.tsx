@@ -13,7 +13,6 @@ const Inner = styled.div`
   height: 90vh;
 `
 
-
 export const FullPageWrap = ({ children }: PropsWithChildren) => {
   return (
     <Wrapper>

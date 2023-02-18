@@ -2,6 +2,7 @@ import { useAccount, useConnect } from "wagmi";
 import styled from "styled-components";
 import { ButtonOuter, ButtonInner } from "../button/buttonstyled";
 import { shortenAddress } from "../../helpers/shortenAddress";
+import { ConnectedAccount } from "./addressDisplay";
 
 const StyledAddressText = styled.p`
   margin-right: 10px;
@@ -19,11 +20,13 @@ export const ConnectWallet = () => {
 
   return (
     <ConnectWalletWrapper>
-      {address && <StyledAddressText>Connected: {shortenAddress(address)}</StyledAddressText>}
+      <ConnectedAccount />
       {connectors.map((connector) => (
         <ButtonOuter key={connector.id}>
           <ButtonInner
-            onClick={() => connect({ connector })}
+            onClick={() => {
+              connect({ connector })
+            }}
           >
             Connect
             {isLoading &&
