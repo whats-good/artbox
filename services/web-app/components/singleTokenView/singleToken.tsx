@@ -25,18 +25,18 @@ const SingleTokenViewWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  height: 100%;
 `;
 const ImageColumnWrapper = styled.div`
+  height: 75vh;
   width: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 75vh;
   border-right: 1px solid black;
 `;
 const ImageInfoWrapper = styled.div`
   width: 50%;
-  height: 75vh;
   padding: 0px 10px 10px;
 `;
 
@@ -50,8 +50,8 @@ const ImageColumn = ({ urls }: ImageColumnProps) => {
   return (
     <ImageColumnWrapper>
         <img
-          alt={"NFT Image QR8"}
-          style={{width: 'auto', height: '70%', marginBottom: '40px'}}
+          alt="NFT Image QR8"
+          style={{width: 'auto', height: '70%'}}
           src={src}
           onError={() => {
             if (i !== urls.length - 1) {

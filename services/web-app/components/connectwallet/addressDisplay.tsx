@@ -8,7 +8,7 @@ const ConnectedAccountWrapper = styled.div`
   justify-content: end;
   align-items: center;
   padding-right: 10px;
-`
+`;
 
 export const ConnectedAccount = () => {
 

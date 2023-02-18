@@ -46,7 +46,7 @@ const ArtistInfoButton = ({ bio, userAddress } : ArtistInfoButtonProps) => {
   const { address } = useAccount();
   const [showModal, toggleShowModal] = useState<boolean>(false);
   const [showSignupModal, toggleShowSignupModal] = useState<boolean>(false);
-  const handleOpenModal = () => toggleShowModal(true);
+  const handleOpenModal = () => toggleShowModal(!showModal);
   const [isUser] = useState<boolean>(address === userAddress);
 
   if (!isUser) {
