@@ -453,27 +453,50 @@ builder.mutationType({
         if (!userAddress) {
           throw new UnknownError('No session token');
         }
-        if (userAddress !== args.input.userAddress) {
-          throw new UnknownError('Authenticated adress does not match arg');
-        }
-        const contract = await prismaClient.smartContract.findUnique({
-          where: {
-            contractAddress: args.input.contractAddress,
-          },
-        });
-        const user = await prismaClient.user.findUnique({
-          where: {
-            address: userAddress,
-          },
-        });
-        const deletedRelation = await prismaClient.userOnContract.delete({
-          where: {
-            unique_combo: {
-              userId: user.id,
-              smartContractId: contract.id,
+
+        let user;
+        let contract;
+        let deletedRelation;
+
+        //Confirm the username belongs to the authenticated address
+        try {
+          user = await prismaClient.user.findUniqueOrThrow({
+            where: {
+              username: args.input.username,
             },
-          },
-        });
+          });
+          if (user.address !== userAddress) {
+            throw new UnknownError('Username does not belong to address');
+          }
+        } catch (e) {
+          throw new UnknownError('Username does not exist');
+        }
+
+        //Get contract ID
+        try {
+          contract = await prismaClient.smartContract.findUnique({
+            where: {
+              contractAddress: args.input.contractAddress,
+            },
+          });
+        } catch (e) {
+          throw new UnknownError('Unable to find contract address');
+        }
+
+        //Delete the Relation
+        try {
+          deletedRelation = await prismaClient.userOnContract.delete({
+            where: {
+              unique_combo: {
+                userId: user.id,
+                smartContractId: contract.id,
+              },
+            },
+          });
+        } catch (e) {
+          throw new UnknownError('Unable to delete contract linked to account');
+        }
+
         if (!deletedRelation || !contract || !user) {
           throw new UnknownError();
         }
