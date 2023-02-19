@@ -194,15 +194,17 @@ builder.queryType({
       },
       type: [User],
       resolve: async (query, _, { address }) => {
-        const users = await prismaClient.user.findMany({
-          where: {
-            address: address,
-          },
-        });
-        if (!users) {
+        try {
+          const users = await prismaClient.user.findMany({
+            where: {
+              address: address,
+            },
+            take: 10,
+          });
+          return users;
+        } catch (e) {
           throw new NotFoundError();
         }
-        return users;
       },
     }),
   }),
