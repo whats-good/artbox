@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import LoadingGif from "../../assets/QR8-loading-large.gif"
-import Image from 'next/image';
+import styled from "styled-components";
+import LoadingGif from "../../assets/QR8-loading-large.gif";
+import Image from "next/image";
 
 const GalleryItemLoadingWrapper = styled.div`
   margin: auto;
@@ -9,11 +9,11 @@ const GalleryItemLoadingWrapper = styled.div`
   width: 100vw;
   justify-content: center;
   align-items: center;
-`
+`;
 export const PageLoading = () => {
   return (
     <GalleryItemLoadingWrapper>
-      <Image width="200" src={LoadingGif} alt="Loading-Icon"/>
+      <Image width="200" src={LoadingGif} alt="Loading-Icon" />
     </GalleryItemLoadingWrapper>
-  )
-}
+  );
+};

@@ -1,12 +1,8 @@
 import { useAccount, useConnect } from "wagmi";
 import styled from "styled-components";
 import { ButtonOuter, ButtonInner } from "../button/buttonstyled";
-import { shortenAddress } from "../../helpers/shortenAddress";
 import { ConnectedAccount } from "./addressDisplay";
 
-const StyledAddressText = styled.p`
-  margin-right: 10px;
-`;
 const ConnectWalletWrapper = styled.div`
   grid-column-start: 3;
   display: flex;
@@ -15,8 +11,8 @@ const ConnectWalletWrapper = styled.div`
 `;
 
 export const ConnectWallet = () => {
-  const { connect, connectors, error, isLoading, pendingConnector } = useConnect();
-  const { address } = useAccount();
+  const { connect, connectors, error, isLoading, pendingConnector } =
+    useConnect();
 
   return (
     <ConnectWalletWrapper>
@@ -25,7 +21,7 @@ export const ConnectWallet = () => {
         <ButtonOuter key={connector.id}>
           <ButtonInner
             onClick={() => {
-              connect({ connector })
+              connect({ connector });
             }}
           >
             Connect
@@ -38,4 +34,4 @@ export const ConnectWallet = () => {
       {error && <div>{error.message}</div>}
     </ConnectWalletWrapper>
   );
-}
+};

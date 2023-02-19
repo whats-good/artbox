@@ -1,4 +1,4 @@
-import { useAccount } from "wagmi"
+import { useAccount } from "wagmi";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { shortenAddress } from "../../helpers/shortenAddress";
@@ -11,27 +11,23 @@ const ConnectedAccountWrapper = styled.div`
 `;
 
 export const ConnectedAccount = () => {
+  const [connectedAddress, setConnectedAddress] = useState<string>("");
 
-  const [connectedAddress, setConnectedAddress] = useState<string>('')
-
-  const { address, isConnecting, isConnected } = useAccount()
+  const { address, isConnecting, isConnected } = useAccount();
 
   useEffect(() => {
     if (typeof address === "string") {
-      setConnectedAddress(address)
+      setConnectedAddress(address);
     }
-  }, [address])
+  }, [address]);
 
-  return (
-    connectedAddress ? (
-      <ConnectedAccountWrapper>
+  return connectedAddress ? (
+    <ConnectedAccountWrapper>
       <p>Connected: {shortenAddress(connectedAddress)}</p>
     </ConnectedAccountWrapper>
-    ) : (
-      <ConnectedAccountWrapper></ConnectedAccountWrapper>
-    )
-
-  )
+  ) : (
+    <ConnectedAccountWrapper></ConnectedAccountWrapper>
+  );
 
   // if (connectedAddress) {
   //   return (
@@ -45,4 +41,4 @@ export const ConnectedAccount = () => {
   //     <p>Not Connected</p>
   //   </ConnectedAccountWrapper>
   // )
-}
+};

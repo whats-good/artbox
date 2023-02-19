@@ -9,10 +9,10 @@ import { CreateProfile } from "./createProfile";
 
 type ConnectedAddressProps = {
   address: string;
-}
+};
 type InsideSignUpModalProps = {
   toggleShowModal: Dispatch<SetStateAction<boolean>>;
-}
+};
 
 //Styles
 
@@ -33,37 +33,40 @@ const InsideSignUpModalWrapper = styled.div`
   align-items: center;
 `;
 
-export const InsideSignUpModal = ({ toggleShowModal }: InsideSignUpModalProps) => {
-
+export const InsideSignUpModal = ({
+  toggleShowModal,
+}: InsideSignUpModalProps) => {
   const { address } = useAccount();
 
-  if (!address) return <ConnectWalletMessage />
+  if (!address) return <ConnectWalletMessage />;
 
   return (
     <InsideSignUpModalWrapper>
-      {address ?
+      {address ? (
         <>
-          <ConnectedAddress address={address}/>
-          <CreateProfile address={address} toggleShowModal={toggleShowModal}/>
+          <ConnectedAddress address={address} />
+          <CreateProfile address={address} toggleShowModal={toggleShowModal} />
         </>
-      : <ConnectWalletMessage />}
+      ) : (
+        <ConnectWalletMessage />
+      )}
     </InsideSignUpModalWrapper>
-  )
-}
+  );
+};
 
 const ConnectWalletMessage = () => {
   return (
     <ConnectWalletMessageWrapper>
       <p>Please connect your wallet to create an account</p>
-      <ConnectWallet/>
+      <ConnectWallet />
     </ConnectWalletMessageWrapper>
-  )
-}
+  );
+};
 
-const ConnectedAddress = ({ address } : ConnectedAddressProps) => {
+const ConnectedAddress = ({ address }: ConnectedAddressProps) => {
   return (
     <>
       <p>Connected at {shortenAddress(address)}</p>
     </>
-  )
-}
+  );
+};

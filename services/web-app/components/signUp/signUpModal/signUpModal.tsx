@@ -6,9 +6,9 @@ import { InsideSignUpModal } from "./insideSignUpModal";
 
 type SignUpModalProps = {
   toggleShowModal: Dispatch<SetStateAction<boolean>>;
-}
+};
 
-export const SignUpModal = ({ toggleShowModal } : SignUpModalProps) => {
+export const SignUpModal = ({ toggleShowModal }: SignUpModalProps) => {
   return (
     <>
       <Modal
@@ -21,8 +21,8 @@ export const SignUpModal = ({ toggleShowModal } : SignUpModalProps) => {
           y: 40,
         }}
       >
-        <InsideSignUpModal toggleShowModal={toggleShowModal}/>
+        <InsideSignUpModal toggleShowModal={toggleShowModal} />
       </Modal>
     </>
-  )
-}
+  );
+};

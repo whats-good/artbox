@@ -16,19 +16,19 @@ type RowTopBarProps = {
     __typename?: "SalesVolume" | undefined;
     usdcPrice: number;
   };
-}
+};
 type RowTopBarWrapperProps = {
-  expand: boolean
-}
+  expand: boolean;
+};
 type AggregateStatProps = {
   label: string;
   stat: string;
   dollar?: boolean;
-}
+};
 type ExpandButtonProps = {
   expand: boolean;
   setExpand: Dispatch<SetStateAction<boolean>>;
-}
+};
 
 //Styles
 
@@ -38,7 +38,7 @@ const RowTopBarWrapper = styled.div<RowTopBarWrapperProps>`
   margin-right: 15px;
   background-color: #008080;
   border: 1px solid black;
-  border-bottom: ${props => props.expand ? 'none' : ''};
+  border-bottom: ${(props) => (props.expand ? "none" : "")};
   display: grid;
   grid-template-columns: 5% 22% 15% 15% 15% auto;
   align-content: center;
@@ -61,20 +61,20 @@ const ExpandButtonWrapper = styled.div`
 const CardsIcon = () => {
   return (
     <CardsIconWrapper>
-      <Image src={cardImage} alt="card-icon"/>
+      <Image src={cardImage} alt="card-icon" />
     </CardsIconWrapper>
-  )
-}
+  );
+};
 
-const AggregateStat = ({ label, stat, dollar } : AggregateStatProps) => {
+const AggregateStat = ({ label, stat, dollar }: AggregateStatProps) => {
   return (
     <p>
       {label} : {dollar ? `$${stat}` : stat}
     </p>
-  )
-}
+  );
+};
 
-const ExpandButton = ({ expand, setExpand } : ExpandButtonProps) => {
+const ExpandButton = ({ expand, setExpand }: ExpandButtonProps) => {
   return (
     <ExpandButtonWrapper>
       <ButtonOuter>
@@ -83,18 +83,32 @@ const ExpandButton = ({ expand, setExpand } : ExpandButtonProps) => {
         </ButtonInner>
       </ButtonOuter>
     </ExpandButtonWrapper>
-  )
-}
+  );
+};
 
-export const RowTopBar = ({ collection, items, holders, volume, expand, setExpand } : RowTopBarProps) => {
+export const RowTopBar = ({
+  collection,
+  items,
+  holders,
+  volume,
+  expand,
+  setExpand,
+}: RowTopBarProps) => {
   return (
     <RowTopBarWrapper expand={expand}>
       <CardsIcon />
-      <AggregateStat label="Collection" stat={collection ? collection : 'N/A'}/>
-      <AggregateStat label="Items" stat={items ? items.toString() : 'N/A'}/>
-      <AggregateStat label="Holders" stat={holders.toString()}/>
-      <AggregateStat label="volume" stat={volume.usdcPrice.toFixed(0)} dollar={true}/>
-      <ExpandButton expand={expand} setExpand={setExpand}/>
+      <AggregateStat
+        label="Collection"
+        stat={collection ? collection : "N/A"}
+      />
+      <AggregateStat label="Items" stat={items ? items.toString() : "N/A"} />
+      <AggregateStat label="Holders" stat={holders.toString()} />
+      <AggregateStat
+        label="volume"
+        stat={volume.usdcPrice.toFixed(0)}
+        dollar={true}
+      />
+      <ExpandButton expand={expand} setExpand={setExpand} />
     </RowTopBarWrapper>
-  )
+  );
 };

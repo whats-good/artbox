@@ -3,31 +3,33 @@ import { validateContract } from "./validateContract";
 import apolloClient from "../utils/apollo-client";
 import { createContract } from "../querys/internal";
 
-
 type AddContractInput = {
   contractAddress: string;
   userAddress: string;
   provider: Provider;
-}
+};
 type AddContractSuccess = {
   success: true;
   addedContract: string;
-}
+};
 type AddContractFailed = {
   success: false;
   message: string;
-}
+};
 
-type AddContractOutput = AddContractSuccess | AddContractFailed
+type AddContractOutput = AddContractSuccess | AddContractFailed;
 
-export const addContract = async ({ contractAddress, userAddress, provider }: AddContractInput): Promise<AddContractOutput> => {
-
+export const addContract = async ({
+  contractAddress,
+  userAddress,
+  provider,
+}: AddContractInput): Promise<AddContractOutput> => {
   //First check if contract is valid ERC-721
   if (!validateContract(contractAddress, provider).valid) {
     return {
       success: false,
-      message: "Not Valid Contract"
-    }
+      message: "Not Valid Contract",
+    };
   }
 
   //Next create contract
@@ -46,16 +48,16 @@ export const addContract = async ({ contractAddress, userAddress, provider }: Ad
       return {
         success: true,
         addedContract: linkedContracts.data.createContract.contractAddress,
-      }
+      };
     }
     return {
       success: false,
       message: "Unknown error",
-    }
-  } catch(e) {
+    };
+  } catch (e) {
     return {
       success: false,
       message: JSON.stringify(e),
-    }
+    };
   }
-}
+};

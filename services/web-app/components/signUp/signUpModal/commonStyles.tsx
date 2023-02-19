@@ -2,9 +2,9 @@ import styled from "styled-components";
 
 export const StyledInput = styled.input`
   height: 20px;
-  margin-Bottom: 8px;
+  margin-bottom: 8px;
   border: 1px solid black;
-  background-color: #EBEBEB;
+  background-color: #ebebeb;
   width: 100%;
 `;
 export const StyledLabel = styled.label`

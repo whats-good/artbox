@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import { PropsWithChildren } from 'react'
+import styled from "styled-components";
+import { PropsWithChildren } from "react";
 
 const BlueBar = styled.div`
   background-color: #008080;
@@ -23,5 +23,5 @@ export const PageWrapper = ({ children }: PropsWithChildren) => {
       <BlueBar />
       {children}
     </Wrapper>
-  )
-}
+  );
+};

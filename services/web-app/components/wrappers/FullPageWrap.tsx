@@ -1,7 +1,7 @@
-import styled from "styled-components"
-import { PropsWithChildren } from 'react'
-import { TopBar } from "../connectwallet"
-import { Footer } from "../footer"
+import styled from "styled-components";
+import { PropsWithChildren } from "react";
+import { TopBar } from "../connectwallet";
+import { Footer } from "../footer";
 
 const Wrapper = styled.div`
   display: flex;
@@ -11,17 +11,14 @@ const Wrapper = styled.div`
 
 const Inner = styled.div`
   height: 90vh;
-`
+`;
 
 export const FullPageWrap = ({ children }: PropsWithChildren) => {
   return (
     <Wrapper>
       <TopBar />
-      <Inner>
-        {children}
-        </Inner>
+      <Inner>{children}</Inner>
       <Footer />
     </Wrapper>
-  )
-}
-
+  );
+};

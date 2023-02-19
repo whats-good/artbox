@@ -18,20 +18,33 @@ const ModalAnchor = styled.div`
 `;
 
 const Home: NextPage = () => {
-
   const [signUpModal, toggleSignUpModal] = useState<boolean>(false);
   const [discoverModal, toggleDiscoverModal] = useState<boolean>(false);
 
   return (
     <>
       <ModalAnchor>
-        {signUpModal ? <SignUpModal toggleShowModal={toggleSignUpModal} /> : <></>}
-        {discoverModal ? <DiscoverModal toggleShowModal={toggleDiscoverModal} /> : <></>}
+        {signUpModal ? (
+          <SignUpModal toggleShowModal={toggleSignUpModal} />
+        ) : (
+          <></>
+        )}
+        {discoverModal ? (
+          <DiscoverModal toggleShowModal={toggleDiscoverModal} />
+        ) : (
+          <></>
+        )}
       </ModalAnchor>
       <BodyWrapper>
         <ButtonWrapper>
-          <SignUpButton toggleShowModal={toggleSignUpModal} showModal={signUpModal}/>
-          <DiscoverButton toggleShowModal={toggleDiscoverModal} showModal={discoverModal}/>
+          <SignUpButton
+            toggleShowModal={toggleSignUpModal}
+            showModal={signUpModal}
+          />
+          <DiscoverButton
+            toggleShowModal={toggleDiscoverModal}
+            showModal={discoverModal}
+          />
         </ButtonWrapper>
       </BodyWrapper>
     </>
