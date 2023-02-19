@@ -226,7 +226,7 @@ const EditUserInput = builder.inputType('EditUserInput', {
 
 const ContractInput = builder.inputType('ContractInput', {
   fields: (t) => ({
-    userAddress: t.string({ required: true }),
+    username: t.string({ required: true }),
     contractAddress: t.string({ required: true }),
   }),
 });
@@ -330,6 +330,21 @@ builder.mutationType({
         if (!userAddress) {
           throw new UnknownError('No session token');
         }
+        //Check if the username belongs to the authenticated address
+        try {
+          const checkedUsername = await prismaClient.user.findUniqueOrThrow({
+            where: {
+              username: args.input.username,
+            },
+          });
+          if (checkedUsername.address !== userAddress) {
+            throw new UnknownError('Username does not belong to address');
+          }
+        } catch (e) {
+          throw new UnknownError('Username does not exist');
+        }
+
+        //Update the user
         try {
           const user = await prismaClient.user.update({
             where: {
@@ -354,56 +369,76 @@ builder.mutationType({
         if (!userAddress) {
           throw new UnknownError('No session token');
         }
-        if (userAddress !== args.input.userAddress) {
-          throw new UnknownError('Authenticated adress does not match arg');
+
+        let user;
+        let contract;
+        let connected;
+
+        //Confirm the username belongs to the authenticated address
+        try {
+          user = await prismaClient.user.findUniqueOrThrow({
+            where: {
+              username: args.input.username,
+            },
+          });
+          if (user.address !== userAddress) {
+            throw new UnknownError('Username does not belong to address');
+          }
+        } catch (e) {
+          throw new UnknownError('Username does not exist');
         }
-        const contract = await prismaClient.smartContract.upsert({
-          where: { contractAddress: args.input.contractAddress },
-          update: {
-            contractAddress: args.input.contractAddress,
-            network: {
-              connect: { name: 'Ethereum' },
-            },
-          },
-          create: {
-            contractAddress: args.input.contractAddress,
-            network: {
-              connect: { name: 'Ethereum' },
-            },
-          },
-        });
 
-        const { id } = await prismaClient.user.findUnique({
-          where: {
-            address: userAddress,
-          },
-        });
+        //Create the contract in DB (If doesn't alreadt exist)
+        try {
+          contract = await prismaClient.smartContract.upsert({
+            where: { contractAddress: args.input.contractAddress },
+            update: {
+              contractAddress: args.input.contractAddress,
+              network: {
+                connect: { name: 'Ethereum' },
+              },
+            },
+            create: {
+              contractAddress: args.input.contractAddress,
+              network: {
+                connect: { name: 'Ethereum' },
+              },
+            },
+          });
+        } catch (e) {
+          throw new UnknownError('Unable to create contract');
+        }
 
-        const connectUser = await prismaClient.userOnContract.upsert({
-          where: {
-            unique_combo: {
-              smartContractId: contract.id,
-              userId: id,
+        //Connect the contract with user via UserOnContract join table
+        try {
+          connected = await prismaClient.userOnContract.upsert({
+            where: {
+              unique_combo: {
+                smartContractId: contract.id,
+                userId: user.id,
+              },
             },
-          },
-          create: {
-            user: {
-              connect: { address: userAddress },
+            create: {
+              user: {
+                connect: { username: args.input.username },
+              },
+              smartContract: {
+                connect: { contractAddress: args.input.contractAddress },
+              },
             },
-            smartContract: {
-              connect: { contractAddress: args.input.contractAddress },
+            update: {
+              user: {
+                connect: { username: args.input.username },
+              },
+              smartContract: {
+                connect: { contractAddress: args.input.contractAddress },
+              },
             },
-          },
-          update: {
-            user: {
-              connect: { address: userAddress },
-            },
-            smartContract: {
-              connect: { contractAddress: args.input.contractAddress },
-            },
-          },
-        });
-        if (!connectUser || !contract) {
+          });
+        } catch (e) {
+          throw new UnknownError('Unable to link contract to user');
+        }
+        if (!connected || !contract || !user) {
           throw new UnknownError();
         }
         return contract;
