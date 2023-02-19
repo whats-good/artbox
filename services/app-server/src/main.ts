@@ -138,17 +138,17 @@ builder.queryType({
         }),
       },
       resolve: async (query, _, { username }) => {
-        const user = await prismaClient.user.findUnique({
-          ...query,
-          where: {
-            username: username,
-          },
-        });
-
-        if (!user) {
-          throw new NotFoundError();
+        try {
+          const user = await prismaClient.user.findUnique({
+            ...query,
+            where: {
+              username: username,
+            },
+          });
+          return user;
+        } catch (e) {
+          throw new UnknownError('Error while fetching user.');
         }
-        return user;
       },
     }),
     discoverUsers: t.prismaField({
