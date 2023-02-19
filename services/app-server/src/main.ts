@@ -216,6 +216,14 @@ const UserInput = builder.inputType('UserInput', {
   }),
 });
 
+const EditUserInput = builder.inputType('EditUserInput', {
+  fields: (t) => ({
+    username: t.string({ required: true }),
+    address: t.string({ required: false }),
+    description: t.string({ required: false }),
+  }),
+});
+
 const ContractInput = builder.inputType('ContractInput', {
   fields: (t) => ({
     userAddress: t.string({ required: true }),
@@ -311,6 +319,30 @@ builder.mutationType({
           throw new UnknownError();
         }
         return user;
+      },
+    }),
+    editUser: t.field({
+      type: User,
+      args: {
+        input: t.arg({ type: EditUserInput, required: true }),
+      },
+      resolve: async (root, args, { userAddress }) => {
+        if (!userAddress) {
+          throw new UnknownError('No session token');
+        }
+        try {
+          const user = await prismaClient.user.update({
+            where: {
+              username: args.input.username,
+            },
+            data: {
+              description: args.input.description,
+            },
+          });
+          return user;
+        } catch (e) {
+          throw new UnknownError('Unable to update user');
+        }
       },
     }),
     createContract: t.field({
