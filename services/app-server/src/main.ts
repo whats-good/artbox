@@ -168,17 +168,18 @@ builder.queryType({
       },
       type: [User],
       resolve: async (query, _, { take, cursor }) => {
-        const users = await prismaClient.user.findMany({
-          ...query,
-          take: take,
-          cursor: {
-            id: cursor,
-          },
-        });
-        if (!users) {
+        try {
+          const users = await prismaClient.user.findMany({
+            ...query,
+            take: take,
+            cursor: {
+              id: cursor,
+            },
+          });
+          return users;
+        } catch (e) {
           throw new NotFoundError();
         }
-        return users;
       },
     }),
     getAccounts: t.prismaField({
