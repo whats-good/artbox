@@ -6,7 +6,6 @@ import { shortenAddress } from "../../../helpers/shortenAddress";
 import { CreateProfile } from "./createProfile";
 
 //Types
-
 type ConnectedAddressProps = {
   address: string;
 };
@@ -15,7 +14,6 @@ type InsideSignUpModalProps = {
 };
 
 //Styles
-
 const ConnectWalletMessageWrapper = styled.div`
   height: 500px;
   width: 450px;
@@ -37,8 +35,6 @@ export const InsideSignUpModal = ({
   toggleShowModal,
 }: InsideSignUpModalProps) => {
   const { address } = useAccount();
-
-  if (!address) return <ConnectWalletMessage />;
 
   return (
     <InsideSignUpModalWrapper>
