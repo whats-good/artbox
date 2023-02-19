@@ -2,7 +2,7 @@ import SchemaBuilder from '@pothos/core';
 import ErrorsPlugin from '@pothos/plugin-errors';
 import PrismaPlugin from '@pothos/plugin-prisma';
 import type PrismaTypes from '@pothos/plugin-prisma/generated';
-import { PrismaClient } from '@prisma/client';
+import { prisma, PrismaClient } from '@prisma/client';
 import { createYoga } from 'graphql-yoga';
 import { generateNonce, SiweMessage } from 'siwe';
 import session from 'express-session';
@@ -134,33 +134,17 @@ builder.queryType({
       type: User,
       args: {
         username: t.arg.string({
-          required: false,
-        }),
-        address: t.arg.string({
-          required: false,
+          required: true,
         }),
       },
-      resolve: async (query, _, { username, address }) => {
-        if (!username && !address) {
-          throw new UnknownError('Must provide either username or address');
-        }
-        let user = undefined;
-        if (address) {
-          user = await prismaClient.user.findUnique({
-            ...query,
-            where: {
-              address: address,
-            },
-          });
-        }
-        if (username) {
-          user = await prismaClient.user.findUnique({
-            ...query,
-            where: {
-              username: username,
-            },
-          });
-        }
+      resolve: async (query, _, { username }) => {
+        const user = await prismaClient.user.findUnique({
+          ...query,
+          where: {
+            username: username,
+          },
+        });
+
         if (!user) {
           throw new NotFoundError();
         }
@@ -197,6 +181,29 @@ builder.queryType({
         return users;
       },
     }),
+    getAccounts: t.prismaField({
+      errors: {
+        types: [NotFoundError],
+        directResult: false,
+      },
+      args: {
+        address: t.arg.string({
+          required: true,
+        }),
+      },
+      type: [User],
+      resolve: async (query, _, { address }) => {
+        const users = await prismaClient.user.findMany({
+          where: {
+            address: address,
+          },
+        });
+        if (!users) {
+          throw new NotFoundError();
+        }
+        return users;
+      },
+    }),
   }),
 });
 
@@ -205,6 +212,7 @@ const UserInput = builder.inputType('UserInput', {
     username: t.string({ required: true }),
     address: t.string({ required: true }),
     description: t.string({ required: false }),
+    smartContracts: t.stringList({ required: false }),
   }),
 });
 
@@ -227,22 +235,79 @@ builder.mutationType({
           throw new UnknownError('No session token');
         }
         if (userAddress !== args.input.address) {
-          throw new UnknownError('Authenticated adress does not match arg');
+          throw new UnknownError('Authenticated address does not match arg');
         }
-        const user = await prismaClient.user.upsert({
-          where: { address: userAddress },
-          update: {
-            address: userAddress,
-            username: args.input.username,
-            description: args.input.description,
-          },
-          create: {
-            address: userAddress,
-            username: args.input.username,
-            description: args.input.description,
-          },
-        });
-        if (!user) {
+
+        //Check if the username is available
+        try {
+          await prismaClient.user.findUniqueOrThrow({
+            where: { username: args.input.username },
+          });
+        } catch (e) {
+          throw new UnknownError('Sorry, this username already exists.');
+        }
+
+        let user;
+
+        //Create User
+        try {
+          user = await prismaClient.user.create({
+            data: {
+              username: args.input.username,
+              address: userAddress,
+              description: args.input.description,
+            },
+          });
+        } catch (e) {
+          throw new UnknownError('Unable to create User');
+        }
+
+        try {
+          if (args.input.smartContracts.length) {
+            for (let i = 0; i < args.input.smartContracts.length; i++) {
+              const contract = await prismaClient.smartContract.upsert({
+                where: { contractAddress: args.input.smartContracts[i] },
+                update: {
+                  contractAddress: args.input.smartContracts[i],
+                  network: {
+                    connect: { name: 'Ethereum' },
+                  },
+                },
+                create: {
+                  contractAddress: args.input.smartContracts[i],
+                  network: {
+                    connect: { name: 'Ethereum' },
+                  },
+                },
+              });
+
+              const connectUser = await prismaClient.userOnContract.upsert({
+                where: {
+                  unique_combo: {
+                    smartContractId: contract.id,
+                    userId: user.id,
+                  },
+                },
+                create: {
+                  user: {
+                    connect: { username: args.input.username },
+                  },
+                  smartContract: {
+                    connect: { contractAddress: args.input.smartContracts[i] },
+                  },
+                },
+                update: {
+                  user: {
+                    connect: { username: args.input.username },
+                  },
+                  smartContract: {
+                    connect: { contractAddress: args.input.smartContracts[i] },
+                  },
+                },
+              });
+            }
+          }
+        } catch (e) {
           throw new UnknownError();
         }
         return user;
@@ -306,7 +371,6 @@ builder.mutationType({
             },
           },
         });
-
         if (!connectUser || !contract) {
           throw new UnknownError();
         }
@@ -354,8 +418,7 @@ builder.mutationType({
 
 const yoga = createYoga({
   schema: builder.toSchema(),
-  // maskedErrors: process.env.NODE_ENV === 'production',
-  maskedErrors: false,
+  maskedErrors: process.env.NODE_ENV === 'production',
   cors: {
     origin: [
       process.env.CLIENT_URL,
