@@ -9,10 +9,19 @@ type AccountsViewProps = {
   address: string;
   toggleShowModal: Dispatch<SetStateAction<boolean>>;
 };
-type AccountProps = {
+
+export type UserData = {
+  __typename?: "User";
+  address: string;
   username: string;
+  description?: string | null;
+  contracts: Array<{ __typename?: "SmartContract"; contractAddress: string }>;
+};
+
+type AccountProps = {
   setEditMode: Dispatch<SetStateAction<boolean>>;
-  setEditUsername: Dispatch<SetStateAction<string | undefined>>;
+  setUserToEdit: Dispatch<SetStateAction<UserData | undefined>>;
+  data: UserData;
 };
 
 const AccountsListWrapper = styled.div`
@@ -54,20 +63,21 @@ export const AccountsView = ({
   });
 
   const [editMode, setEditMode] = useState<boolean>(false);
-  const [editUsername, setEditUsername] = useState<string | undefined>();
+  const [userToEdit, setUserToEdit] = useState<UserData | undefined>();
 
   if (data?.getAccounts.__typename === "QueryGetAccountsSuccess") {
+    console.log("SUCCESS");
     return (
       <>
-        {editMode && editUsername ? (
-          <EditAccount username={editUsername} address={address} />
+        {editMode && userToEdit ? (
+          <EditAccount data={userToEdit} />
         ) : (
           <AccountsListWrapper>
             {data.getAccounts.data.map((account) => (
               <Account
+                data={account}
                 key={account.username}
-                username={account.username}
-                setEditUsername={setEditUsername}
+                setUserToEdit={setUserToEdit}
                 setEditMode={setEditMode}
               />
             ))}
@@ -76,23 +86,23 @@ export const AccountsView = ({
       </>
     );
   }
-  return <AccountsListWrapper>{}</AccountsListWrapper>;
+  return <AccountsListWrapper>yo</AccountsListWrapper>;
 };
 
-const Account = ({ setEditUsername, setEditMode, username }: AccountProps) => {
+const Account = ({ setUserToEdit, setEditMode, data }: AccountProps) => {
   return (
     <AccountWrapper>
-      <UsernameText>{username}</UsernameText>
+      <UsernameText>{data.username}</UsernameText>
       <Links>
         <p
           onClick={() => {
-            setEditUsername(username);
+            setUserToEdit(data);
             setEditMode(true);
           }}
         >
           Edit
         </p>
-        <Link href={`/${username}`}>View</Link>
+        <Link href={`/${data.username}`}>View</Link>
       </Links>
     </AccountWrapper>
   );

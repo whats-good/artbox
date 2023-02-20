@@ -18,7 +18,7 @@ const documents = {
     "\n  mutation DeleteContract($address: String!, $username: String!) {\n    deleteContract(input: {contractAddress: $address, username: $username}) {\n      contractAddress\n    }\n  }\n": types.DeleteContractDocument,
     "\n  query DiscoverUsers {\n    discoverUsers {\n      ... on QueryDiscoverUsersSuccess {\n        __typename\n        data {\n          username\n        }\n      }\n    }\n  }\n": types.DiscoverUsersDocument,
     "\n  mutation EditUser($username: String!, $description: String) {\n    editUser(input: {username: $username, description: $description}) {\n      username\n    }\n  }\n": types.EditUserDocument,
-    "\n  query GetAccounts($address: String!) {\n    getAccounts(address: $address) {\n      ... on QueryGetAccountsSuccess {\n        __typename\n        data {\n          username\n          contracts {\n            contractAddress\n          }\n        }\n      }\n    }\n  }\n": types.GetAccountsDocument,
+    "\n  query GetAccounts($address: String!) {\n    getAccounts(address: $address) {\n      ... on QueryGetAccountsSuccess {\n        __typename\n        data {\n          username\n          description\n          address\n          contracts {\n            contractAddress\n          }\n        }\n      }\n    }\n  }\n": types.GetAccountsDocument,
     "\n  query userInfo($name: String!) {\n    user(username: $name) {\n      ... on QueryUserSuccess {\n        __typename\n        data {\n          address\n          contracts {\n            contractAddress\n          }\n          description\n          username\n          id\n        }\n      }\n    }\n  }\n": types.UserInfoDocument,
 };
 
@@ -59,7 +59,7 @@ export function gql(source: "\n  mutation EditUser($username: String!, $descript
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GetAccounts($address: String!) {\n    getAccounts(address: $address) {\n      ... on QueryGetAccountsSuccess {\n        __typename\n        data {\n          username\n          contracts {\n            contractAddress\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetAccounts($address: String!) {\n    getAccounts(address: $address) {\n      ... on QueryGetAccountsSuccess {\n        __typename\n        data {\n          username\n          contracts {\n            contractAddress\n          }\n        }\n      }\n    }\n  }\n"];
+export function gql(source: "\n  query GetAccounts($address: String!) {\n    getAccounts(address: $address) {\n      ... on QueryGetAccountsSuccess {\n        __typename\n        data {\n          username\n          description\n          address\n          contracts {\n            contractAddress\n          }\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetAccounts($address: String!) {\n    getAccounts(address: $address) {\n      ... on QueryGetAccountsSuccess {\n        __typename\n        data {\n          username\n          description\n          address\n          contracts {\n            contractAddress\n          }\n        }\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

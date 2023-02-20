@@ -41,7 +41,7 @@ type InnerAccountsModalProps = {
 
 const InnerAccountsModal = ({ toggleShowModal }: InnerAccountsModalProps) => {
   const { address } = useAccount();
-
+  console.log("ADDRESS: ", address);
   return (
     <InnerAccountsModalWrapper>
       {address ? (

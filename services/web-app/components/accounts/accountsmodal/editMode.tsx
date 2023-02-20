@@ -1,42 +1,44 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { useSigner } from "wagmi";
+import { useAccount, useSigner } from "wagmi";
 import { ModalSignMessage } from "../../shared/signMessage";
 import { useMutation, useQuery } from "@apollo/client";
 import { AddCollections, ShowCollections } from "./addCollections";
 import { editUser, userInfo } from "../../../querys/internal";
+import type { UserData } from "./accountsView";
 
 const EditAccountWrapper = styled.div``;
 
 type EditAccountProps = {
-  username: string;
-  address: string;
+  data: UserData;
 };
 type SignedInViewProps = {
-  username: string;
+  userData: UserData;
 };
 
-export const EditAccount = ({ username, address }: EditAccountProps) => {
+export const EditAccount = ({ data }: EditAccountProps) => {
   const [signedIn, setSignedIn] = useState<boolean>(false);
+
+  const { address } = useAccount();
 
   const { data: signer } = useSigner();
 
   return (
     <EditAccountWrapper>
-      {signedIn ? (
-        <SignedInView username={username} />
-      ) : (
+      {!signedIn && address ? (
         <ModalSignMessage
           address={address}
           signer={signer}
           loggedInFunction={setSignedIn}
         />
+      ) : (
+        <SignedInView userData={data} />
       )}
     </EditAccountWrapper>
   );
 };
 
-const SignedInView = ({ username }: SignedInViewProps) => {
+const SignedInView = ({ userData }: SignedInViewProps) => {
   const [mutateFunction, { data, loading, error }] = useMutation(editUser);
 
   return (

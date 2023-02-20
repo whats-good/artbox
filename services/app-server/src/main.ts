@@ -196,6 +196,7 @@ builder.queryType({
       resolve: async (query, _, { address }) => {
         try {
           const users = await prismaClient.user.findMany({
+            ...query,
             where: {
               address: address,
             },
