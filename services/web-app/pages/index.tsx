@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { SignUpButton, SignUpModal } from "../components/signUp";
 import { DiscoverButton, DiscoverModal } from "../components/discover";
 import { AccountsButton, AccountsModal } from "../components/accounts";
+import { EditAccountModal } from "../components/editaccount/editaccountmodal/editAccountModal";
 
 const ButtonWrapper = styled.div`
   width: 150px;
@@ -22,6 +23,8 @@ const Home: NextPage = () => {
   const [signUpModal, toggleSignUpModal] = useState<boolean>(false);
   const [discoverModal, toggleDiscoverModal] = useState<boolean>(false);
   const [accountsModal, toggleAccountsModal] = useState<boolean>(false);
+  const [editAccountModal, toggleEditAccountModal] = useState<boolean>(false);
+  const [accountEdited, setAccountEdited] = useState<string>();
 
   return (
     <>
@@ -31,7 +34,17 @@ const Home: NextPage = () => {
           <DiscoverModal toggleShowModal={toggleDiscoverModal} />
         )}
         {accountsModal && (
-          <AccountsModal toggleShowModal={toggleAccountsModal} />
+          <AccountsModal
+            toggleEditAccount={toggleEditAccountModal}
+            toggleShowModal={toggleAccountsModal}
+            setAccountEdited={setAccountEdited}
+          />
+        )}
+        {editAccountModal && (
+          <EditAccountModal
+            accountEdited={accountEdited}
+            toggleShowModal={toggleEditAccountModal}
+          />
         )}
       </ModalAnchor>
       <BodyWrapper>

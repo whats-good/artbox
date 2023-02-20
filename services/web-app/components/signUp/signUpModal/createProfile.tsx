@@ -53,16 +53,6 @@ export const CreateProfile = ({
   const [message, setMessage] = useState<string>("");
   const { data: signer } = useSigner();
 
-  // useEffect(() => {
-  //   populateSignUpForm({ address: address }).then((res) => {
-  //     if (res.userExists) {
-  //       setUsername(res.username);
-  //       setBio(res.description);
-  //       setContracts(res.contracts);
-  //     }
-  //   });
-  // }, [address]);
-
   if (!loggedIn) {
     return (
       <PleaseSignMessageButton>
