@@ -1,7 +1,7 @@
 import { gql } from "../../.utils/internalTypes";
 
 export const discoverUser = gql(`
-  query discoverUser {
+  query DiscoverUsers {
     discoverUsers {
       ... on QueryDiscoverUsersSuccess {
         __typename
