@@ -50,10 +50,10 @@ export const InsideSignUpModal = ({
   );
 };
 
-const ConnectWalletMessage = () => {
+export const ConnectWalletMessage = () => {
   return (
     <ConnectWalletMessageWrapper>
-      <p>Please connect your wallet to create an account</p>
+      <p>Please connect your wallet</p>
       <ConnectWallet />
     </ConnectWalletMessageWrapper>
   );

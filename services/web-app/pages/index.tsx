@@ -8,6 +8,10 @@ import { EditAccountModal } from "../components/editaccount/editaccountmodal/edi
 
 const ButtonWrapper = styled.div`
   width: 150px;
+  display: flex;
+  height: 12%;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 const BodyWrapper = styled.div`
   height: calc(100vh - 87px);
@@ -23,8 +27,6 @@ const Home: NextPage = () => {
   const [signUpModal, toggleSignUpModal] = useState<boolean>(false);
   const [discoverModal, toggleDiscoverModal] = useState<boolean>(false);
   const [accountsModal, toggleAccountsModal] = useState<boolean>(false);
-  const [editAccountModal, toggleEditAccountModal] = useState<boolean>(false);
-  const [accountEdited, setAccountEdited] = useState<string>();
 
   return (
     <>
@@ -34,17 +36,7 @@ const Home: NextPage = () => {
           <DiscoverModal toggleShowModal={toggleDiscoverModal} />
         )}
         {accountsModal && (
-          <AccountsModal
-            toggleEditAccount={toggleEditAccountModal}
-            toggleShowModal={toggleAccountsModal}
-            setAccountEdited={setAccountEdited}
-          />
-        )}
-        {editAccountModal && (
-          <EditAccountModal
-            accountEdited={accountEdited}
-            toggleShowModal={toggleEditAccountModal}
-          />
+          <AccountsModal toggleShowModal={toggleAccountsModal} />
         )}
       </ModalAnchor>
       <BodyWrapper>

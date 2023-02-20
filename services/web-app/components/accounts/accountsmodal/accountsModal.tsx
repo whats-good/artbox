@@ -1,17 +1,17 @@
 import styled from "styled-components";
-import { Modal } from "../../modal";
 import { useAccount } from "wagmi";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useQuery } from "@apollo/client";
+import Link from "next/link";
+import { Modal } from "../../modal";
 import { GetAccounts } from "../../../querys/internal";
 import { ConnectedAccount } from "../../connectwallet";
-import Link from "next/link";
+import { ConnectWalletMessage } from "../../signUp/signUpModal/insideSignUpModal";
+import { EditAccount } from "./editMode";
 
 //Types
 type AccountsModalProps = {
   toggleShowModal: Dispatch<SetStateAction<boolean>>;
-  toggleEditAccount: Dispatch<SetStateAction<boolean>>;
-  setAccountEdited: Dispatch<SetStateAction<string | undefined>>;
 };
 
 //Styles
@@ -20,59 +20,40 @@ const InnerAccountsModalWrapper = styled.div`
   flex-direction: column;
 `;
 
-export const AccountsModal = ({
-  toggleShowModal,
-  toggleEditAccount,
-  setAccountEdited,
-}: AccountsModalProps) => {
+export const AccountsModal = ({ toggleShowModal }: AccountsModalProps) => {
   return (
     <Modal
       toggleShowModal={toggleShowModal}
       title="My Accounts"
-      height="300px"
+      height="450px"
       defaultPosition={{
         x: 40,
         y: 40,
       }}
     >
-      <InnerAccountsModal
-        toggleShowModal={toggleShowModal}
-        toggleEditAccount={toggleEditAccount}
-        setAccountEdited={setAccountEdited}
-      />
+      <InnerAccountsModal toggleShowModal={toggleShowModal} />
     </Modal>
   );
 };
 
 type InnerAccountsModalProps = {
-  toggleEditAccount: Dispatch<SetStateAction<boolean>>;
   toggleShowModal: Dispatch<SetStateAction<boolean>>;
-  setAccountEdited: Dispatch<SetStateAction<string | undefined>>;
 };
 
-const InnerAccountsModal = ({
-  toggleShowModal,
-  toggleEditAccount,
-  setAccountEdited,
-}: InnerAccountsModalProps) => {
+const InnerAccountsModal = ({ toggleShowModal }: InnerAccountsModalProps) => {
   const { address } = useAccount();
 
   if (address) {
     return (
       <InnerAccountsModalWrapper>
         <ConnectedAccount />
-        <AccountsView
-          setAccountEdited={setAccountEdited}
-          toggleShowModal={toggleShowModal}
-          toggleEditAccount={toggleEditAccount}
-          address={address}
-        />
+        <AccountsView toggleShowModal={toggleShowModal} address={address} />
       </InnerAccountsModalWrapper>
     );
   } else {
     return (
       <InnerAccountsModalWrapper>
-        <p>Please connect Wallet</p>
+        <ConnectWalletMessage />
       </InnerAccountsModalWrapper>
     );
   }
@@ -80,17 +61,10 @@ const InnerAccountsModal = ({
 
 type AccountsViewProps = {
   address: string;
-  toggleEditAccount: Dispatch<SetStateAction<boolean>>;
   toggleShowModal: Dispatch<SetStateAction<boolean>>;
-  setAccountEdited: Dispatch<SetStateAction<string | undefined>>;
 };
 
-const AccountsView = ({
-  address,
-  toggleShowModal,
-  toggleEditAccount,
-  setAccountEdited,
-}: AccountsViewProps) => {
+const AccountsView = ({ address, toggleShowModal }: AccountsViewProps) => {
   const { loading, error, data, refetch } = useQuery(GetAccounts, {
     variables: {
       address: address,
@@ -98,18 +72,28 @@ const AccountsView = ({
     notifyOnNetworkStatusChange: true,
   });
 
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [editUsername, setEditUsername] = useState<string | undefined>();
+
   if (data?.getAccounts.__typename === "QueryGetAccountsSuccess") {
     return (
-      <AccountsListWrapper>
-        {data.getAccounts.data.map((account) => (
-          <Account
-            toggleShowModal={toggleShowModal}
-            toggleEditAccount={toggleEditAccount}
-            key={account.username}
-            username={account.username}
-          />
-        ))}
-      </AccountsListWrapper>
+      <>
+        {editMode && editUsername ? (
+          <EditAccount username={editUsername} address={address} />
+        ) : (
+          <AccountsListWrapper>
+            {data.getAccounts.data.map((account) => (
+              <Account
+                toggleShowModal={toggleShowModal}
+                key={account.username}
+                username={account.username}
+                setEditUsername={setEditUsername}
+                setEditMode={setEditMode}
+              />
+            ))}
+          </AccountsListWrapper>
+        )}
+      </>
     );
   }
 
@@ -118,8 +102,9 @@ const AccountsView = ({
 
 type AccountProps = {
   username: string;
-  toggleEditAccount: Dispatch<SetStateAction<boolean>>;
   toggleShowModal: Dispatch<SetStateAction<boolean>>;
+  setEditMode: Dispatch<SetStateAction<boolean>>;
+  setEditUsername: Dispatch<SetStateAction<string | undefined>>;
 };
 
 const AccountsListWrapper = styled.div`
@@ -153,9 +138,10 @@ const Links = styled.div`
 `;
 
 const Account = ({
+  setEditUsername,
+  setEditMode,
   toggleShowModal,
   username,
-  toggleEditAccount,
 }: AccountProps) => {
   return (
     <AccountWrapper>
@@ -163,8 +149,9 @@ const Account = ({
       <Links>
         <p
           onClick={() => {
-            toggleShowModal(false);
-            toggleEditAccount(true);
+            setEditUsername(username);
+            setEditMode(true);
+            // toggleShowModal(false);
           }}
         >
           Edit
