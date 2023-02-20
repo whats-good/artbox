@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<Success> = async (
   }
 
   try {
-    //Check if the user has 'liked' collection
+    //TODO: Check if the user has 'liked' collection
   } catch (e) {
     return {
       notFound: true,
