@@ -19,21 +19,21 @@ export const userInfo = gql(`
   }
 `);
 
-export const userInfoWithAddress = gql(`
-  query userInfoWithAddress($address: String!) {
-    user(address: $address) {
-      ... on QueryUserSuccess {
-        __typename
-        data {
-          address
-          contracts {
-            contractAddress
-          }
-          description
-          username
-          id
-        }
-      }
-    }
-  }
-`);
+// export const userInfoWithAddress = gql(`
+//   query userInfoWithAddress($address: String!) {
+//     user(address: $address) {
+//       ... on QueryUserSuccess {
+//         __typename
+//         data {
+//           address
+//           contracts {
+//             contractAddress
+//           }
+//           description
+//           username
+//           id
+//         }
+//       }
+//     }
+//   }
+// `);
