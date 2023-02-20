@@ -27,21 +27,21 @@ export const Footer = () => {
       </Link>
       <FooterText>
         Created by{" "}
-        <a
+        <Link
           target="_blank"
           rel="noopener noreferrer"
           href="https://twitter.com/logan_larkin"
         >
           @logan_larkin
-        </a>{" "}
+        </Link>{" "}
         |{" "}
-        <a
+        <Link
           target="_blank"
           rel="noopener noreferrer"
           href="https://twitter.com/Theskbeats"
         >
           @skbeats
-        </a>
+        </Link>
       </FooterText>
     </FooterWrapper>
   );
