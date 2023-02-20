@@ -7,6 +7,9 @@ export const GetAccounts = gql(`
         __typename
         data {
           username
+          contracts {
+            contractAddress
+          }
         }
       }
     }
