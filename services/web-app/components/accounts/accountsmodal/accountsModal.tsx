@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Modal } from "../../modal";
 import { GetAccounts } from "../../../querys/internal";
 import { ConnectedAccount } from "../../connectwallet";
-import { ConnectWalletMessage } from "../../signUp/signUpModal/insideSignUpModal";
+import { ModalConnectWallet } from "../../shared/connectWallet";
 import { EditAccount } from "./editMode";
 
 //Types
@@ -53,7 +53,7 @@ const InnerAccountsModal = ({ toggleShowModal }: InnerAccountsModalProps) => {
   } else {
     return (
       <InnerAccountsModalWrapper>
-        <ConnectWalletMessage />
+        <ModalConnectWallet />
       </InnerAccountsModalWrapper>
     );
   }

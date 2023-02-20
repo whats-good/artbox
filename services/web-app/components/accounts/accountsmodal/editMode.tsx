@@ -1,8 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useSigner } from "wagmi";
-import { signInWithEthereum } from "../../../siwe";
-import { ButtonInner, ButtonOuter } from "../../button";
+import { ModalSignMessage } from "../../shared/signMessage";
 
 const EditAccountWrapper = styled.div``;
 
@@ -21,23 +20,11 @@ export const EditAccount = ({ username, address }: EditAccountProps) => {
       {signedIn ? (
         <SignedInView username={username} />
       ) : (
-        <ButtonOuter>
-          <ButtonInner
-            onClick={async () => {
-              const signedIn = await signInWithEthereum(
-                address,
-                signer,
-                window.location.host,
-                window.location.origin
-              );
-              if (signedIn.ok) {
-                setSignedIn(true);
-              }
-            }}
-          >
-            Please sign a message to edit your account.
-          </ButtonInner>
-        </ButtonOuter>
+        <ModalSignMessage
+          address={address}
+          signer={signer}
+          loggedInFunction={setSignedIn}
+        />
       )}
     </EditAccountWrapper>
   );
