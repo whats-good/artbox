@@ -9,6 +9,7 @@ import { AddCollections } from "./addCollections";
 import { ShowCollections } from "./showCollections";
 import { editUser } from "../../../../querys/internal";
 import type { UserData } from "../accounts";
+import { EditDescription } from "./editDescription";
 
 const EditAccountWrapper = styled.div``;
 
@@ -50,14 +51,21 @@ export const EditAccount = ({ data }: EditAccountProps) => {
 };
 
 const SignedInView = ({ userData }: SignedInViewProps) => {
-  const [mutateFunction, { data, loading, error }] = useMutation(editUser);
-
+  const [description, setDescription] = useState(
+    userData.description ? userData.description : ""
+  );
   const [contracts, setContracts] = useState(
     userData.contracts.map((c) => c.contractAddress)
   );
 
   return (
     <>
+      <p>Username: {userData.username}</p>
+      <EditDescription
+        username={userData.username}
+        description={description}
+        setDescription={setDescription}
+      />
       <AddCollections
         contracts={contracts}
         setContracts={setContracts}
