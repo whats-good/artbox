@@ -77,9 +77,10 @@ const CollectionDisplay = ({
                 address: contract,
               },
             });
-            const arr = contracts.filter((c) => c !== contract);
-            setContracts(arr);
-            console.log("DELETED CONTRACT: ", deletedContract);
+            if (!deletedContract.errors) {
+              const arr = contracts.filter((c) => c !== contract);
+              setContracts(arr);
+            }
           }}
         >
           x

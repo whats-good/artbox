@@ -72,7 +72,6 @@ export const AddCollections = ({
                   addedContract.data.createContract.contractAddress,
                 ]);
               }
-              console.log("ADDED CONTRACT: ", addedContract);
             }
           }}
         >

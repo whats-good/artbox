@@ -1,6 +1,7 @@
 import { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import client from "../../../utils/apollo-client";
 import { tokenInfo } from "../../../querys/zora";
+import { userInfo } from "../../../querys/internal";
 import type { TokenInfoQuery } from "../../../.utils/zoraTypes/graphql";
 import { PageWrapper, SingleTokenView } from "../../../components";
 
@@ -11,26 +12,46 @@ type Success = {
 export const getServerSideProps: GetServerSideProps<Success> = async (
   context
 ) => {
-  let user, collection, id;
+  let user: string;
+  let collection: string;
+  let id: string;
 
   //Checks if the url params correct
-  if (context.params) {
+  if (
+    context.params &&
+    typeof context.params.user === "string" &&
+    typeof context.params.collection === "string" &&
+    typeof context.params.id === "string"
+  ) {
     user = context.params.user;
     collection = context.params.collection;
     id = context.params.id;
-  }
-  if (
-    typeof user !== "string" ||
-    typeof collection !== "string" ||
-    typeof id !== "string"
-  ) {
+  } else {
     return {
       notFound: true,
     };
   }
 
+  //Check if user has 'liked' collection, if not, 404
   try {
-    //TODO: Check if the user has 'liked' collection
+    const { data } = await client.query({
+      variables: {
+        name: user,
+      },
+      query: userInfo,
+    });
+
+    if (data.user.__typename === "QueryUserSuccess") {
+      if (
+        !data.user.data.contracts
+          .map((c) => c.contractAddress.toUpperCase())
+          .includes(collection.toUpperCase())
+      ) {
+        return {
+          notFound: true,
+        };
+      }
+    }
   } catch (e) {
     return {
       notFound: true,
