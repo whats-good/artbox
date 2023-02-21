@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Link from "next/link";
 import { Dispatch, SetStateAction } from "react";
 import { UserData } from "./accounts";
+import { ButtonInner, ButtonOuter } from "../../button";
 
 type AccountProps = {
   setEditMode: Dispatch<SetStateAction<boolean>>;
@@ -14,7 +15,7 @@ const AccountWrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 5px;
-  height: 20px;
+  height: 25px;
   align-items: center;
   border-bottom: 1px solid black;
   justify-content: space-between;
@@ -27,6 +28,8 @@ const Links = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
+  width: 35%;
 `;
 
 export const Account = ({ setUserToEdit, setEditMode, data }: AccountProps) => {
@@ -34,15 +37,21 @@ export const Account = ({ setUserToEdit, setEditMode, data }: AccountProps) => {
     <AccountWrapper>
       <UsernameText>{data.username}</UsernameText>
       <Links>
-        <p
-          onClick={() => {
-            setUserToEdit(data);
-            setEditMode(true);
-          }}
-        >
-          Edit
-        </p>
-        <Link href={`/${data.username}`}>View</Link>
+        <ButtonOuter>
+          <ButtonInner
+            onClick={() => {
+              setUserToEdit(data);
+              setEditMode(true);
+            }}
+          >
+            Edit
+          </ButtonInner>
+        </ButtonOuter>
+        <Link href={`/${data.username}`}>
+          <ButtonOuter>
+            <ButtonInner>View</ButtonInner>
+          </ButtonOuter>
+        </Link>
       </Links>
     </AccountWrapper>
   );
