@@ -19,12 +19,12 @@ type CollectionDisplayProps = {
 };
 
 const ShowCollectionsWrapper = styled.div`
-  width: 388px;
+  width: 100%;
   background-color: #ebebeb;
-  height: 80px;
+  height: 85px;
   overflow-y: scroll;
   border: 1px solid black;
-  margin: 10px 0px 0px 5px;
+  margin-top: 10px;
 `;
 const CollectionDisplayWrapper = styled.div`
   justify-content: space-between;
@@ -62,7 +62,6 @@ const CollectionDisplay = ({
   const [mutateFunction, { data, loading, error }] = useMutation(
     deleteContractMutation
   );
-
   return (
     <CollectionDisplayWrapper>
       {shortenAddress(contract)}

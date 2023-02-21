@@ -2,24 +2,17 @@ import { useState } from "react";
 import styled from "styled-components";
 import { useAccount, useSigner } from "wagmi";
 import { ModalSignMessage } from "../../../shared/signMessage";
-import { useMutation, useQuery } from "@apollo/client";
-import type { ApolloQueryResult } from "@apollo/client";
-import { GetAccountsQuery } from "../../../../.utils/internalTypes/graphql";
 import { AddCollections } from "./addCollections";
 import { ShowCollections } from "./showCollections";
-import { editUser } from "../../../../querys/internal";
 import type { UserData } from "../accounts";
 import { EditDescription } from "./editDescription";
 
-const EditAccountWrapper = styled.div``;
-
-export type Refetch = (
-  variables?:
-    | Partial<{
-        address: string;
-      }>
-    | undefined
-) => Promise<ApolloQueryResult<GetAccountsQuery>>;
+const EditAccountWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  align-items: center;
+`;
 
 type EditAccountProps = {
   data: UserData;
@@ -50,7 +43,12 @@ export const EditAccount = ({ data }: EditAccountProps) => {
   );
 };
 
+const UsernameText = styled.p`
+  align-self: flex-start;
+`;
+
 const SignedInView = ({ userData }: SignedInViewProps) => {
+  const [descriptionEditMode, setDescriptionEditMode] = useState(false);
   const [description, setDescription] = useState(
     userData.description ? userData.description : ""
   );
@@ -60,8 +58,10 @@ const SignedInView = ({ userData }: SignedInViewProps) => {
 
   return (
     <>
-      <p>Username: {userData.username}</p>
+      <UsernameText>Username: {userData.username}</UsernameText>
       <EditDescription
+        descriptionEditMode={descriptionEditMode}
+        setDescriptionEditMode={setDescriptionEditMode}
         username={userData.username}
         description={description}
         setDescription={setDescription}

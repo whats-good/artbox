@@ -7,6 +7,7 @@ import { validateContract } from "../../../../helpers";
 import {
   StyledLabel,
   StyledInput,
+  StyledForm,
 } from "../../../signUp/signUpModal/commonStyles";
 import { createContract } from "../../../../querys/internal";
 
@@ -21,11 +22,21 @@ type AddCollectionsProps = {
 const AddButton = styled(ButtonOuter)`
   align-self: flex-end;
   width: 25%;
-  margin-right: -6px;
 `;
 
 const AddCollectionInput = styled(StyledInput)`
+  width: 98.5%;
+`;
+const ButtonMessageWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
   width: 100%;
+  align-items: center;
+`;
+const Message = styled.p`
+  margin: 0px 5px 0px 0px;
+  padding: 0px;
 `;
 
 export const AddCollections = ({
@@ -34,50 +45,60 @@ export const AddCollections = ({
   setContracts,
 }: AddCollectionsProps) => {
   const [contractAddress, setContractAddress] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+
   const [mutateFunction, { data, loading, error }] =
     useMutation(createContract);
 
   const provider = useProvider();
 
   return (
-    <>
-      <StyledLabel>
+    <StyledForm>
+      <StyledLabel htmlFor="collection">
         Add Collection: <br />
-        <AddCollectionInput
-          type="text"
-          name="name"
-          value={contractAddress}
-          onChange={(e) => setContractAddress(e.target.value)}
-        />
       </StyledLabel>
-      <AddButton>
-        <ButtonInner
-          onClick={async (e) => {
-            e.preventDefault();
+      <AddCollectionInput
+        type="text"
+        name="collection"
+        id="collection"
+        value={contractAddress}
+        onChange={(e) => setContractAddress(e.target.value)}
+      />
+      <ButtonMessageWrapper>
+        <Message>{message}</Message>
+        <AddButton>
+          <ButtonInner
+            type="submit"
+            onClick={async (e) => {
+              e.preventDefault();
+              setMessage("");
+              //Check if contract is valid before pushing it into state array
+              const validContract = validateContract(contractAddress, provider);
 
-            //Check if contract is valid before pushing it into state array
-            const validContract = validateContract(contractAddress, provider);
-
-            if (validContract.valid) {
-              //Add contract to account
-              const addedContract = await mutateFunction({
-                variables: {
-                  address: validContract.contract,
-                  username: username,
-                },
-              });
-              if (addedContract.data?.createContract.contractAddress) {
-                setContracts([
-                  ...contracts,
-                  addedContract.data.createContract.contractAddress,
-                ]);
+              if (validContract.valid) {
+                const addedContract = await mutateFunction({
+                  variables: {
+                    address: validContract.contract,
+                    username: username,
+                  },
+                });
+                if (addedContract.data?.createContract.contractAddress) {
+                  setContracts([
+                    ...contracts,
+                    addedContract.data.createContract.contractAddress,
+                  ]);
+                  setMessage("Successfully Added");
+                  setContractAddress("");
+                }
+              } else {
+                setMessage("Failed");
               }
-            }
-          }}
-        >
-          Add
-        </ButtonInner>
-      </AddButton>
-    </>
+            }}
+          >
+            Add
+          </ButtonInner>
+        </AddButton>
+      </ButtonMessageWrapper>
+    </StyledForm>
   );
 };
