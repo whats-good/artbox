@@ -24,11 +24,6 @@ export const getServerSideProps: GetServerSideProps<Success> = async (
   let user;
   let profile: Profile;
 
-  context.res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=0, stale-while-revalidate=0"
-  );
-
   //Validate the URL parameter exists and is string
   if (context.params) {
     user = context.params.user;
@@ -45,6 +40,7 @@ export const getServerSideProps: GetServerSideProps<Success> = async (
         name: user,
       },
       query: userInfo,
+      fetchPolicy: "no-cache",
     });
 
     //Confirm query is successful

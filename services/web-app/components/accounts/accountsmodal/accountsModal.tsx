@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction } from "react";
 import { Modal } from "../../modal";
 import { ConnectedAccount } from "../../connectwallet";
 import { ModalConnectWallet } from "../../shared/connectWallet";
-import { AccountsView } from "./accountsView";
+import { AccountsView } from "./accounts";
 
 //Types
 type AccountsModalProps = {
@@ -30,24 +30,19 @@ export const AccountsModal = ({ toggleShowModal }: AccountsModalProps) => {
         y: 40,
       }}
     >
-      <InnerAccountsModal toggleShowModal={toggleShowModal} />
+      <InnerAccountsModal />
     </Modal>
   );
 };
 
-type InnerAccountsModalProps = {
-  toggleShowModal: Dispatch<SetStateAction<boolean>>;
-};
-
-const InnerAccountsModal = ({ toggleShowModal }: InnerAccountsModalProps) => {
+const InnerAccountsModal = () => {
   const { address } = useAccount();
-  console.log("ADDRESS: ", address);
   return (
     <InnerAccountsModalWrapper>
       {address ? (
         <>
           <ConnectedAccount />
-          <AccountsView toggleShowModal={toggleShowModal} address={address} />
+          <AccountsView address={address} />
         </>
       ) : (
         <ModalConnectWallet />

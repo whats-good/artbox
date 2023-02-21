@@ -1,13 +1,24 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useAccount, useSigner } from "wagmi";
-import { ModalSignMessage } from "../../shared/signMessage";
+import { ModalSignMessage } from "../../../shared/signMessage";
 import { useMutation, useQuery } from "@apollo/client";
-import { AddCollections, ShowCollections } from "./addCollections";
-import { editUser, userInfo } from "../../../querys/internal";
-import type { UserData } from "./accountsView";
+import type { ApolloQueryResult } from "@apollo/client";
+import { GetAccountsQuery } from "../../../../.utils/internalTypes/graphql";
+import { AddCollections } from "./addCollections";
+import { ShowCollections } from "./showCollections";
+import { editUser } from "../../../../querys/internal";
+import type { UserData } from "../accounts";
 
 const EditAccountWrapper = styled.div``;
+
+export type Refetch = (
+  variables?:
+    | Partial<{
+        address: string;
+      }>
+    | undefined
+) => Promise<ApolloQueryResult<GetAccountsQuery>>;
 
 type EditAccountProps = {
   data: UserData;
@@ -41,18 +52,22 @@ export const EditAccount = ({ data }: EditAccountProps) => {
 const SignedInView = ({ userData }: SignedInViewProps) => {
   const [mutateFunction, { data, loading, error }] = useMutation(editUser);
 
+  const [contracts, setContracts] = useState(
+    userData.contracts.map((c) => c.contractAddress)
+  );
+
   return (
     <>
-      {/* <AddCollections
+      <AddCollections
         contracts={contracts}
         setContracts={setContracts}
-        userAddress={address}
+        username={userData.username}
       />
       <ShowCollections
-        userAddress={address}
         contracts={contracts}
         setContracts={setContracts}
-      /> */}
+        username={userData.username}
+      />
     </>
   );
 };
