@@ -1,11 +1,13 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { useAccount } from "wagmi";
+import { useQuery } from "@apollo/client";
+import { userInfo } from "../../querys/internal";
 import { ButtonOuter, ButtonInner } from "../button";
 import { ArtistBioModalInside } from "./artistInfoModalContent";
 import { Modal } from "../modal";
-import { SignUpModal } from "../signUp";
 import { shortenAddress } from "../../helpers/shortenAddress";
+import { EditAccountModal } from "./galleryEditModal";
 
 type GalleryHeaderProps = {
   user: string;
@@ -15,6 +17,7 @@ type GalleryHeaderProps = {
 type ArtistInfoButtonProps = {
   bio: string;
   userAddress: string;
+  username: string;
 };
 
 const GalleryHeaderWrapper = styled.div`
@@ -46,19 +49,31 @@ export const GalleryHeader = ({
         <h1>{user}</h1>
         <p>{bio.slice(0, 60) + "..."}</p>
       </HeaderAndBioWrapper>
-      <ArtistInfoButton bio={bio} userAddress={userAddress} />
+      <ArtistInfoButton username={user} bio={bio} userAddress={userAddress} />
     </GalleryHeaderWrapper>
   );
 };
 
-const ArtistInfoButton = ({ bio, userAddress }: ArtistInfoButtonProps) => {
+const ArtistInfoButton = ({
+  username,
+  bio,
+  userAddress,
+}: ArtistInfoButtonProps) => {
   const { address } = useAccount();
   const [showModal, toggleShowModal] = useState<boolean>(false);
-  const [showSignupModal, toggleShowSignupModal] = useState<boolean>(false);
+  const [showEditModal, toggleShowEditModal] = useState<boolean>(false);
   const handleOpenModal = () => toggleShowModal(!showModal);
   const [isUser] = useState<boolean>(address === userAddress);
 
-  if (isUser) {
+  const { loading, error, data, refetch } = useQuery(userInfo, {
+    variables: {
+      name: username,
+    },
+    fetchPolicy: "no-cache",
+    notifyOnNetworkStatusChange: true,
+  });
+
+  if (isUser && data?.user.__typename === "QueryUserSuccess") {
     return (
       <>
         <ArtistInfoButtonWrapper>
@@ -66,15 +81,18 @@ const ArtistInfoButton = ({ bio, userAddress }: ArtistInfoButtonProps) => {
             Created By: {shortenAddress(userAddress)}
           </ArtistInfoText>
           <ButtonOuter>
-            <ButtonInner
-              onClick={() => toggleShowSignupModal(!showSignupModal)}
-            >
+            <ButtonInner onClick={() => toggleShowEditModal(!showEditModal)}>
               Edit Info
             </ButtonInner>
           </ButtonOuter>
         </ArtistInfoButtonWrapper>
-        {showSignupModal && (
-          <SignUpModal toggleShowModal={toggleShowSignupModal} />
+        {showEditModal && data ? (
+          <EditAccountModal
+            data={data.user.data}
+            toggleShowModal={toggleShowEditModal}
+          />
+        ) : (
+          <></>
         )}
       </>
     );
