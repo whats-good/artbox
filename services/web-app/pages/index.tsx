@@ -4,12 +4,11 @@ import styled from "styled-components";
 import { SignUpButton, SignUpModal } from "../components/signUp";
 import { DiscoverButton, DiscoverModal } from "../components/discover";
 import { AccountsButton, AccountsModal } from "../components/accounts";
-import { EditAccountModal } from "../components/editaccount/editaccountmodal/editAccountModal";
 
 const ButtonWrapper = styled.div`
   width: 150px;
   display: flex;
-  height: 12%;
+  height: 85px;
   flex-direction: column;
   justify-content: space-between;
 `;
