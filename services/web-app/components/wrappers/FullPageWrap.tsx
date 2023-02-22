@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 `;
 
 const Inner = styled.div`
-  height: 90vh;
+  height: 89vh;
 `;
 
 export const FullPageWrap = ({ children }: PropsWithChildren) => {

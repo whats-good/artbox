@@ -28,17 +28,4 @@ export const ConnectedAccount = () => {
   ) : (
     <ConnectedAccountWrapper></ConnectedAccountWrapper>
   );
-
-  // if (connectedAddress) {
-  //   return (
-  //     <ConnectedAccountWrapper>
-  //       <p>Connected: {shortenAddress(connectedAddress)}</p>
-  //     </ConnectedAccountWrapper>
-  //   )
-  // };
-  // return (
-  //   <ConnectedAccountWrapper>
-  //     <p>Not Connected</p>
-  //   </ConnectedAccountWrapper>
-  // )
 };

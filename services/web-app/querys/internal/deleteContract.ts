@@ -1,8 +1,8 @@
 import { gql } from "../../.utils/internalTypes";
 
 export const deleteContractMutation = gql(`
-  mutation deleteContract($deleteContractArgs: ContractInput!) {
-    deleteContract(input: $deleteContractArgs) {
+  mutation DeleteContract($address: String!, $username: String!) {
+    deleteContract(input: {contractAddress: $address, username: $username}) {
       contractAddress
     }
   }

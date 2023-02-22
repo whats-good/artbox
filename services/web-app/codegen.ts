@@ -1,5 +1,7 @@
 import { CodegenConfig } from "@graphql-codegen/cli";
 
+//TODO: Can't use env variables here
+
 const config: CodegenConfig = {
   generates: {
     "./.utils/internalTypes/": {
@@ -8,7 +10,7 @@ const config: CodegenConfig = {
         "!utils/gql/**/*",
         "!querys/zora/*.ts",
       ],
-      schema: `${process.env.NEXT_PUBLIC_BACKEND_URL}/graphql`,
+      schema: `http://localhost:4001/graphql`,
       preset: "client",
       plugins: ["typescript"],
       presetConfig: {
@@ -21,7 +23,6 @@ const config: CodegenConfig = {
         "!utils/gql/**/*",
         "!querys/internal/*.ts",
       ],
-      // schema: process.env.NEXT_PUBLIC_ZORA_GRAPHQL_URI,
       schema: "https://api.zora.co/graphql",
       preset: "client",
       plugins: ["typescript"],

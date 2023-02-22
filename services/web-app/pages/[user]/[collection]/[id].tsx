@@ -1,55 +1,60 @@
-import { InferGetServerSidePropsType, GetServerSidePropsResult } from "next";
-import { GetServerSideProps } from "next";
+import { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import client from "../../../utils/apollo-client";
 import { tokenInfo } from "../../../querys/zora";
+import { userInfo } from "../../../querys/internal";
 import type { TokenInfoQuery } from "../../../.utils/zoraTypes/graphql";
 import { PageWrapper, SingleTokenView } from "../../../components";
 
-type FetchError = {
-  __typename: "FetchError";
-  message: string;
-};
 type Success = {
-  __typename: "Success";
   token: TokenInfoQuery;
 };
-type FetchNftProps = FetchError | Success;
 
-export const getServerSideProps: GetServerSideProps<FetchNftProps> = async (
+export const getServerSideProps: GetServerSideProps<Success> = async (
   context
 ) => {
-  let user, collection, id;
+  let user: string;
+  let collection: string;
+  let id: string;
 
-  //Checking if the url params correct
-  if (context.params) {
+  //Checks if the url params correct
+  if (
+    context.params &&
+    typeof context.params.user === "string" &&
+    typeof context.params.collection === "string" &&
+    typeof context.params.id === "string"
+  ) {
     user = context.params.user;
     collection = context.params.collection;
     id = context.params.id;
-  }
-  if (
-    typeof user !== "string" ||
-    typeof collection !== "string" ||
-    typeof id !== "string"
-  ) {
+  } else {
     return {
-      props: {
-        __typename: "FetchError",
-        message: "Unable to use URL parameters",
-        notFound: true,
-      },
+      notFound: true,
     };
   }
 
-  //Check if the user has 'liked' collection
+  //Check if user has 'liked' collection, if not, 404
   try {
-  } catch (e) {
-    console.log(e);
-    return {
-      props: {
-        __typename: "FetchError",
-        message: "There was an error fetching token Data: ",
-        e,
+    const { data } = await client.query({
+      variables: {
+        name: user,
       },
+      query: userInfo,
+    });
+
+    if (data.user.__typename === "QueryUserSuccess") {
+      if (
+        !data.user.data.contracts
+          .map((c) => c.contractAddress.toUpperCase())
+          .includes(collection.toUpperCase())
+      ) {
+        return {
+          notFound: true,
+        };
+      }
+    }
+  } catch (e) {
+    return {
+      notFound: true,
     };
   }
 
@@ -64,38 +69,28 @@ export const getServerSideProps: GetServerSideProps<FetchNftProps> = async (
       context: { clientName: "zora" },
       query: tokenInfo,
     });
-
     return {
       props: {
-        __typename: "Success",
         token: data,
       },
     };
   } catch (e) {
-    console.log(e);
     return {
-      props: {
-        __typename: "FetchError",
-        message: "There was an error fetching token Data: ",
-        e,
-        notFound: true,
-      },
+      notFound: true,
     };
   }
 };
 
 function Token(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  if (props.__typename === "Success") {
-    return (
-      <PageWrapper>
-        {props.token.token ? (
-          <SingleTokenView token={props.token.token} />
-        ) : (
-          <p>There was an error.</p>
-        )}
-      </PageWrapper>
-    );
-  }
+  return (
+    <PageWrapper>
+      {props.token.token ? (
+        <SingleTokenView token={props.token.token} />
+      ) : (
+        <p>There was an error.</p>
+      )}
+    </PageWrapper>
+  );
 }
 
 export default Token;

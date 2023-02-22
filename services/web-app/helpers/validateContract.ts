@@ -3,23 +3,26 @@ import { ethers } from "ethers";
 import { erc721ABI } from "wagmi";
 
 type Valid = {
-  message: string;
-  valid: boolean;
+  contract: string;
+  valid: true;
 };
+type inValid = {
+  valid: false;
+};
+
+type isValid = Valid | inValid;
 
 export const validateContract = (
   address: string,
   provider: Provider
-): Valid => {
+): isValid => {
   let output;
 
   //Check if address is valid (in any supported format).
   if (!ethers.utils.isAddress(address)) {
-    output = {
-      message: "This is not a properly formatted address",
+    return {
       valid: false,
     };
-    return output;
   }
 
   //Try to instantiate contract class with ERC721 ABI, if that works, we're good.
@@ -30,22 +33,17 @@ export const validateContract = (
     if (contract.functions.ownerOf !== undefined) {
       output = {
         valid: true,
-        message: "valid",
+        contract: contract.address,
       };
       return output;
     }
 
-    output = {
+    return {
       valid: false,
-      message: "inValid",
     };
-
-    return output;
   } catch (e) {
-    output = {
-      message: "Was unable to verify this is ERC-721 contract",
+    return {
       valid: false,
     };
-    return output;
   }
 };

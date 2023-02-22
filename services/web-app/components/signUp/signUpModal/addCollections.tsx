@@ -2,11 +2,11 @@ import { useProvider } from "wagmi";
 import styled from "styled-components";
 import { uuid } from "uuidv4";
 import { useState, Dispatch, SetStateAction } from "react";
-import { StyledForm, StyledLabel, StyledInput } from "./commonStyles";
+import { StyledLabel, StyledInput } from "./commonStyles";
 import { ButtonInner, ButtonOuter } from "../../button";
-import { addContract, deleteContract } from "../../../helpers";
 import { shortenAddress } from "../../../helpers/shortenAddress";
 import { ModelExitButtonWrapper, ModelExitButton } from "../../modal";
+import { validateContract } from "../../../helpers";
 
 //Types
 type AddCollectionsProps = {
@@ -60,7 +60,7 @@ export const AddCollections = ({
   const provider = useProvider();
 
   return (
-    <StyledForm>
+    <>
       <StyledLabel>
         Add Collection: <br />
         <AddCollectionInput
@@ -74,22 +74,26 @@ export const AddCollections = ({
       <AddButton>
         <ButtonInner
           onClick={async (e) => {
-            //Check if contract is valid before pushing it into state array
             e.preventDefault();
-            const contract = await addContract({
-              contractAddress: contractAddress,
-              userAddress: userAddress,
-              provider: provider,
-            });
-            if (contract.success) {
-              setContracts([...contracts, contract.addedContract]);
+
+            //Check if contract is valid before pushing it into state array
+            const validContract = validateContract(contractAddress, provider);
+
+            if (validContract.valid) {
+              //Prevents adding same contract twice
+              if (!contracts.includes(contractAddress)) {
+                setContracts([...contracts, validContract.contract]);
+                setContractAddress("");
+              } else {
+                setContractAddress("");
+              }
             }
           }}
         >
           Add
         </ButtonInner>
       </AddButton>
-    </StyledForm>
+    </>
   );
 };
 
@@ -124,18 +128,10 @@ const CollectionDisplay = ({
       {shortenAddress(contract)}
       <ModelExitButtonWrapper>
         <ModelExitButton
-          onClick={async (e) => {
+          onClick={(e) => {
             e.preventDefault();
-            const deletedContract = await deleteContract({
-              contractAddress: contract,
-              userAddress: userAddress,
-            });
-            if (deletedContract.success) {
-              const newArr = contracts.filter(
-                (item) => item !== deletedContract.deletedAddress
-              );
-              setContracts(newArr);
-            }
+            const arr = contracts.filter((c) => c !== contract);
+            setContracts(arr);
           }}
         >
           x

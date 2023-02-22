@@ -8,7 +8,7 @@ export const signInWithEthereum = async (
 ) => {
   const message = await createSiweMessage(
     address,
-    "Sign in with Ethereum to the app.",
+    "Sign in with Ethereum to QR8.",
     domain,
     origin
   );

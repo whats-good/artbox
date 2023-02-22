@@ -134,37 +134,21 @@ builder.queryType({
       type: User,
       args: {
         username: t.arg.string({
-          required: false,
-        }),
-        address: t.arg.string({
-          required: false,
+          required: true,
         }),
       },
-      resolve: async (query, _, { username, address }) => {
-        if (!username && !address) {
-          throw new UnknownError('Must provide either username or address');
-        }
-        let user = undefined;
-        if (address) {
-          user = await prismaClient.user.findUnique({
-            ...query,
-            where: {
-              address: address,
-            },
-          });
-        }
-        if (username) {
-          user = await prismaClient.user.findUnique({
+      resolve: async (query, _, { username }) => {
+        try {
+          const user = await prismaClient.user.findUnique({
             ...query,
             where: {
               username: username,
             },
           });
+          return user;
+        } catch (e) {
+          throw new UnknownError('Error while fetching user.');
         }
-        if (!user) {
-          throw new NotFoundError();
-        }
-        return user;
       },
     }),
     discoverUsers: t.prismaField({
@@ -184,17 +168,44 @@ builder.queryType({
       },
       type: [User],
       resolve: async (query, _, { take, cursor }) => {
-        const users = await prismaClient.user.findMany({
-          ...query,
-          take: take,
-          cursor: {
-            id: cursor,
-          },
-        });
-        if (!users) {
+        try {
+          const users = await prismaClient.user.findMany({
+            ...query,
+            take: take,
+            cursor: {
+              id: cursor,
+            },
+          });
+          return users;
+        } catch (e) {
           throw new NotFoundError();
         }
-        return users;
+      },
+    }),
+    getAccounts: t.prismaField({
+      errors: {
+        types: [NotFoundError],
+        directResult: false,
+      },
+      args: {
+        address: t.arg.string({
+          required: true,
+        }),
+      },
+      type: [User],
+      resolve: async (query, _, { address }) => {
+        try {
+          const users = await prismaClient.user.findMany({
+            ...query,
+            where: {
+              address: address,
+            },
+            take: 10,
+          });
+          return users;
+        } catch (e) {
+          throw new NotFoundError();
+        }
       },
     }),
   }),
@@ -205,12 +216,21 @@ const UserInput = builder.inputType('UserInput', {
     username: t.string({ required: true }),
     address: t.string({ required: true }),
     description: t.string({ required: false }),
+    smartContracts: t.stringList({ required: false }),
+  }),
+});
+
+const EditUserInput = builder.inputType('EditUserInput', {
+  fields: (t) => ({
+    username: t.string({ required: true }),
+    address: t.string({ required: false }),
+    description: t.string({ required: false }),
   }),
 });
 
 const ContractInput = builder.inputType('ContractInput', {
   fields: (t) => ({
-    userAddress: t.string({ required: true }),
+    username: t.string({ required: true }),
     contractAddress: t.string({ required: true }),
   }),
 });
@@ -227,25 +247,121 @@ builder.mutationType({
           throw new UnknownError('No session token');
         }
         if (userAddress !== args.input.address) {
-          throw new UnknownError('Authenticated adress does not match arg');
+          throw new UnknownError('Authenticated address does not match arg');
         }
-        const user = await prismaClient.user.upsert({
-          where: { address: userAddress },
-          update: {
-            address: userAddress,
-            username: args.input.username,
-            description: args.input.description,
-          },
-          create: {
-            address: userAddress,
-            username: args.input.username,
-            description: args.input.description,
-          },
-        });
-        if (!user) {
+
+        //Check if the username is available
+        try {
+          await prismaClient.user.findUniqueOrThrow({
+            where: { username: args.input.username },
+          });
+        } catch (e) {
+          throw new UnknownError('Sorry, this username already exists.');
+        }
+
+        let user;
+
+        //Create User
+        try {
+          user = await prismaClient.user.create({
+            data: {
+              username: args.input.username,
+              address: userAddress,
+              description: args.input.description,
+            },
+          });
+        } catch (e) {
+          throw new UnknownError('Unable to create User');
+        }
+
+        try {
+          if (args.input.smartContracts.length) {
+            for (let i = 0; i < args.input.smartContracts.length; i++) {
+              const contract = await prismaClient.smartContract.upsert({
+                where: { contractAddress: args.input.smartContracts[i] },
+                update: {
+                  contractAddress: args.input.smartContracts[i],
+                  network: {
+                    connect: { name: 'Ethereum' },
+                  },
+                },
+                create: {
+                  contractAddress: args.input.smartContracts[i],
+                  network: {
+                    connect: { name: 'Ethereum' },
+                  },
+                },
+              });
+
+              const connectUser = await prismaClient.userOnContract.upsert({
+                where: {
+                  unique_combo: {
+                    smartContractId: contract.id,
+                    userId: user.id,
+                  },
+                },
+                create: {
+                  user: {
+                    connect: { username: args.input.username },
+                  },
+                  smartContract: {
+                    connect: { contractAddress: args.input.smartContracts[i] },
+                  },
+                },
+                update: {
+                  user: {
+                    connect: { username: args.input.username },
+                  },
+                  smartContract: {
+                    connect: { contractAddress: args.input.smartContracts[i] },
+                  },
+                },
+              });
+            }
+          }
+        } catch (e) {
           throw new UnknownError();
         }
         return user;
+      },
+    }),
+    editUser: t.field({
+      type: User,
+      args: {
+        input: t.arg({ type: EditUserInput, required: true }),
+      },
+      resolve: async (root, args, { userAddress }) => {
+        if (!userAddress) {
+          throw new UnknownError('No session token');
+        }
+        //Check if the username belongs to the authenticated address
+        try {
+          const checkedUsername = await prismaClient.user.findUniqueOrThrow({
+            where: {
+              username: args.input.username,
+            },
+          });
+          if (checkedUsername.address !== userAddress) {
+            throw new UnknownError('Username does not belong to address');
+          }
+        } catch (e) {
+          throw new UnknownError('Username does not exist');
+        }
+
+        //Update the user
+        try {
+          const user = await prismaClient.user.update({
+            where: {
+              username: args.input.username,
+            },
+            data: {
+              description: args.input.description,
+            },
+          });
+          return user;
+        } catch (e) {
+          throw new UnknownError('Unable to update user');
+        }
       },
     }),
     createContract: t.field({
@@ -257,57 +373,76 @@ builder.mutationType({
         if (!userAddress) {
           throw new UnknownError('No session token');
         }
-        if (userAddress !== args.input.userAddress) {
-          throw new UnknownError('Authenticated adress does not match arg');
+
+        let user;
+        let contract;
+        let connected;
+
+        //Confirm the username belongs to the authenticated address
+        try {
+          user = await prismaClient.user.findUniqueOrThrow({
+            where: {
+              username: args.input.username,
+            },
+          });
+          if (user.address !== userAddress) {
+            throw new UnknownError('Username does not belong to address');
+          }
+        } catch (e) {
+          throw new UnknownError('Username does not exist');
         }
-        const contract = await prismaClient.smartContract.upsert({
-          where: { contractAddress: args.input.contractAddress },
-          update: {
-            contractAddress: args.input.contractAddress,
-            network: {
-              connect: { name: 'Ethereum' },
-            },
-          },
-          create: {
-            contractAddress: args.input.contractAddress,
-            network: {
-              connect: { name: 'Ethereum' },
-            },
-          },
-        });
 
-        const { id } = await prismaClient.user.findUnique({
-          where: {
-            address: userAddress,
-          },
-        });
+        //Create the contract in DB (If doesn't alreadt exist)
+        try {
+          contract = await prismaClient.smartContract.upsert({
+            where: { contractAddress: args.input.contractAddress },
+            update: {
+              contractAddress: args.input.contractAddress,
+              network: {
+                connect: { name: 'Ethereum' },
+              },
+            },
+            create: {
+              contractAddress: args.input.contractAddress,
+              network: {
+                connect: { name: 'Ethereum' },
+              },
+            },
+          });
+        } catch (e) {
+          throw new UnknownError('Unable to create contract');
+        }
 
-        const connectUser = await prismaClient.userOnContract.upsert({
-          where: {
-            unique_combo: {
-              smartContractId: contract.id,
-              userId: id,
+        //Connect the contract with user via UserOnContract join table
+        try {
+          connected = await prismaClient.userOnContract.upsert({
+            where: {
+              unique_combo: {
+                smartContractId: contract.id,
+                userId: user.id,
+              },
             },
-          },
-          create: {
-            user: {
-              connect: { address: userAddress },
+            create: {
+              user: {
+                connect: { username: args.input.username },
+              },
+              smartContract: {
+                connect: { contractAddress: args.input.contractAddress },
+              },
             },
-            smartContract: {
-              connect: { contractAddress: args.input.contractAddress },
+            update: {
+              user: {
+                connect: { username: args.input.username },
+              },
+              smartContract: {
+                connect: { contractAddress: args.input.contractAddress },
+              },
             },
-          },
-          update: {
-            user: {
-              connect: { address: userAddress },
-            },
-            smartContract: {
-              connect: { contractAddress: args.input.contractAddress },
-            },
-          },
-        });
-
-        if (!connectUser || !contract) {
+          });
+        } catch (e) {
+          throw new UnknownError('Unable to link contract to user');
+        }
+        if (!connected || !contract || !user) {
           throw new UnknownError();
         }
         return contract;
@@ -322,27 +457,50 @@ builder.mutationType({
         if (!userAddress) {
           throw new UnknownError('No session token');
         }
-        if (userAddress !== args.input.userAddress) {
-          throw new UnknownError('Authenticated adress does not match arg');
-        }
-        const contract = await prismaClient.smartContract.findUnique({
-          where: {
-            contractAddress: args.input.contractAddress,
-          },
-        });
-        const user = await prismaClient.user.findUnique({
-          where: {
-            address: userAddress,
-          },
-        });
-        const deletedRelation = await prismaClient.userOnContract.delete({
-          where: {
-            unique_combo: {
-              userId: user.id,
-              smartContractId: contract.id,
+
+        let user;
+        let contract;
+        let deletedRelation;
+
+        //Confirm the username belongs to the authenticated address
+        try {
+          user = await prismaClient.user.findUniqueOrThrow({
+            where: {
+              username: args.input.username,
             },
-          },
-        });
+          });
+          if (user.address !== userAddress) {
+            throw new UnknownError('Username does not belong to address');
+          }
+        } catch (e) {
+          throw new UnknownError('Username does not exist');
+        }
+
+        //Get contract ID
+        try {
+          contract = await prismaClient.smartContract.findUnique({
+            where: {
+              contractAddress: args.input.contractAddress,
+            },
+          });
+        } catch (e) {
+          throw new UnknownError('Unable to find contract address');
+        }
+
+        //Delete the Relation
+        try {
+          deletedRelation = await prismaClient.userOnContract.delete({
+            where: {
+              unique_combo: {
+                userId: user.id,
+                smartContractId: contract.id,
+              },
+            },
+          });
+        } catch (e) {
+          throw new UnknownError('Unable to delete contract linked to account');
+        }
+
         if (!deletedRelation || !contract || !user) {
           throw new UnknownError();
         }
@@ -354,8 +512,7 @@ builder.mutationType({
 
 const yoga = createYoga({
   schema: builder.toSchema(),
-  // maskedErrors: process.env.NODE_ENV === 'production',
-  maskedErrors: false,
+  maskedErrors: process.env.NODE_ENV === 'production',
   cors: {
     origin: [
       process.env.CLIENT_URL,

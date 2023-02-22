@@ -1,12 +1,11 @@
 import { Dispatch, SetStateAction } from "react";
 import { useAccount } from "wagmi";
 import styled from "styled-components";
-import { ConnectWallet } from "../../connectwallet";
 import { shortenAddress } from "../../../helpers/shortenAddress";
 import { CreateProfile } from "./createProfile";
+import { ModalConnectWallet } from "../../shared/connectWallet";
 
 //Types
-
 type ConnectedAddressProps = {
   address: string;
 };
@@ -15,15 +14,6 @@ type InsideSignUpModalProps = {
 };
 
 //Styles
-
-const ConnectWalletMessageWrapper = styled.div`
-  height: 500px;
-  width: 450px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-`;
 const InsideSignUpModalWrapper = styled.div`
   height: 500px;
   width: 450px;
@@ -38,8 +28,6 @@ export const InsideSignUpModal = ({
 }: InsideSignUpModalProps) => {
   const { address } = useAccount();
 
-  if (!address) return <ConnectWalletMessage />;
-
   return (
     <InsideSignUpModalWrapper>
       {address ? (
@@ -48,18 +36,9 @@ export const InsideSignUpModal = ({
           <CreateProfile address={address} toggleShowModal={toggleShowModal} />
         </>
       ) : (
-        <ConnectWalletMessage />
+        <ModalConnectWallet />
       )}
     </InsideSignUpModalWrapper>
-  );
-};
-
-const ConnectWalletMessage = () => {
-  return (
-    <ConnectWalletMessageWrapper>
-      <p>Please connect your wallet to create an account</p>
-      <ConnectWallet />
-    </ConnectWalletMessageWrapper>
   );
 };
 

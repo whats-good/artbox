@@ -1,11 +1,5 @@
 import styled from "styled-components";
-import {
-  useContext,
-  useEffect,
-  useState,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import { useContext, useState, Dispatch, SetStateAction } from "react";
 import { useSigner } from "wagmi";
 import { createOrUpdateUser } from "../../../helpers";
 import { signInWithEthereum } from "../../../siwe";
@@ -14,6 +8,7 @@ import { ButtonInner, ButtonOuter } from "../../button";
 import { StyledLabel, StyledInput, StyledForm } from "./commonStyles";
 import { AddCollections, ShowCollections } from "./addCollections";
 import { populateSignUpForm } from "../../../helpers";
+import { ModalSignMessage } from "../../shared/signMessage";
 
 //Types
 type CreateProfileProps = {
@@ -53,35 +48,13 @@ export const CreateProfile = ({
   const [message, setMessage] = useState<string>("");
   const { data: signer } = useSigner();
 
-  useEffect(() => {
-    populateSignUpForm({ address: address }).then((res) => {
-      if (res.userExists) {
-        setUsername(res.username);
-        setBio(res.description);
-        setContracts(res.contracts);
-      }
-    });
-  }, [address]);
-
   if (!loggedIn) {
     return (
-      <PleaseSignMessageButton>
-        <ButtonInner
-          onClick={async () => {
-            const signedIn = await signInWithEthereum(
-              address,
-              signer,
-              window.location.host,
-              window.location.origin
-            );
-            if (signedIn.ok) {
-              setLoggedIn(true);
-            }
-          }}
-        >
-          Please sign a message to create or edit your account.
-        </ButtonInner>
-      </PleaseSignMessageButton>
+      <ModalSignMessage
+        address={address}
+        signer={signer}
+        loggedInFunction={setLoggedIn}
+      />
     );
   }
   return (

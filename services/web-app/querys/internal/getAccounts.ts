@@ -1,18 +1,17 @@
 import { gql } from "../../.utils/internalTypes";
 
-export const userInfo = gql(`
-  query userInfo($name: String!) {
-    user(username: $name) {
-      ... on QueryUserSuccess {
+export const GetAccounts = gql(`
+  query GetAccounts($address: String!) {
+    getAccounts(address: $address) {
+      ... on QueryGetAccountsSuccess {
         __typename
         data {
+          username
+          description
           address
           contracts {
             contractAddress
           }
-          description
-          username
-          id
         }
       }
     }

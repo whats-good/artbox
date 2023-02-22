@@ -11,12 +11,10 @@ export const SignUpButton = ({
   showModal,
 }: SignUpButtonProps) => {
   return (
-    <>
-      <ButtonOuter>
-        <ButtonInner onClick={() => toggleShowModal(!showModal)}>
-          Create
-        </ButtonInner>
-      </ButtonOuter>
-    </>
+    <ButtonOuter>
+      <ButtonInner onClick={() => toggleShowModal(!showModal)}>
+        Create
+      </ButtonInner>
+    </ButtonOuter>
   );
 };
