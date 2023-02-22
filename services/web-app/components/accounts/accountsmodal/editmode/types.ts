@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import type { UserData } from "../accounts";
+import type { UserData } from "../types";
 
 export type AddCollectionsProps = {
   username: string;
