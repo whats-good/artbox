@@ -19,67 +19,32 @@ export const createOrUpdateUser = async ({
   username,
   contracts,
 }: CreateUserInput): Promise<CreateUserOutput> => {
-  let editedAccount;
-  let linkedContracts;
-
   //Update or create User information
   try {
-    editedAccount = await apolloClient.mutate({
+    const newUser = await apolloClient.mutate({
       mutation: createUser,
       variables: {
-        newUserDetails: {
+        user: {
           address: address,
           username: username,
           description: bio,
+          smartContracts: contracts,
         },
       },
     });
-
-    if (editedAccount.errors) {
+    if (newUser.errors) {
       return {
         success: false,
-        message: `There was an error creating user. Error => ${editedAccount.errors}`,
+        message: `There was an error creating user. Error => ${newUser.errors}`,
       };
     }
   } catch (e) {
-    console.log(e);
     return {
       success: false,
       message: `There was an error creating user. Error => ${JSON.stringify(
         e
       )}`,
     };
-  }
-
-  //Then create / link contracts if they are added in form
-  if (contracts?.length) {
-    try {
-      for (let i = 0; i < contracts.length; i++) {
-        linkedContracts = await apolloClient.mutate({
-          mutation: createContract,
-          variables: {
-            ContractInfo: {
-              contractAddress: contracts[i],
-              userAddress: address,
-            },
-          },
-        });
-        if (linkedContracts.errors) {
-          return {
-            success: false,
-            message: `There was an error linking or creating contracts with ${contracts[i]}. Error => ${linkedContracts.errors}`,
-          };
-        }
-      }
-    } catch (e) {
-      console.log(e);
-      return {
-        success: false,
-        message: `There was an error linking or creating contracts. Error => ${JSON.stringify(
-          e
-        )}`,
-      };
-    }
   }
 
   //Return Success

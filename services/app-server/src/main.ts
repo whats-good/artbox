@@ -250,12 +250,11 @@ builder.mutationType({
           throw new UnknownError('Authenticated address does not match arg');
         }
 
-        //Check if the username is available
-        try {
-          await prismaClient.user.findUniqueOrThrow({
-            where: { username: args.input.username },
-          });
-        } catch (e) {
+        //Check if username is available
+        const findUser = await prismaClient.user.findUnique({
+          where: { username: args.input.username },
+        });
+        if (findUser) {
           throw new UnknownError('Sorry, this username already exists.');
         }
 
@@ -275,7 +274,7 @@ builder.mutationType({
         }
 
         try {
-          if (args.input.smartContracts.length) {
+          if (args.input.smartContracts && args.input.smartContracts.length) {
             for (let i = 0; i < args.input.smartContracts.length; i++) {
               const contract = await prismaClient.smartContract.upsert({
                 where: { contractAddress: args.input.smartContracts[i] },
@@ -321,6 +320,9 @@ builder.mutationType({
           }
         } catch (e) {
           throw new UnknownError();
+        }
+        if (!user) {
+          throw new UnknownError('No User created');
         }
         return user;
       },
@@ -392,7 +394,7 @@ builder.mutationType({
           throw new UnknownError('Username does not exist');
         }
 
-        //Create the contract in DB (If doesn't alreadt exist)
+        //Create the contract in DB (If doesn't already exists)
         try {
           contract = await prismaClient.smartContract.upsert({
             where: { contractAddress: args.input.contractAddress },
@@ -524,7 +526,7 @@ const yoga = createYoga({
     if (!req.session) {
       return {
         signedIn: false,
-        userAddress: undefined,
+        userAddress: null,
       };
     }
     if (req.session.siwe?.address) {
@@ -535,7 +537,7 @@ const yoga = createYoga({
     }
     return {
       userAddress: undefined,
-      signedIn: true,
+      signedIn: null,
     };
   },
 });

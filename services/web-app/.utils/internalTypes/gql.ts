@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n  mutation CreateContract($address: String!, $username: String!) {\n    createContract(input: {contractAddress: $address, username: $username}) {\n      contractAddress\n    }\n  }\n": types.CreateContractDocument,
-    "\n  mutation CreateUser($address: String!, $username: String!) {\n    createUser(input: {address: $address, username: $username}) {\n      address\n    }\n  }\n": types.CreateUserDocument,
+    "\n  mutation CreateUser($user: UserInput!) {\n    createUser(input: $user) {\n      address\n    }\n  }\n": types.CreateUserDocument,
     "\n  mutation DeleteContract($address: String!, $username: String!) {\n    deleteContract(input: {contractAddress: $address, username: $username}) {\n      contractAddress\n    }\n  }\n": types.DeleteContractDocument,
     "\n  query DiscoverUsers {\n    discoverUsers {\n      ... on QueryDiscoverUsersSuccess {\n        __typename\n        data {\n          username\n        }\n      }\n    }\n  }\n": types.DiscoverUsersDocument,
     "\n  mutation EditUser($username: String!, $description: String) {\n    editUser(input: {username: $username, description: $description}) {\n      username\n    }\n  }\n": types.EditUserDocument,
@@ -43,7 +43,7 @@ export function gql(source: "\n  mutation CreateContract($address: String!, $use
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  mutation CreateUser($address: String!, $username: String!) {\n    createUser(input: {address: $address, username: $username}) {\n      address\n    }\n  }\n"): (typeof documents)["\n  mutation CreateUser($address: String!, $username: String!) {\n    createUser(input: {address: $address, username: $username}) {\n      address\n    }\n  }\n"];
+export function gql(source: "\n  mutation CreateUser($user: UserInput!) {\n    createUser(input: $user) {\n      address\n    }\n  }\n"): (typeof documents)["\n  mutation CreateUser($user: UserInput!) {\n    createUser(input: $user) {\n      address\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

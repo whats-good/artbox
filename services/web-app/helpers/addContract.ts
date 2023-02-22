@@ -7,6 +7,7 @@ type AddContractInput = {
   contractAddress: string;
   userAddress: string;
   provider: Provider;
+  username: string;
 };
 type AddContractSuccess = {
   success: true;
@@ -22,6 +23,7 @@ type AddContractOutput = AddContractSuccess | AddContractFailed;
 export const addContract = async ({
   contractAddress,
   userAddress,
+  username,
   provider,
 }: AddContractInput): Promise<AddContractOutput> => {
   //First check if contract is valid ERC-721
@@ -37,10 +39,8 @@ export const addContract = async ({
     const linkedContracts = await apolloClient.mutate({
       mutation: createContract,
       variables: {
-        ContractInfo: {
-          contractAddress: contractAddress,
-          userAddress: userAddress,
-        },
+        address: contractAddress,
+        username: username,
       },
     });
 
