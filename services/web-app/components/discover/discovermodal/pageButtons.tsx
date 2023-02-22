@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import { ButtonInner, ButtonOuter } from "../../button"
+import styled from "styled-components";
+import { ButtonInner, ButtonOuter } from "../../button";
 
 const PageButtonsWrapper = styled.div`
   display: flex;
@@ -8,21 +8,17 @@ const PageButtonsWrapper = styled.div`
   height: max-content;
   justify-content: flex-end;
   padding-top: 5px;
-`
+`;
 
 export const PageButtons = () => {
   return (
     <PageButtonsWrapper>
       <ButtonOuter>
-        <ButtonInner>
-          {'<<'}
-        </ButtonInner>
+        <ButtonInner>{"<<"}</ButtonInner>
       </ButtonOuter>
       <ButtonOuter>
-        <ButtonInner>
-          {'>>'}
-        </ButtonInner>
+        <ButtonInner>{">>"}</ButtonInner>
       </ButtonOuter>
     </PageButtonsWrapper>
-  )
-}
+  );
+};

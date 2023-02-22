@@ -6,23 +6,23 @@ import { InsideSignUpModal } from "./insideSignUpModal";
 
 type SignUpModalProps = {
   toggleShowModal: Dispatch<SetStateAction<boolean>>;
-}
+};
 
-export const SignUpModal = ({ toggleShowModal } : SignUpModalProps) => {
+export const SignUpModal = ({ toggleShowModal }: SignUpModalProps) => {
   return (
     <>
       <Modal
         toggleShowModal={toggleShowModal}
         title="Create Profile"
-        height="500px"
+        height="510px"
         width="450px"
         defaultPosition={{
           x: 40,
           y: 40,
         }}
       >
-        <InsideSignUpModal toggleShowModal={toggleShowModal}/>
+        <InsideSignUpModal toggleShowModal={toggleShowModal} />
       </Modal>
     </>
-  )
-}
+  );
+};
