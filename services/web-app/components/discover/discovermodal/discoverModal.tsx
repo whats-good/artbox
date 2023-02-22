@@ -41,6 +41,7 @@ const InnerDiscoverModal = ({}) => {
   const { loading, error, data, refetch } = useQuery(discoverUser, {
     variables: {},
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: "no-cache",
   });
 
   if (loading) return <p>Loading....</p>;
