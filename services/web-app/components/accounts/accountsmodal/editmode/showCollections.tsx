@@ -1,37 +1,10 @@
-import styled from "styled-components";
 import { uuid } from "uuidv4";
-import { Dispatch, SetStateAction } from "react";
 import { useMutation } from "@apollo/client";
 import { shortenAddress } from "../../../../helpers/shortenAddress";
 import { deleteContractMutation } from "../../../../querys/internal";
 import { ModelExitButtonWrapper, ModelExitButton } from "../../../modal";
-
-type ShowCollectionsProps = {
-  username: string;
-  contracts: string[];
-  setContracts: Dispatch<SetStateAction<string[]>>;
-};
-type CollectionDisplayProps = {
-  contracts: string[];
-  contract: string;
-  username: string;
-  setContracts: Dispatch<SetStateAction<string[]>>;
-};
-
-const ShowCollectionsWrapper = styled.div`
-  width: 100%;
-  background-color: #ebebeb;
-  height: 85px;
-  overflow-y: scroll;
-  border: 1px solid black;
-  margin-top: 10px;
-`;
-const CollectionDisplayWrapper = styled.div`
-  justify-content: space-between;
-  padding: 4px 4px;
-  display: flex;
-  border-bottom: 1px solid black;
-`;
+import { ShowCollectionsProps, CollectionDisplayProps } from "./types";
+import { CollectionDisplayWrapper, ShowCollectionsWrapper } from "./styles";
 
 export const ShowCollections = ({
   contracts,
@@ -69,7 +42,7 @@ const CollectionDisplay = ({
         <ModelExitButton
           onClick={async (e) => {
             e.preventDefault();
-            //Delete Contract
+
             const deletedContract = await mutateFunction({
               variables: {
                 username: username,

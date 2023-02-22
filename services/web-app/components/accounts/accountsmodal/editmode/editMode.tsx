@@ -1,25 +1,11 @@
 import { useState } from "react";
-import styled from "styled-components";
 import { useAccount, useSigner } from "wagmi";
 import { ModalSignMessage } from "../../../shared/signMessage";
 import { AddCollections } from "./addCollections";
 import { ShowCollections } from "./showCollections";
-import type { UserData } from "../accounts";
+import { EditAccountProps, SignedInViewProps } from "./types";
 import { EditDescription } from "./editDescription";
-
-const EditAccountWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  align-items: center;
-`;
-
-type EditAccountProps = {
-  data: UserData;
-};
-type SignedInViewProps = {
-  userData: UserData;
-};
+import { EditAccountWrapper, UsernameText } from "./styles";
 
 export const EditAccount = ({ data }: EditAccountProps) => {
   const [signedIn, setSignedIn] = useState<boolean>(false);
@@ -42,10 +28,6 @@ export const EditAccount = ({ data }: EditAccountProps) => {
     </EditAccountWrapper>
   );
 };
-
-const UsernameText = styled.p`
-  align-self: flex-start;
-`;
 
 const SignedInView = ({ userData }: SignedInViewProps) => {
   const [descriptionEditMode, setDescriptionEditMode] = useState(false);
