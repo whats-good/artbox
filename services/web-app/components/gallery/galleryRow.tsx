@@ -1,22 +1,8 @@
 import { useState } from "react";
-import styled from "styled-components";
-import type { CollectionInfoQuery } from "../../.utils/zoraTypes/graphql";
 import { RowTopBar } from "./galleryRow/rowTop";
 import { RowBottom } from "./galleryRow/rowBottom";
-
-//Types
-
-type GalleryRowProps = {
-  contract: CollectionInfoQuery;
-};
-
-//Styles
-
-const GalleryRowWrapper = styled.div`
-  margin: 15px 0px;
-`;
-
-//Components
+import { GalleryRowProps } from "./types";
+import { GalleryRowWrapper } from "./styles";
 
 export const GalleryRow = ({ contract }: GalleryRowProps) => {
   const [expand, setExpand] = useState(false);
