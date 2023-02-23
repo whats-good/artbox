@@ -89,27 +89,7 @@ export const CreateProfile = ({
         />
         <p>{message}</p>
         <SubmitButton>
-          <ButtonInner
-            type="submit"
-            // onClick={async (e) => {
-            //   e.preventDefault();
-            //   const createProfile = await createOrUpdateUser({
-            //     address: address,
-            //     bio: bio,
-            //     username: username,
-            //     contracts: contracts,
-            //   });
-            //   if (createProfile.success) {
-            //     setMessage("Success!");
-            //   } else {
-            //     setMessage(
-            //       "Something went wrong...Please make sure username is not taken"
-            //     );
-            //   }
-            // }}
-          >
-            Submit
-          </ButtonInner>
+          <ButtonInner type="submit">Submit</ButtonInner>
         </SubmitButton>
       </StyledForm>
     </CreateProfileWrapper>
