@@ -1,10 +1,5 @@
-import { Dispatch, SetStateAction } from "react";
 import { ButtonInner, ButtonOuter } from "../button";
-
-type DiscoverButtonProps = {
-  toggleShowModal: Dispatch<SetStateAction<boolean>>;
-  showModal: boolean;
-};
+import { DiscoverButtonProps } from "./types";
 
 export const DiscoverButton = ({
   toggleShowModal,
