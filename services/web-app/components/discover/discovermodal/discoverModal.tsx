@@ -45,12 +45,16 @@ const InnerDiscoverModal = ({}) => {
   });
 
   if (data?.discoverUsers.__typename === "QueryDiscoverUsersSuccess") {
-    <InnerDiscoverModalWrapper>
-      <DiscoverModalTop />
-      <UsersList data={data.discoverUsers} />
-      <PageButtons />
-    </InnerDiscoverModalWrapper>;
+    return (
+      <InnerDiscoverModalWrapper>
+        <DiscoverModalTop />
+        <UsersList data={data.discoverUsers} />
+        <PageButtons />
+      </InnerDiscoverModalWrapper>
+    );
+  } else if (loading) {
+    return <p>Loading....</p>;
+  } else {
+    return <p>error</p>;
   }
-  if (loading) return <p>Loading....</p>;
-  return <p>error</p>;
 };

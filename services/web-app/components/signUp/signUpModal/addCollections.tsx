@@ -29,16 +29,16 @@ export const AddCollections = ({
 
   return (
     <>
-      <StyledLabel>
+      <StyledLabel htmlFor="signup">
         Add Collection: <br />
-        <AddCollectionInput
-          required
-          type="text"
-          name="name"
-          value={contractAddress}
-          onChange={(e) => setContractAddress(e.target.value)}
-        />
       </StyledLabel>
+      <AddCollectionInput
+        type="text"
+        name="name"
+        value={contractAddress}
+        onChange={(e) => setContractAddress(e.target.value)}
+      />
+
       <AddButton>
         <ButtonInner
           onClick={async (e) => {

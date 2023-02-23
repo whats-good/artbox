@@ -37,6 +37,9 @@ const ArtistInfoButtonWrapper = styled.div`
 const ArtistInfoText = styled.p`
   margin: 0px 10px 0px 0px;
 `;
+const ModalAnchor = styled.div`
+  height: 1px;
+`;
 
 export const GalleryHeader = ({
   user,
@@ -87,10 +90,12 @@ const ArtistInfoButton = ({
           </ButtonOuter>
         </ArtistInfoButtonWrapper>
         {showEditModal && data ? (
-          <EditAccountModal
-            data={data.user.data}
-            toggleShowModal={toggleShowEditModal}
-          />
+          <ModalAnchor>
+            <EditAccountModal
+              data={data.user.data}
+              toggleShowModal={toggleShowEditModal}
+            />
+          </ModalAnchor>
         ) : (
           <></>
         )}

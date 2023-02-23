@@ -53,6 +53,49 @@ const Home: NextPage = () => {
             showModal={accountsModal}
           />
         </ButtonWrapper>
+        {/* <p>Fields marked with * are required.</p>
+        <form>
+          <label htmlFor="name">Name: *</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            pattern="[a-zA-Z]+"
+            placeholder="Monty"
+            required
+          />
+          <br />
+          <label htmlFor="name">Company Email Address: *</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="joe@company.com"
+            pattern=".+@company\.com"
+            required
+          />
+          <br />
+          <label htmlFor="name">Age: </label>
+          <input
+            type="number"
+            id="age"
+            name="age"
+            min="10"
+            max="80"
+            placeholder="30"
+          />
+          <br />
+          <label htmlFor="name">Favorite Tuts+ Website: *</label>
+          <input
+            type="url"
+            id="website"
+            name="website"
+            pattern="https://.*\.tutsplus\.com"
+            placeholder="https://code.tutsplus.com"
+            required
+          />
+          <button type="submit">Submit</button>
+        </form> */}
       </BodyWrapper>
     </>
   );

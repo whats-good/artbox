@@ -37,27 +37,46 @@ export const CreateProfile = ({
   }
   return (
     <CreateProfileWrapper>
-      <StyledForm>
-        <StyledLabel>
+      <StyledForm
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const createProfile = await createOrUpdateUser({
+            address: address,
+            bio: bio,
+            username: username,
+            contracts: contracts,
+          });
+          if (createProfile.success) {
+            setMessage("Success!");
+          } else {
+            setMessage(
+              "Something went wrong...Please make sure username is not taken"
+            );
+          }
+        }}
+      >
+        <StyledLabel htmlFor="signup">
           Set Name: <br />
-          <StyledInput
-            required
-            type="text"
-            name="name"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
         </StyledLabel>
-        <StyledLabel>
+        <StyledInput
+          type="text"
+          id="name"
+          name="formfield"
+          pattern="^[A-Za-z0-9]{3,16}$"
+          required
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <StyledLabel htmlFor="signup">
           Set Description: <br />
-          <StyledTextArea
-            required
-            maxLength={280}
-            value={bio}
-            name="description"
-            onChange={(e) => setBio(e.target.value)}
-          />
         </StyledLabel>
+        <StyledTextArea
+          required
+          maxLength={280}
+          value={bio}
+          name="description"
+          onChange={(e) => setBio(e.target.value)}
+        />
         <AddCollections
           contracts={contracts}
           setContracts={setContracts}
@@ -72,22 +91,22 @@ export const CreateProfile = ({
         <SubmitButton>
           <ButtonInner
             type="submit"
-            onClick={async (e) => {
-              e.preventDefault();
-              const createProfile = await createOrUpdateUser({
-                address: address,
-                bio: bio,
-                username: username,
-                contracts: contracts,
-              });
-              if (createProfile.success) {
-                setMessage("Success!");
-              } else {
-                setMessage(
-                  "Something went wrong...Please make sure username is not taken"
-                );
-              }
-            }}
+            // onClick={async (e) => {
+            //   e.preventDefault();
+            //   const createProfile = await createOrUpdateUser({
+            //     address: address,
+            //     bio: bio,
+            //     username: username,
+            //     contracts: contracts,
+            //   });
+            //   if (createProfile.success) {
+            //     setMessage("Success!");
+            //   } else {
+            //     setMessage(
+            //       "Something went wrong...Please make sure username is not taken"
+            //     );
+            //   }
+            // }}
           >
             Submit
           </ButtonInner>
