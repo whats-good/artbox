@@ -1,41 +1,19 @@
-import styled from "styled-components";
-import { useContext, useState, Dispatch, SetStateAction } from "react";
+import { useContext, useState } from "react";
 import { useSigner } from "wagmi";
 import { createOrUpdateUser } from "../../../helpers";
-import { signInWithEthereum } from "../../../siwe";
 import { LoggedInContext } from "../../../utils/loggedInContext";
-import { ButtonInner, ButtonOuter } from "../../button";
-import { StyledLabel, StyledInput, StyledForm } from "./commonStyles";
+import { ButtonInner } from "../../button";
 import { AddCollections, ShowCollections } from "./addCollections";
-import { populateSignUpForm } from "../../../helpers";
 import { ModalSignMessage } from "../../shared/signMessage";
-
-//Types
-type CreateProfileProps = {
-  address: string;
-  toggleShowModal: Dispatch<SetStateAction<boolean>>;
-};
-
-const SubmitButton = styled(ButtonOuter)`
-  margin: -18px -6px 0px 0px;
-  align-self: flex-end;
-  width: 25%;
-`;
-
-//Styles
-const CreateProfileWrapper = styled.div`
-  width: 85%;
-`;
-const PleaseSignMessageButton = styled(ButtonOuter)`
-  width: 90%;
-`;
-const StyledTextArea = styled.textarea`
-  resize: none;
-  width: 100%;
-  border: 1px solid black;
-  background-color: #ebebeb;
-  height: 150px;
-`;
+import type { CreateProfileProps } from "./types";
+import {
+  CreateProfileWrapper,
+  StyledTextArea,
+  SubmitButton,
+  StyledLabel,
+  StyledInput,
+  StyledForm,
+} from "./styles";
 
 export const CreateProfile = ({
   address,

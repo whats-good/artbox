@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import {
-  StyledForm,
-  StyledLabel,
-} from "../../../signUp/signUpModal/commonStyles";
+import { StyledForm, StyledLabel } from "../../../signUp/signUpModal/styles";
 import { DescriptionTextArea, ButtonMessageWrapper, Message } from "./styles";
 import { editUser } from "../../../../querys/internal";
 import { ButtonInner, ButtonOuter } from "../../../button";

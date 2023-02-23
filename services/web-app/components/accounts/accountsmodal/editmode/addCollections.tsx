@@ -5,10 +5,7 @@ import { ButtonInner } from "../../../button";
 import { validateContract } from "../../../../helpers";
 import { AddCollectionsProps } from "./types";
 import { createContract } from "../../../../querys/internal";
-import {
-  StyledLabel,
-  StyledForm,
-} from "../../../signUp/signUpModal/commonStyles";
+import { StyledLabel, StyledForm } from "../../../signUp/signUpModal/styles";
 import {
   AddCollectionInput,
   ButtonMessageWrapper,

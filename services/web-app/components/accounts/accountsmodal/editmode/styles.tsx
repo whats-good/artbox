@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { StyledInput } from "../../../signUp/signUpModal/commonStyles";
+import { StyledInput } from "../../../signUp/signUpModal/styles";
 import { ButtonOuter } from "../../../button";
 
 export const AddButton = styled(ButtonOuter)`
