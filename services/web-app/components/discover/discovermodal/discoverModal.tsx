@@ -44,20 +44,13 @@ const InnerDiscoverModal = ({}) => {
     fetchPolicy: "no-cache",
   });
 
-  if (loading) return <p>Loading....</p>;
-  if (error) {
-    console.log(error);
-    return (
-      <>
-        <p>Error</p>
-      </>
-    );
-  }
-  return (
+  if (data?.discoverUsers.__typename === "QueryDiscoverUsersSuccess") {
     <InnerDiscoverModalWrapper>
       <DiscoverModalTop />
-      <UsersList data={data} />
+      <UsersList data={data.discoverUsers} />
       <PageButtons />
-    </InnerDiscoverModalWrapper>
-  );
+    </InnerDiscoverModalWrapper>;
+  }
+  if (loading) return <p>Loading....</p>;
+  return <p>error</p>;
 };
