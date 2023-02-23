@@ -1,17 +1,6 @@
-import styled from "styled-components";
 import { useState } from "react";
-import { ButtonInner, ButtonOuter } from "../../button";
-
-const DiscoverModalTopWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 15% 15% 15% 15% 30%;
-  padding: 10px;
-  justify-content: space-between;
-`;
-
-const DiscoverModalFilterButton = styled(ButtonInner)`
-  padding: 0px;
-`;
+import { ButtonOuter } from "../../button";
+import { DiscoverModalTopWrapper, DiscoverModalFilterButton } from "./styles";
 
 export const DiscoverModalTop = () => {
   return (
