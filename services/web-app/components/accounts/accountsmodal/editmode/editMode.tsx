@@ -5,8 +5,9 @@ import { AddCollections } from "./addCollections";
 import { ShowCollections } from "./showCollections";
 import { EditAccountProps, SignedInViewProps } from "./types";
 import { EditDescription } from "./editDescription";
-import { EditAccountWrapper, UsernameText } from "./styles";
+import { UsernameText } from "./styles";
 import { ModalConnectWallet } from "../../../shared/connectWallet";
+import { FormWrapper } from "../../../shared/styles";
 import { ConnectedAccount } from "../../../connectwallet";
 
 export const EditAccount = ({ data }: EditAccountProps) => {
@@ -17,27 +18,21 @@ export const EditAccount = ({ data }: EditAccountProps) => {
   const { data: signer } = useSigner();
 
   if (!address) {
-    return (
-      <EditAccountWrapper>
-        <ModalConnectWallet />
-      </EditAccountWrapper>
-    );
+    return <ModalConnectWallet />;
   } else if (!signedIn) {
     return (
-      <EditAccountWrapper>
-        <ModalSignMessage
-          address={address}
-          signer={signer}
-          loggedInFunction={setSignedIn}
-        />
-      </EditAccountWrapper>
+      <ModalSignMessage
+        address={address}
+        signer={signer}
+        loggedInFunction={setSignedIn}
+      />
     );
   } else {
     return (
-      <EditAccountWrapper>
+      <FormWrapper>
         <ConnectedAccount connectedAddress={address} />
         <SignedInView userData={data} />
-      </EditAccountWrapper>
+      </FormWrapper>
     );
   }
 };

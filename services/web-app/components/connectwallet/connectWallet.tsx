@@ -28,7 +28,7 @@ export const ConnectWallet = () => {
   return (
     <ConnectWalletWrapper>
       {connectedAddress && (
-        <ConnectedAccount connectedAddress={connectedAddress} />
+        <ConnectedAccount navbar={true} connectedAddress={connectedAddress} />
       )}
       {connectors.map((connector) => (
         <ButtonOuter key={connector.id}>
