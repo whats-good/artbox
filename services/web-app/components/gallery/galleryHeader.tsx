@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useQuery } from "@apollo/client";
@@ -8,35 +7,14 @@ import { ArtistBioModalInside } from "./artistInfoModalContent";
 import { Modal } from "../modal";
 import { shortenAddress } from "../../helpers/shortenAddress";
 import { EditAccountModal } from "./galleryEditModal";
-
-type GalleryHeaderProps = {
-  user: string;
-  bio: string;
-  userAddress: string;
-};
-type ArtistInfoButtonProps = {
-  bio: string;
-  userAddress: string;
-  username: string;
-};
-
-const GalleryHeaderWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 50% 50%;
-`;
-const HeaderAndBioWrapper = styled.div`
-  padding-left: 10px;
-`;
-const ArtistInfoButtonWrapper = styled.div`
-  display: flex;
-  padding: 3px;
-  justify-content: flex-end;
-  height: min-content;
-  align-items: center;
-`;
-const ArtistInfoText = styled.p`
-  margin: 0px 10px 0px 0px;
-`;
+import type { GalleryHeaderProps, ArtistInfoButtonProps } from "./types";
+import {
+  GalleryHeaderWrapper,
+  HeaderAndBioWrapper,
+  ArtistInfoButtonWrapper,
+  ArtistInfoText,
+  ModalAnchor,
+} from "./styles";
 
 export const GalleryHeader = ({
   user,
@@ -87,10 +65,12 @@ const ArtistInfoButton = ({
           </ButtonOuter>
         </ArtistInfoButtonWrapper>
         {showEditModal && data ? (
-          <EditAccountModal
-            data={data.user.data}
-            toggleShowModal={toggleShowEditModal}
-          />
+          <ModalAnchor>
+            <EditAccountModal
+              data={data.user.data}
+              toggleShowModal={toggleShowEditModal}
+            />
+          </ModalAnchor>
         ) : (
           <></>
         )}

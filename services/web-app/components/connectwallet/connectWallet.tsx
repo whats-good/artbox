@@ -1,30 +1,47 @@
-import { useAccount, useConnect } from "wagmi";
-import styled from "styled-components";
-import { ButtonOuter, ButtonInner } from "../button/buttonstyled";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useEffect, useState } from "react";
+import { ButtonInner, ButtonOuter } from "../button";
+import { ConnectWalletWrapper } from "./styles";
 import { ConnectedAccount } from "./addressDisplay";
 
-const ConnectWalletWrapper = styled.div`
-  grid-column-start: 3;
-  display: flex;
-  justify-content: end;
-  align-items: center;
-`;
-
 export const ConnectWallet = () => {
+  const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
+
   const { connect, connectors, error, isLoading, pendingConnector } =
     useConnect();
 
+  const disconnect = useDisconnect({
+    onError(e) {},
+    onSuccess() {
+      setConnectedAddress(null);
+    },
+  });
+
+  const { address, isConnecting, isConnected } = useAccount();
+
+  useEffect(() => {
+    if (typeof address === "string") {
+      setConnectedAddress(address);
+    }
+  }, [address]);
+
   return (
     <ConnectWalletWrapper>
-      <ConnectedAccount />
+      {connectedAddress && (
+        <ConnectedAccount connectedAddress={connectedAddress} />
+      )}
       {connectors.map((connector) => (
         <ButtonOuter key={connector.id}>
           <ButtonInner
             onClick={() => {
-              connect({ connector });
+              if (connectedAddress) {
+                disconnect.disconnect();
+              } else {
+                connect({ connector });
+              }
             }}
           >
-            Connect
+            {connectedAddress ? "Disconnect" : "Connect"}
             {isLoading &&
               connector.id === pendingConnector?.id &&
               " (connecting)"}

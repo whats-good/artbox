@@ -1,25 +1,12 @@
 import { useState } from "react";
-import styled from "styled-components";
 import { useAccount, useSigner } from "wagmi";
 import { ModalSignMessage } from "../../../shared/signMessage";
 import { AddCollections } from "./addCollections";
 import { ShowCollections } from "./showCollections";
-import type { UserData } from "../accounts";
+import { EditAccountProps, SignedInViewProps } from "./types";
 import { EditDescription } from "./editDescription";
-
-const EditAccountWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  align-items: center;
-`;
-
-type EditAccountProps = {
-  data: UserData;
-};
-type SignedInViewProps = {
-  userData: UserData;
-};
+import { EditAccountWrapper, UsernameText } from "./styles";
+import { ModalConnectWallet } from "../../../shared/connectWallet";
 
 export const EditAccount = ({ data }: EditAccountProps) => {
   const [signedIn, setSignedIn] = useState<boolean>(false);
@@ -28,24 +15,30 @@ export const EditAccount = ({ data }: EditAccountProps) => {
 
   const { data: signer } = useSigner();
 
-  return (
-    <EditAccountWrapper>
-      {!signedIn && address ? (
+  if (!address) {
+    return (
+      <EditAccountWrapper>
+        <ModalConnectWallet />
+      </EditAccountWrapper>
+    );
+  } else if (!signedIn) {
+    return (
+      <EditAccountWrapper>
         <ModalSignMessage
           address={address}
           signer={signer}
           loggedInFunction={setSignedIn}
         />
-      ) : (
+      </EditAccountWrapper>
+    );
+  } else {
+    return (
+      <EditAccountWrapper>
         <SignedInView userData={data} />
-      )}
-    </EditAccountWrapper>
-  );
+      </EditAccountWrapper>
+    );
+  }
 };
-
-const UsernameText = styled.p`
-  align-self: flex-start;
-`;
 
 const SignedInView = ({ userData }: SignedInViewProps) => {
   const [descriptionEditMode, setDescriptionEditMode] = useState(false);

@@ -1,41 +1,19 @@
-import styled from "styled-components";
-import { useContext, useState, Dispatch, SetStateAction } from "react";
+import { useContext, useState } from "react";
 import { useSigner } from "wagmi";
 import { createOrUpdateUser } from "../../../helpers";
-import { signInWithEthereum } from "../../../siwe";
 import { LoggedInContext } from "../../../utils/loggedInContext";
-import { ButtonInner, ButtonOuter } from "../../button";
-import { StyledLabel, StyledInput, StyledForm } from "./commonStyles";
+import { ButtonInner } from "../../button";
 import { AddCollections, ShowCollections } from "./addCollections";
-import { populateSignUpForm } from "../../../helpers";
 import { ModalSignMessage } from "../../shared/signMessage";
-
-//Types
-type CreateProfileProps = {
-  address: string;
-  toggleShowModal: Dispatch<SetStateAction<boolean>>;
-};
-
-const SubmitButton = styled(ButtonOuter)`
-  margin: -18px -6px 0px 0px;
-  align-self: flex-end;
-  width: 25%;
-`;
-
-//Styles
-const CreateProfileWrapper = styled.div`
-  width: 85%;
-`;
-const PleaseSignMessageButton = styled(ButtonOuter)`
-  width: 90%;
-`;
-const StyledTextArea = styled.textarea`
-  resize: none;
-  width: 100%;
-  border: 1px solid black;
-  background-color: #ebebeb;
-  height: 150px;
-`;
+import type { CreateProfileProps } from "./types";
+import {
+  CreateProfileWrapper,
+  StyledTextArea,
+  SubmitButton,
+  StyledLabel,
+  StyledInput,
+  StyledForm,
+} from "./styles";
 
 export const CreateProfile = ({
   address,
@@ -59,27 +37,46 @@ export const CreateProfile = ({
   }
   return (
     <CreateProfileWrapper>
-      <StyledForm>
-        <StyledLabel>
+      <StyledForm
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const createProfile = await createOrUpdateUser({
+            address: address,
+            bio: bio,
+            username: username,
+            contracts: contracts,
+          });
+          if (createProfile.success) {
+            setMessage("Success!");
+          } else {
+            setMessage(
+              "Something went wrong...Please make sure username is not taken"
+            );
+          }
+        }}
+      >
+        <StyledLabel htmlFor="signup">
           Set Name: <br />
-          <StyledInput
-            required
-            type="text"
-            name="name"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
         </StyledLabel>
-        <StyledLabel>
+        <StyledInput
+          type="text"
+          id="name"
+          name="formfield"
+          pattern="^[A-Za-z0-9]{3,16}$"
+          required
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <StyledLabel htmlFor="signup">
           Set Description: <br />
-          <StyledTextArea
-            required
-            maxLength={280}
-            value={bio}
-            name="description"
-            onChange={(e) => setBio(e.target.value)}
-          />
         </StyledLabel>
+        <StyledTextArea
+          required
+          maxLength={280}
+          value={bio}
+          name="description"
+          onChange={(e) => setBio(e.target.value)}
+        />
         <AddCollections
           contracts={contracts}
           setContracts={setContracts}
@@ -92,27 +89,7 @@ export const CreateProfile = ({
         />
         <p>{message}</p>
         <SubmitButton>
-          <ButtonInner
-            type="submit"
-            onClick={async (e) => {
-              e.preventDefault();
-              const createProfile = await createOrUpdateUser({
-                address: address,
-                bio: bio,
-                username: username,
-                contracts: contracts,
-              });
-              if (createProfile.success) {
-                setMessage("Success!");
-              } else {
-                setMessage(
-                  "Something went wrong...Please make sure username is not taken"
-                );
-              }
-            }}
-          >
-            Submit
-          </ButtonInner>
+          <ButtonInner type="submit">Submit</ButtonInner>
         </SubmitButton>
       </StyledForm>
     </CreateProfileWrapper>

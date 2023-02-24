@@ -1,16 +1,6 @@
-import type { CollectionInfoQuery } from "../../.utils/zoraTypes/graphql";
 import { GalleryRow } from "./galleryRow";
-import styled from "styled-components";
-
-type GalleryRowsProps = {
-  contracts: CollectionInfoQuery[];
-};
-
-const GalleryRowsWrapper = styled.div`
-  display: grid;
-  overflow-y: scroll;
-  border-top: 1px solid black;
-`;
+import type { GalleryRowsProps } from "./types";
+import { GalleryRowsWrapper } from "./styles";
 
 export const GalleryRows = ({ contracts }: GalleryRowsProps) => {
   return (

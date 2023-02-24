@@ -1,54 +1,22 @@
 import { useProvider } from "wagmi";
-import styled from "styled-components";
 import { uuid } from "uuidv4";
-import { useState, Dispatch, SetStateAction } from "react";
-import { StyledLabel, StyledInput } from "./commonStyles";
-import { ButtonInner, ButtonOuter } from "../../button";
+import { useState } from "react";
+import { ButtonInner } from "../../button";
 import { shortenAddress } from "../../../helpers/shortenAddress";
 import { ModelExitButtonWrapper, ModelExitButton } from "../../modal";
 import { validateContract } from "../../../helpers";
-
-//Types
-type AddCollectionsProps = {
-  setContracts: Dispatch<SetStateAction<string[]>>;
-  contracts: string[];
-  userAddress: string;
-};
-type ShowCollectionsProps = {
-  contracts: string[];
-  setContracts: Dispatch<SetStateAction<string[]>>;
-  userAddress: string;
-};
-type CollectionDisplayProps = {
-  contracts: string[];
-  contract: string;
-  setContracts: Dispatch<SetStateAction<string[]>>;
-  userAddress: string;
-};
-
-//Styles
-const ShowCollectionsWrapper = styled.div`
-  width: 388px;
-  background-color: #ebebeb;
-  height: 80px;
-  overflow-y: scroll;
-  border: 1px solid black;
-  margin: 10px 0px 0px 5px;
-`;
-const CollectionDisplayWrapper = styled.div`
-  justify-content: space-between;
-  padding: 4px 4px;
-  display: flex;
-  border-bottom: 1px solid black;
-`;
-const AddButton = styled(ButtonOuter)`
-  align-self: flex-end;
-  width: 25%;
-  margin-right: -6px;
-`;
-const AddCollectionInput = styled(StyledInput)`
-  width: 100%;
-`;
+import {
+  StyledLabel,
+  AddCollectionInput,
+  AddButton,
+  ShowCollectionsWrapper,
+  CollectionDisplayWrapper,
+} from "./styles";
+import type {
+  AddCollectionsProps,
+  ShowCollectionsProps,
+  CollectionDisplayProps,
+} from "./types";
 
 export const AddCollections = ({
   contracts,
@@ -61,16 +29,16 @@ export const AddCollections = ({
 
   return (
     <>
-      <StyledLabel>
+      <StyledLabel htmlFor="signup">
         Add Collection: <br />
-        <AddCollectionInput
-          required
-          type="text"
-          name="name"
-          value={contractAddress}
-          onChange={(e) => setContractAddress(e.target.value)}
-        />
       </StyledLabel>
+      <AddCollectionInput
+        type="text"
+        name="name"
+        value={contractAddress}
+        onChange={(e) => setContractAddress(e.target.value)}
+      />
+
       <AddButton>
         <ButtonInner
           onClick={async (e) => {

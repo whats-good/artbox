@@ -1,12 +1,6 @@
-import { Dispatch, SetStateAction } from "react";
 import { EditAccount } from "../accounts/accountsmodal/editmode/editMode";
 import { Modal } from "../modal";
-import type { UserData } from "../accounts/accountsmodal/accounts";
-
-type EditAccountModalProps = {
-  toggleShowModal: Dispatch<SetStateAction<boolean>>;
-  data: UserData;
-};
+import type { EditAccountModalProps } from "./types";
 
 export const EditAccountModal = ({
   toggleShowModal,

@@ -1,123 +1,23 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Dispatch, SetStateAction, useState } from "react";
-import styled from "styled-components";
+import { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { tokenGallery } from "../../../querys/zora";
 import { ButtonInner, ButtonOuter } from "../../button";
 import { parseIpfs } from "../../../helpers";
-import Image from "next/image";
-
-//Types
-
-type GalleryRowItemProps = {
-  urls: string[];
-  title: string;
-  contract: string;
-  user: string;
-};
-type GalleryRowItemBottomProps = {
-  title: string;
-};
-type ExpandRowBottomProps = {
-  contractAddress: string;
-  page: string | null | undefined;
-  count: number;
-  hasNext?: boolean;
-};
-type RowBottomProps = {
-  expand: boolean;
-  setExpand: Dispatch<SetStateAction<boolean>>;
-  tokens: {
-    __typename?: "TokenWithMarketsSummaryConnection";
-    nodes: Array<{
-      __typename?: "TokenWithMarketsSummary";
-      token: {
-        __typename?: "Token";
-        collectionName?: string | null;
-        collectionAddress: string;
-        description?: string | null;
-        metadata?: any | null;
-        tokenId: string;
-        image?: {
-          __typename?: "TokenContentMedia";
-          url?: string | null;
-          mediaEncoding?:
-            | {
-                __typename?: "AudioEncodingTypes";
-              }
-            | {
-                __typename?: "ImageEncodingTypes";
-                thumbnail?: string | null;
-              }
-            | {
-                __typename: "UnsupportedEncodingTypes";
-                original: string;
-              }
-            | {
-                __typename?: "VideoEncodingTypes";
-              }
-            | null;
-        } | null;
-        tokenContract?: {
-          __typename?: "TokenContract";
-          description?: string | null;
-          name?: string | null;
-          symbol?: string | null;
-          totalSupply?: number | null;
-          collectionAddress: string;
-        } | null;
-      };
-    }>;
-    pageInfo: {
-      __typename?: "PageInfo";
-      hasNextPage: boolean;
-      endCursor?: string | null;
-    };
-  };
-};
-
-//Styles
-
-const RowBottomWrapper = styled.div`
-  min-height: 210px;
-  margin: 5px 15px 5px 5px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-`;
-const GalleryRowItemBottomWrapper = styled.div`
-  padding-left: 5px;
-  align-content: center;
-`;
-const ExpandRowBottomWrapper = styled.div`
-  margin-left: 5px;
-  margin-right: 15px;
-  background-color: #008080;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-`;
-const PageButtonsWrapper = styled.div`
-  display: flex;
-  grid-template-columns: 1fr 1fr;
-  margin-right: 15px;
-  margin-left: 5px;
-  height: max-content;
-  justify-content: flex-end;
-  padding: 3px;
-  background-color: #008080;
-`;
-const GalleryRowItemWrapper = styled.div`
-  margin: 1px 2px;
-  border: 1px solid black;
-  height: max;
-  background-color: #cdcdcd;
-  &:hover {
-    border: 3px solid #565656;
-  }
-`;
-
-//Components
+import type {
+  ExpandRowBottomProps,
+  GalleryRowItemBottomProps,
+  GalleryRowItemProps,
+  RowBottomProps,
+} from "./types";
+import {
+  ExpandRowBottomWrapper,
+  PageButtonsWrapper,
+  GalleryRowItemBottomWrapper,
+  RowBottomWrapper,
+  GalleryRowItemWrapper,
+} from "./styles";
 
 const ExpandRowBottom = ({
   contractAddress,

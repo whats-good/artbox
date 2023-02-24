@@ -1,24 +1,14 @@
-import styled from "styled-components";
 import { PropsWithChildren } from "react";
 import { TopBar } from "../connectwallet";
 import { Footer } from "../footer";
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Inner = styled.div`
-  height: 89vh;
-`;
+import { FullPageWrapper, InnerWrapper } from "./styles";
 
 export const FullPageWrap = ({ children }: PropsWithChildren) => {
   return (
-    <Wrapper>
+    <FullPageWrapper>
       <TopBar />
-      <Inner>{children}</Inner>
+      <InnerWrapper>{children}</InnerWrapper>
       <Footer />
-    </Wrapper>
+    </FullPageWrapper>
   );
 };

@@ -1,33 +1,14 @@
-import { Dispatch, SetStateAction } from "react";
 import { useAccount } from "wagmi";
-import styled from "styled-components";
+import { InsideSignUpModalWrapper } from "./styles";
 import { shortenAddress } from "../../../helpers/shortenAddress";
 import { CreateProfile } from "./createProfile";
 import { ModalConnectWallet } from "../../shared/connectWallet";
-
-//Types
-type ConnectedAddressProps = {
-  address: string;
-};
-type InsideSignUpModalProps = {
-  toggleShowModal: Dispatch<SetStateAction<boolean>>;
-};
-
-//Styles
-const InsideSignUpModalWrapper = styled.div`
-  height: 500px;
-  width: 450px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-`;
+import type { InsideSignUpModalProps, ConnectedAddressProps } from "./types";
 
 export const InsideSignUpModal = ({
   toggleShowModal,
 }: InsideSignUpModalProps) => {
   const { address } = useAccount();
-
   return (
     <InsideSignUpModalWrapper>
       {address ? (
@@ -43,9 +24,5 @@ export const InsideSignUpModal = ({
 };
 
 const ConnectedAddress = ({ address }: ConnectedAddressProps) => {
-  return (
-    <>
-      <p>Connected at {shortenAddress(address)}</p>
-    </>
-  );
+  return <p>Connected at {shortenAddress(address)}</p>;
 };

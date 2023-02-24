@@ -1,22 +1,10 @@
-import styled from "styled-components";
 import { useAccount } from "wagmi";
-import { Dispatch, SetStateAction } from "react";
 import { Modal } from "../../modal";
 import { ConnectedAccount } from "../../connectwallet";
 import { ModalConnectWallet } from "../../shared/connectWallet";
 import { AccountsView } from "./accounts";
-
-//Types
-type AccountsModalProps = {
-  toggleShowModal: Dispatch<SetStateAction<boolean>>;
-};
-
-//Styles
-const InnerAccountsModalWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
+import { AccountsModalProps } from "./types";
+import { InnerAccountsModalWrapper } from "./styles";
 
 export const AccountsModal = ({ toggleShowModal }: AccountsModalProps) => {
   return (
@@ -41,7 +29,7 @@ const InnerAccountsModal = () => {
     <InnerAccountsModalWrapper>
       {address ? (
         <>
-          <ConnectedAccount />
+          <ConnectedAccount connectedAddress={address} />
           <AccountsView address={address} />
         </>
       ) : (

@@ -1,10 +1,5 @@
-import { Dispatch, SetStateAction } from "react";
+import { SignUpButtonProps } from "./types";
 import { ButtonInner, ButtonOuter } from "../button";
-
-type SignUpButtonProps = {
-  toggleShowModal: Dispatch<SetStateAction<boolean>>;
-  showModal: boolean;
-};
 
 export const SignUpButton = ({
   toggleShowModal,
