@@ -1,16 +1,8 @@
 import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { disconnect } from "@wagmi/core";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { ButtonOuter, ButtonInner } from "../button/buttonstyled";
+import { ButtonInner, ButtonOuter } from "../button";
+import { ConnectWalletWrapper } from "./styles";
 import { ConnectedAccount } from "./addressDisplay";
-
-const ConnectWalletWrapper = styled.div`
-  grid-column-start: 3;
-  display: flex;
-  justify-content: end;
-  align-items: center;
-`;
 
 export const ConnectWallet = () => {
   const [connectedAddress, setConnectedAddress] = useState<string | null>(null);
@@ -19,11 +11,8 @@ export const ConnectWallet = () => {
     useConnect();
 
   const disconnect = useDisconnect({
-    onError(e) {
-      console.log("ERROR: ", e);
-    },
+    onError(e) {},
     onSuccess(data) {
-      console.log("SUCCESS: ", data);
       setConnectedAddress(null);
     },
   });

@@ -1,16 +1,7 @@
-import styled from "styled-components";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { ButtonInner, ButtonOuter } from "../button";
-
-const NavButtonsWrapper = styled.div`
-  display: flex;
-  justify-content: start;
-  align-items: center;
-`;
-const NavButtonOuter = styled(ButtonOuter)`
-  margin-right: 5px;
-`;
+import { ButtonInner } from "../button";
+import { NavButtonsWrapper, NavButtonOuter } from "./styles";
 
 export const NavButtons = () => {
   const router = useRouter();
