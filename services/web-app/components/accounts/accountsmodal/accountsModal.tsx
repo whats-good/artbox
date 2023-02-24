@@ -5,6 +5,7 @@ import { ModalConnectWallet } from "../../shared/connectWallet";
 import { AccountsView } from "./accounts";
 import { AccountsModalProps } from "./types";
 import { InnerAccountsModalWrapper } from "./styles";
+import { InnerModalWrapper } from "../../shared/styles";
 
 export const AccountsModal = ({ toggleShowModal }: AccountsModalProps) => {
   return (
@@ -26,15 +27,8 @@ export const AccountsModal = ({ toggleShowModal }: AccountsModalProps) => {
 const InnerAccountsModal = () => {
   const { address } = useAccount();
   return (
-    <InnerAccountsModalWrapper>
-      {address ? (
-        <>
-          <ConnectedAccount connectedAddress={address} />
-          <AccountsView address={address} />
-        </>
-      ) : (
-        <ModalConnectWallet />
-      )}
-    </InnerAccountsModalWrapper>
+    <InnerModalWrapper>
+      {address ? <AccountsView address={address} /> : <ModalConnectWallet />}
+    </InnerModalWrapper>
   );
 };

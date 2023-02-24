@@ -270,6 +270,7 @@ builder.mutationType({
             },
           });
         } catch (e) {
+          console.log(e);
           throw new UnknownError('Unable to create User');
         }
 

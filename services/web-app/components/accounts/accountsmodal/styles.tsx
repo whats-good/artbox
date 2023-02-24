@@ -27,6 +27,7 @@ export const AccountsListWrapper = styled.div`
   border: 1px solid black;
   margin: 0px 10px 10px 10px;
   height: 430px;
+  width: 95%;
 `;
 export const InnerAccountsModalWrapper = styled.div`
   display: flex;
