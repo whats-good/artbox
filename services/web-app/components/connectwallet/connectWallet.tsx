@@ -12,7 +12,7 @@ export const ConnectWallet = () => {
 
   const disconnect = useDisconnect({
     onError(e) {},
-    onSuccess(data) {
+    onSuccess() {
       setConnectedAddress(null);
     },
   });
@@ -27,7 +27,9 @@ export const ConnectWallet = () => {
 
   return (
     <ConnectWalletWrapper>
-      <ConnectedAccount />
+      {connectedAddress && (
+        <ConnectedAccount connectedAddress={connectedAddress} />
+      )}
       {connectors.map((connector) => (
         <ButtonOuter key={connector.id}>
           <ButtonInner

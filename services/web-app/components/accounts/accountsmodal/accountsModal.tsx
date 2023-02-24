@@ -29,7 +29,7 @@ const InnerAccountsModal = () => {
     <InnerAccountsModalWrapper>
       {address ? (
         <>
-          <ConnectedAccount />
+          <ConnectedAccount connectedAddress={address} />
           <AccountsView address={address} />
         </>
       ) : (
