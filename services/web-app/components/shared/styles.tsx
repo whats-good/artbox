@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { ButtonOuter } from "../button";
 
 //Use this for ModalSignMessageWrapper
 export const ConnectWalletMessageWrapper = styled.div`
@@ -7,9 +6,6 @@ export const ConnectWalletMessageWrapper = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-`;
-export const PleaseSignMessageButton = styled(ButtonOuter)`
-  width: 90%;
 `;
 export const InnerModalWrapper = styled.div`
   display: flex;

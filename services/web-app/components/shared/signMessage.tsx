@@ -1,8 +1,8 @@
 import { signInWithEthereum } from "../../siwe";
-import { ButtonInner } from "../button";
+import { ButtonInner, ButtonOuter } from "../button";
 import { ConnectedAccount } from "../connectwallet";
 import type { ModalSignMessageProps } from "./types";
-import { PleaseSignMessageButton, ModalSignMessageWrapper } from "./styles";
+import { ModalSignMessageWrapper } from "./styles";
 
 export const ModalSignMessage = ({
   address,
@@ -12,7 +12,7 @@ export const ModalSignMessage = ({
   return (
     <ModalSignMessageWrapper>
       <ConnectedAccount connectedAddress={address} />
-      <PleaseSignMessageButton>
+      <ButtonOuter>
         <ButtonInner
           onClick={async () => {
             const signedIn = await signInWithEthereum(
@@ -26,9 +26,9 @@ export const ModalSignMessage = ({
             }
           }}
         >
-          Please sign a message to create or edit your account.
+          Please sign a message
         </ButtonInner>
-      </PleaseSignMessageButton>
+      </ButtonOuter>
     </ModalSignMessageWrapper>
   );
 };
