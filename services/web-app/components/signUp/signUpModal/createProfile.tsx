@@ -15,7 +15,11 @@ import {
   StyledForm,
 } from "./styles";
 import { ConnectedAccount } from "../../connectwallet";
-import { FormWrapper } from "../../shared/styles";
+import {
+  FormWrapper,
+  ButtonMessageWrapper,
+  Message,
+} from "../../shared/styles";
 
 export const CreateProfile = ({
   address,
@@ -52,9 +56,7 @@ export const CreateProfile = ({
           if (createProfile.success) {
             setMessage("Success!");
           } else {
-            setMessage(
-              "Something went wrong...Please make sure username is not taken"
-            );
+            setMessage("Something went wrong...");
           }
         }}
       >
@@ -90,10 +92,12 @@ export const CreateProfile = ({
           contracts={contracts}
           setContracts={setContracts}
         />
-        <p>{message}</p>
-        <SubmitButton>
-          <ButtonInner type="submit">Submit</ButtonInner>
-        </SubmitButton>
+        <ButtonMessageWrapper>
+          <Message>{message}</Message>
+          <SubmitButton>
+            <ButtonInner type="submit">Submit</ButtonInner>
+          </SubmitButton>
+        </ButtonMessageWrapper>
       </StyledForm>
     </FormWrapper>
   );

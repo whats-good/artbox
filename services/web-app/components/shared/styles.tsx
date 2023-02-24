@@ -21,3 +21,15 @@ export const ModalSignMessageWrapper = styled.div`
 export const FormWrapper = styled.div`
   width: 85%;
 `;
+export const ButtonMessageWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 395px;
+  align-items: center;
+  margin-top: 8px;
+`;
+export const Message = styled.p`
+  margin: 0px 5px 0px 0px;
+  padding: 0px;
+`;
