@@ -22,5 +22,5 @@ export const FullPageWrapper = styled.div`
 `;
 
 export const InnerWrapper = styled.div`
-  height: 89vh;
+  height: 90vh;
 `;
