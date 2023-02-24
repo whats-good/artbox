@@ -14,6 +14,7 @@ import {
   StyledInput,
   StyledForm,
 } from "./styles";
+import { ConnectedAccount } from "../../connectwallet";
 
 export const CreateProfile = ({
   address,
@@ -37,6 +38,7 @@ export const CreateProfile = ({
   }
   return (
     <CreateProfileWrapper>
+      <ConnectedAccount connectedAddress={address} />
       <StyledForm
         onSubmit={async (e) => {
           e.preventDefault();

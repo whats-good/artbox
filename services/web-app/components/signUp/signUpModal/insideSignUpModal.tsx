@@ -12,10 +12,7 @@ export const InsideSignUpModal = ({
   return (
     <InsideSignUpModalWrapper>
       {address ? (
-        <>
-          <ConnectedAddress address={address} />
-          <CreateProfile address={address} toggleShowModal={toggleShowModal} />
-        </>
+        <CreateProfile address={address} toggleShowModal={toggleShowModal} />
       ) : (
         <ModalConnectWallet />
       )}

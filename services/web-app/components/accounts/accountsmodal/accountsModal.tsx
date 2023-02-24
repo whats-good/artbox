@@ -27,14 +27,7 @@ const InnerAccountsModal = () => {
   const { address } = useAccount();
   return (
     <InnerAccountsModalWrapper>
-      {address ? (
-        <>
-          <ConnectedAccount connectedAddress={address} />
-          <AccountsView address={address} />
-        </>
-      ) : (
-        <ModalConnectWallet />
-      )}
+      {address ? <AccountsView address={address} /> : <ModalConnectWallet />}
     </InnerAccountsModalWrapper>
   );
 };

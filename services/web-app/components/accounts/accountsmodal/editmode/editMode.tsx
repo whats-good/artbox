@@ -7,6 +7,7 @@ import { EditAccountProps, SignedInViewProps } from "./types";
 import { EditDescription } from "./editDescription";
 import { EditAccountWrapper, UsernameText } from "./styles";
 import { ModalConnectWallet } from "../../../shared/connectWallet";
+import { ConnectedAccount } from "../../../connectwallet";
 
 export const EditAccount = ({ data }: EditAccountProps) => {
   const [signedIn, setSignedIn] = useState<boolean>(false);
@@ -34,6 +35,7 @@ export const EditAccount = ({ data }: EditAccountProps) => {
   } else {
     return (
       <EditAccountWrapper>
+        <ConnectedAccount connectedAddress={address} />
         <SignedInView userData={data} />
       </EditAccountWrapper>
     );
