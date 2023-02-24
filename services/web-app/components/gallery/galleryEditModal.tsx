@@ -1,6 +1,7 @@
 import { EditAccount } from "../accounts/accountsmodal/editmode/editMode";
 import { Modal } from "../modal";
 import type { EditAccountModalProps } from "./types";
+import { InnerModalWrapper } from "../shared/styles";
 
 export const EditAccountModal = ({
   toggleShowModal,
@@ -17,7 +18,9 @@ export const EditAccountModal = ({
         y: 40,
       }}
     >
-      <EditAccount data={data} />
+      <InnerModalWrapper>
+        <EditAccount data={data} />
+      </InnerModalWrapper>
     </Modal>
   );
 };

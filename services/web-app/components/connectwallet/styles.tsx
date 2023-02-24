@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { ButtonOuter } from "../button";
-import { ConnectedAccount } from "./addressDisplay";
 
 export const ConnectedAccountWrapper = styled.div`
   display: flex;

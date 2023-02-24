@@ -10,7 +10,6 @@ export const InsideSignUpModalWrapper = styled.div`
   align-items: center;
 `;
 export const SubmitButton = styled(ButtonOuter)`
-  margin: -18px -6px 0px 0px;
   align-self: flex-end;
   width: 25%;
 `;
