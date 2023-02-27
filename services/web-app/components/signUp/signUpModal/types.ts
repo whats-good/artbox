@@ -17,6 +17,7 @@ export type AddCollectionsProps = {
   setContracts: Dispatch<SetStateAction<string[]>>;
   contracts: string[];
   userAddress: string;
+  setMessage: Dispatch<SetStateAction<string>>;
 };
 export type ShowCollectionsProps = {
   contracts: string[];

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useSigner } from "wagmi";
 import { createOrUpdateUser } from "../../../helpers";
 import { LoggedInContext } from "../../../utils/loggedInContext";
@@ -32,6 +32,12 @@ export const CreateProfile = ({
   const [message, setMessage] = useState<string>("");
   const { data: signer } = useSigner();
 
+  useEffect(() => {
+    setInterval(() => {
+      setMessage("");
+    }, 20000);
+  });
+
   if (!loggedIn) {
     return (
       <ModalSignMessage
@@ -41,6 +47,7 @@ export const CreateProfile = ({
       />
     );
   }
+
   return (
     <FormWrapper>
       <ConnectedAccount connectedAddress={address} />
@@ -83,6 +90,7 @@ export const CreateProfile = ({
           onChange={(e) => setBio(e.target.value)}
         />
         <AddCollections
+          setMessage={setMessage}
           contracts={contracts}
           setContracts={setContracts}
           userAddress={address}
