@@ -22,6 +22,7 @@ export const AddCollections = ({
   contracts,
   setContracts,
   userAddress,
+  setMessage,
 }: AddCollectionsProps) => {
   const [contractAddress, setContractAddress] = useState<string>("");
 
@@ -45,16 +46,31 @@ export const AddCollections = ({
             e.preventDefault();
 
             //Check if contract is valid before pushing it into state array
-            const validContract = validateContract(contractAddress, provider);
+            const validContract = await validateContract(
+              contractAddress,
+              provider
+            );
 
             if (validContract.valid) {
               //Prevents adding same contract twice
               if (!contracts.includes(contractAddress)) {
                 setContracts([...contracts, validContract.contract]);
                 setContractAddress("");
+                setMessage("Added Contract");
               } else {
                 setContractAddress("");
+                setMessage("Added Contract");
+                setTimeout(() => {
+                  setMessage("");
+                }, 100);
               }
+            } else {
+              setContractAddress("");
+              setMessage("This collection is not supported");
+              setTimeout(() => {
+                setMessage("");
+              }, 2000);
+              console.log("This collection is not supported");
             }
           }}
         >

@@ -1,15 +1,13 @@
 import { GalleryRow } from "./galleryRow";
 import type { GalleryRowsProps } from "./types";
 import { GalleryRowsWrapper } from "./styles";
+import { uuid } from "uuidv4";
 
 export const GalleryRows = ({ contracts }: GalleryRowsProps) => {
   return (
     <GalleryRowsWrapper>
       {contracts.map((contract) => (
-        <GalleryRow
-          key={contract.collections.nodes[0].address}
-          contract={contract}
-        ></GalleryRow>
+        <GalleryRow key={uuid()} contract={contract}></GalleryRow>
       ))}
     </GalleryRowsWrapper>
   );
