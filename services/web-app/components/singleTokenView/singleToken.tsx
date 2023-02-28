@@ -1,49 +1,19 @@
 import styled from "styled-components";
 import { shortenAddress } from "../../helpers/shortenAddress";
+import type { TokenInfoQuery } from "../../.utils/zoraTypes/graphql";
 import type {
-  TokenInfoQuery,
-  TokenAttribute,
-} from "../../.utils/zoraTypes/graphql";
+  ImageColumnProps,
+  ImageInfoPointProps,
+  MetaDataInfoPointProps,
+} from "./types";
+import {
+  ImageColumnWrapper,
+  ImageInfoWrapper,
+  SingleTokenViewWrapper,
+} from "./styles";
 import { useState } from "react";
 import { parseIpfs } from "../../helpers";
 import { EventsList } from "./eventLog";
-
-//Types
-
-type ImageColumnProps = {
-  urls: string[];
-};
-type ImageInfoPointProps = {
-  label: string;
-  info: string;
-};
-type MetaDataInfoPointProps = {
-  label: string;
-  metaData: TokenAttribute[] | undefined | null;
-};
-
-//Styles
-
-const SingleTokenViewWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  height: 100%;
-`;
-const ImageColumnWrapper = styled.div`
-  height: 75vh;
-  width: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid black;
-`;
-const ImageInfoWrapper = styled.div`
-  width: 50%;
-  padding: 0px 10px 10px;
-`;
-
-//Components
 
 const ImageColumn = ({ urls }: ImageColumnProps) => {
   const [i, increment] = useState<number>(0);
