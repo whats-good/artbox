@@ -60,17 +60,10 @@ export const AddCollections = ({
               } else {
                 setContractAddress("");
                 setMessage("Added Contract");
-                setTimeout(() => {
-                  setMessage("");
-                }, 100);
               }
             } else {
               setContractAddress("");
               setMessage("This collection is not supported");
-              setTimeout(() => {
-                setMessage("");
-              }, 2000);
-              console.log("This collection is not supported");
             }
           }}
         >

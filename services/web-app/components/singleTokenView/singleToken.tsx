@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { shortenAddress } from "../../helpers/shortenAddress";
 import type { TokenInfoQuery } from "../../.utils/zoraTypes/graphql";
 import type {
