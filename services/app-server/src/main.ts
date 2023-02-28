@@ -147,6 +147,7 @@ builder.queryType({
           });
           return user;
         } catch (e) {
+          console.log(e);
           throw new UnknownError('Error while fetching user.');
         }
       },
@@ -178,6 +179,7 @@ builder.queryType({
           });
           return users;
         } catch (e) {
+          console.log(e);
           throw new NotFoundError();
         }
       },
@@ -204,6 +206,7 @@ builder.queryType({
           });
           return users;
         } catch (e) {
+          console.log(e);
           throw new NotFoundError();
         }
       },
@@ -320,6 +323,7 @@ builder.mutationType({
             }
           }
         } catch (e) {
+          console.log(e);
           throw new UnknownError();
         }
         if (!user) {
@@ -348,6 +352,7 @@ builder.mutationType({
             throw new UnknownError('Username does not belong to address');
           }
         } catch (e) {
+          console.log(e);
           throw new UnknownError('Username does not exist');
         }
 
@@ -363,6 +368,7 @@ builder.mutationType({
           });
           return user;
         } catch (e) {
+          console.log(e);
           throw new UnknownError('Unable to update user');
         }
       },
@@ -392,6 +398,7 @@ builder.mutationType({
             throw new UnknownError('Username does not belong to address');
           }
         } catch (e) {
+          console.log(e);
           throw new UnknownError('Username does not exist');
         }
 
@@ -413,6 +420,7 @@ builder.mutationType({
             },
           });
         } catch (e) {
+          console.log(e);
           throw new UnknownError('Unable to create contract');
         }
 
@@ -443,6 +451,7 @@ builder.mutationType({
             },
           });
         } catch (e) {
+          console.log(e);
           throw new UnknownError('Unable to link contract to user');
         }
         if (!connected || !contract || !user) {
@@ -476,6 +485,7 @@ builder.mutationType({
             throw new UnknownError('Username does not belong to address');
           }
         } catch (e) {
+          console.log(e);
           throw new UnknownError('Username does not exist');
         }
 
@@ -487,6 +497,7 @@ builder.mutationType({
             },
           });
         } catch (e) {
+          console.log(e);
           throw new UnknownError('Unable to find contract address');
         }
 
@@ -501,6 +512,7 @@ builder.mutationType({
             },
           });
         } catch (e) {
+          console.log(e);
           throw new UnknownError('Unable to delete contract linked to account');
         }
 

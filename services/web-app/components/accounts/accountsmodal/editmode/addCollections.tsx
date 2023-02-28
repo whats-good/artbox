@@ -1,6 +1,6 @@
 import { useProvider } from "wagmi";
 import { useMutation } from "@apollo/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ButtonInner } from "../../../button";
 import { validateContract } from "../../../../helpers";
 import { AddCollectionsProps } from "./types";
@@ -20,6 +20,12 @@ export const AddCollections = ({
 }: AddCollectionsProps) => {
   const [contractAddress, setContractAddress] = useState<string>("");
   const [message, setMessage] = useState<string>("");
+
+  useEffect(() => {
+    setInterval(() => {
+      setMessage("");
+    }, 20000);
+  });
 
   const [mutateFunction, { data, loading, error }] =
     useMutation(createContract);
@@ -47,7 +53,10 @@ export const AddCollections = ({
               e.preventDefault();
               setMessage("");
               //Check if contract is valid before pushing it into state array
-              const validContract = validateContract(contractAddress, provider);
+              const validContract = await validateContract(
+                contractAddress,
+                provider
+              );
 
               if (validContract.valid) {
                 const addedContract = await mutateFunction({
