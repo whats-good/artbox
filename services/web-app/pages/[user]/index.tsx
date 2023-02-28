@@ -81,7 +81,6 @@ export const getServerSideProps: GetServerSideProps<Success> = async (
           });
           contracts.push(data);
         }
-        console.log("CONTRACTS: ", contracts);
         return {
           props: {
             contracts: JSON.parse(JSON.stringify(contracts)),

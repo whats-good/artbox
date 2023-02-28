@@ -6,7 +6,6 @@ import { GalleryRowWrapper } from "./styles";
 
 export const GalleryRow = ({ contract }: GalleryRowProps) => {
   const [expand, setExpand] = useState(false);
-  console.log("CONTRACT INSIDE GALLERYROW: ", contract);
   return (
     <GalleryRowWrapper>
       <RowTopBar
