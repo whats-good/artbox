@@ -47,7 +47,10 @@ export const AddCollections = ({
               e.preventDefault();
               setMessage("");
               //Check if contract is valid before pushing it into state array
-              const validContract = validateContract(contractAddress, provider);
+              const validContract = await validateContract(
+                contractAddress,
+                provider
+              );
 
               if (validContract.valid) {
                 const addedContract = await mutateFunction({
