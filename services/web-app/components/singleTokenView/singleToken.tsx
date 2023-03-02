@@ -22,7 +22,12 @@ const ImageColumn = ({ urls }: ImageColumnProps) => {
     <ImageColumnWrapper>
       <img
         alt="NFT Image QR8"
-        style={{ height: "auto", maxWidth: "40vw" }}
+        style={{
+          height: "auto",
+          maxWidth: "40vw",
+          maxHeight: "75vh",
+          width: "auto",
+        }}
         src={src}
         onError={() => {
           if (i !== urls.length - 1) {
