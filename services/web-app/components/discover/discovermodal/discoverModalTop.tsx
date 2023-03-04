@@ -23,7 +23,7 @@ export const DiscoverModalTop = () => {
 };
 
 const SearchBar = () => {
-  const [search, setSearch] = useState("search");
+  const [search, setSearch] = useState("");
 
   return (
     <input
