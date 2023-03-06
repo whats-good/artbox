@@ -27,6 +27,7 @@ export const UsersListWrapper = styled.div`
   background-color: #ebebeb;
   margin-right: 20px;
   margin-left: 20px;
+  overflow-y: scroll;
 `;
 export const UserListItemWrapper = styled.div`
   border-bottom: 1px solid grey;
