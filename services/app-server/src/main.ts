@@ -160,7 +160,7 @@ builder.queryType({
       args: {
         take: t.arg.int({
           required: false,
-          defaultValue: 10,
+          defaultValue: 20,
         }),
         cursor: t.arg.int({
           required: false,
